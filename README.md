@@ -41,7 +41,7 @@ Built using modern Java and React technologies, cura demonstrates how real-world
 ### Local Setup
 
 ```bash
-git clone https://github.com/your-username/cura.git
+git clone https://github.com/eo640217/cura.git
 cd cura
 cp .env.example .env
 docker compose up -d
