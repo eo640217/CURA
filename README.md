@@ -1,51 +1,49 @@
-# CURA
-cura is a full-stack web application designed to help care homes manage daily operations and maintain compliance through structured workflows, secure data storage, and audit-ready records.
+# cura — Care Home Operations & Compliance Platform
 
-The platform provides tools for managing residents, staff, care tasks, incident reporting, and document storage, with a strong focus on data integrity, traceability, and scalability.
+cura is a full-stack web application designed to support care homes with daily operations and compliance-focused record keeping. The platform emphasizes clean backend architecture, secure data handling, and production-style development workflows.
 
-Built as a modern Java + React system, cura follows real-world backend patterns such as database migrations, role-based access control, secure file handling via cloud storage, and containerized infrastructure.
+Built using modern Java and React technologies, cura demonstrates how real-world systems manage structured data, enforce access control, handle file storage, and maintain audit-ready records.
 
-Key Features
+---
 
-Residents & Staff Management
-CRUD APIs for managing resident profiles and staff accounts with role-based permissions.
+## Features
 
-Care Tasks & Incident Reporting
-Track daily care tasks, record incidents, and maintain structured operational logs.
+- Resident and staff management with CRUD APIs  
+- Care task tracking and incident reporting  
+- Role-based access control for secure operations  
+- Compliance-ready audit logging  
+- Secure document storage using S3-compatible object storage  
+- RESTful API design with OpenAPI / Swagger documentation  
+- Flyway-managed database migrations  
+- Containerized local development environment using Docker
 
-Compliance-Ready Audit Trail
-Database-backed audit records to support traceability and regulatory review.
+---
 
-Secure Document Storage
-File uploads handled via cloud object storage (S3-compatible) with metadata persisted in PostgreSQL.
+## Tech Stack
 
-RESTful API Architecture
-Cleanly designed REST endpoints documented with OpenAPI / Swagger.
+- **Backend:** Java 17, Spring Boot, Spring Data JPA, Spring Security  
+- **Frontend:** React, TypeScript  
+- **Database:** PostgreSQL  
+- **Storage:** AWS S3 (LocalStack for local development)  
+- **Infrastructure:** Docker, Docker Compose  
+- **Build Tool:** Maven  
+- **API Docs:** Swagger / OpenAPI  
 
-Database Migrations & Data Integrity
-Flyway-managed schema migrations to ensure consistent environments across deployments.
+---
 
-Containerized Development Environment
-Docker-based local setup using PostgreSQL and LocalStack for production-like workflows.
+## Getting Started
 
-Tech Stack
+### Prerequisites
+- Java 17
+- Docker & Docker Compose
+- Maven
 
-Backend: Java 17, Spring Boot, Spring Data JPA, Flyway, Spring Security
+### Local Setup
 
-Frontend: React, TypeScript, modern component-based UI
-
-Database: PostgreSQL
-
-Cloud / Storage: AWS S3 (via LocalStack for local development)
-
-Infrastructure: Docker, Docker Compose
-
-Tooling: Maven, OpenAPI (Swagger)
-
-Architecture Highlights
-
-Environment-based configuration with secure secret management
-
-Separation of concerns between API, persistence, and infrastructure layers
-
-Scalable foundation designed to evolve into multi-tenant and event-driven workflows
+```bash
+git clone https://github.com/your-username/cura.git
+cd cura
+cp .env.example .env
+docker compose up -d
+cd cura-api
+mvn spring-boot:run
