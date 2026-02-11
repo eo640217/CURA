@@ -1,0 +1,29 @@
+services:
+  postgres:
+    env_file:
+      - .env
+    image: postgres:16
+    container_name: cura-postgres
+    environment:
+      POSTGRES_USER: cura
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: cura
+    ports:
+      - "5433:5432"
+    volumes:
+      - cura_pgdata:/var/lib/postgresql/data
+
+  localstack:
+    image: localstack/localstack:3
+    container_name: cura-localstack
+    environment:
+      - SERVICES=s3
+      - DEBUG=0
+    ports:
+      - "4566:4566"
+    volumes:
+      - cura_localstack:/var/lib/localstack
+
+volumes:
+  cura_pgdata:
+  cura_localstack:
