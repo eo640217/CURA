@@ -1,0 +1,60 @@
+### Create Resident
+POST http://localhost:8080/api/v1/residents
+Content-Type: application/json
+
+{
+  "facilityId": 3,
+  "firstName": "John",
+  "lastName": "Doe",
+  "dateOfBirth": "1950-01-01",
+  "roomNumber": "101"
+}
+
+### List Residents by facility
+GET http://localhost:8080/api/v1/residents?facilityId=1
+
+### Get Resident by id
+GET http://localhost:8080/api/v1/residents/4
+
+### Update Resident
+PUT http://localhost:8080/api/v1/residents/4
+Content-Type: application/json
+
+{
+  "roomNumber": "B-15"
+}
+
+### Delete Resident
+DELETE http://localhost:8080/api/v1/residents/1
+
+
+
+### Create Facility
+POST http://localhost:8080/api/v1/facilities
+Content-Type: application/json
+
+{
+  "name": "Cura Manor",
+  "address": "123 Queen St W, Toronto"
+}
+
+### List Facilities
+GET http://localhost:8080/api/v1/facilities
+
+### Get Facility 1
+GET http://localhost:8080/api/v1/facilities/3
+
+### PUT into facility
+PUT http://localhost:8080/api/v1/residents/3
+Content-Type: application/json
+
+{
+  "firstName": "Johnny",
+  "lastName": "Doe",
+  "dateOfBirth": "1948-05-10",
+  "roomNumber": "205B"
+}
+
+
+### DELETE
+DELETE http://localhost:8080/api/v1/residents/3
