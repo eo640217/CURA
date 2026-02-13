@@ -1,5 +1,6 @@
 package com.cura.resident;
 
+import com.cura.unit.Unit;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -12,10 +13,6 @@ public class Resident {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // If you have facility_id in the table, keep this.
-    @Column(name = "facility_id", nullable = false)
-    private Long facilityId;
 
     @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
@@ -38,6 +35,10 @@ public class Resident {
 //    @Column(name = "updated_at", nullable = false)
 //    private Instant updatedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "unit_id")
+    private Unit unit;
+
     @PrePersist
     void onCreate() {
         Instant now = Instant.now();
@@ -56,14 +57,6 @@ public class Resident {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getFacilityId() {
-        return facilityId;
-    }
-
-    public void setFacilityId(Long facilityId) {
-        this.facilityId = facilityId;
     }
 
     public String getFirstName() {
@@ -94,17 +87,13 @@ public class Resident {
         return roomNumber;
     }
 
+    public Unit getUnit() { return unit; }
+
+    public void setUnit(Unit unit) { this.unit = unit; }
+
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
     }
-
-//    public String getNotes() {
-//        return notes;
-//    }
-//
-//    public void setNotes(String notes) {
-//        this.notes = notes;
-//    }
 
     public Instant getCreatedAt() {
         return createdAt;
@@ -114,11 +103,4 @@ public class Resident {
         this.createdAt = createdAt;
     }
 
-//    public Instant getUpdatedAt() {
-//        return updatedAt;
-//    }
-//
-//    public void setUpdatedAt(Instant updatedAt) {
-//        this.updatedAt = updatedAt;
-//    }
 }

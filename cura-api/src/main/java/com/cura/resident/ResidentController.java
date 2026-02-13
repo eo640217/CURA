@@ -11,42 +11,67 @@ import java.util.List;
 @RequestMapping("/api/v1/residents")
 public class ResidentController {
 
-    private final ResidentService service;
+    private final ResidentService residentService;
 
     public ResidentController(ResidentService service) {
-        this.service = service;
+        this.residentService = service;
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResidentResponse create(
-            @Valid @RequestBody ResidentCreateRequest req) {
-        return service.create(req);
-    }
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public ResidentResponse create(
+//            @Valid @RequestBody ResidentCreateRequest req) {
+//        return residentService.create(req);
+//    }
 
     @GetMapping("/{id}")
     public ResidentResponse get(
             @PathVariable Long id) {
-        return service.get(id);
+        return residentService.get(id);
     }
 
     @GetMapping
     public List<ResidentResponse> listByFacility(
             @RequestParam Long facilityId) {
-        return service.listByFacility(facilityId);
+        return residentService.listByFacility(facilityId);
     }
 
     @PutMapping("/{id}")
     public ResidentResponse update(
             @PathVariable Long id,
             @Valid @RequestBody ResidentUpdateRequest req) {
-        return service.update(id, req);
+        return residentService.update(id, req);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(
             @PathVariable Long id) {
-        service.delete(id);
+        residentService.delete(id);
     }
+
+    @PostMapping("/units/{unitId}/residents")
+    public ResidentResponse createUnderUnit(
+            @PathVariable Long unitId,
+            @Valid @RequestBody ResidentCreateRequest request
+    ) {
+        return residentService.createUnderUnit(unitId, request);
+    }
+
+    @GetMapping("/units/{unitId}/residents")
+    public List<ResidentResponse> listByUnit(@PathVariable Long unitId) {
+        return residentService.listByUnit(unitId);
+    }
+
+    // ResidentController has @RequestMapping("/api/v1/residents")
+
+    @PatchMapping("/{id}/transfer")
+    public ResidentResponse transfer(
+            @PathVariable Long id,
+            @Valid @RequestBody ResidentTransferRequest req
+    ) {
+        return residentService.transfer(id, req);
+    }
+
+
 }

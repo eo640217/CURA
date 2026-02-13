@@ -58,3 +58,21 @@ Content-Type: application/json
 
 ### DELETE
 DELETE http://localhost:8080/api/v1/residents/3
+
+
+### PUT RES INTO UNIT
+POST http://localhost:8080/api/v1/units/1/residents
+Content-Type: application/json
+
+{
+    "firstName": "Mary", "lastName": "Johnson"
+ }
+
+### TRANSFER RESIDENT
+PATCH http://localhost:8080/api/v1/residents/5/transfer
+Content-Type: application/json
+
+{
+  "toUnitId": 2,
+  "roomNumber": "B20"
+}
