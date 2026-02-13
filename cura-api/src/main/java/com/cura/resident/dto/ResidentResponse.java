@@ -6,6 +6,7 @@ import java.time.LocalDate;
 public record ResidentResponse(
         Long id,
         Long facilityId,
+        Long unitId,
         String firstName,
         String lastName,
         LocalDate dateOfBirth,

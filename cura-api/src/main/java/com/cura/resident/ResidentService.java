@@ -3,6 +3,8 @@ package com.cura.resident;
 import com.cura.common.NotFoundException;
 import com.cura.facility.FacilityRepository;
 import com.cura.resident.dto.*;
+import com.cura.unit.Unit;
+import com.cura.unit.UnitRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,53 +13,39 @@ import java.util.List;
 @Service
 public class ResidentService {
 
-    private final ResidentRepository repo;
+    private final ResidentRepository residentRepo;
     private final FacilityRepository facilityRepo;
+    private final UnitRepository unitRepo;
 
-    public ResidentService(ResidentRepository repo, FacilityRepository facilityRepo) {
-        this.repo = repo;
+    public ResidentService(ResidentRepository residentRepo, FacilityRepository facilityRepo, UnitRepository unitRepo) {
+        this.residentRepo = residentRepo;
         this.facilityRepo = facilityRepo;
-    }
-
-    @Transactional
-    public ResidentResponse create(ResidentCreateRequest req) {
-        // ✅ Prevent FK crash: validate facility exists
-        if (!facilityRepo.existsById(req.facilityId())) {
-            throw new NotFoundException("Facility not found: " + req.facilityId());
-        }
-
-        Resident r = new Resident();
-        r.setFacilityId(req.facilityId());
-        r.setFirstName(req.firstName());
-        r.setLastName(req.lastName());
-        r.setDateOfBirth(req.dateOfBirth());
-        r.setRoomNumber(req.roomNumber());
-        // if Resident has notes in code, set it too:
-        // r.setNotes(req.notes());
-
-        Resident saved = repo.save(r);
-        return toResponse(saved);
+        this.unitRepo = unitRepo;
     }
 
     @Transactional(readOnly = true)
     public List<ResidentResponse> listByFacility(Long facilityId) {
-        // optional: validate facility exists so you can 404 instead of returning []
         if (!facilityRepo.existsById(facilityId)) {
             throw new NotFoundException("Facility not found: " + facilityId);
         }
-        return repo.findByFacilityId(facilityId).stream().map(this::toResponse).toList();
+
+        return residentRepo.findByUnitFacilityId(facilityId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
+
 
     @Transactional(readOnly = true)
     public ResidentResponse get(Long id) {
-        Resident r = repo.findById(id)
+        Resident r = residentRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Resident not found: " + id));
         return toResponse(r);
     }
 
     @Transactional
     public ResidentResponse update(Long id, ResidentUpdateRequest req) {
-        Resident r = repo.findById(id)
+        Resident r = residentRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Resident not found: " + id));
 
         if (req.firstName() != null) r.setFirstName(req.firstName());
@@ -67,24 +55,83 @@ public class ResidentService {
         // if notes exists on entity:
         // if (req.notes() != null) r.setNotes(req.notes());
 
-        return toResponse(repo.save(r));
+        return toResponse(residentRepo.save(r));
     }
 
     @Transactional
     public void delete(Long id) {
-        if (!repo.existsById(id)) throw new NotFoundException("Resident not found: " + id);
-        repo.deleteById(id);
+        if (!residentRepo.existsById(id)) throw new NotFoundException("Resident not found: " + id);
+        residentRepo.deleteById(id);
     }
 
-    private ResidentResponse toResponse(Resident r) {
+    private ResidentResponse toResponse(Resident resident) {
+        Long unitId = resident.getUnit() != null ? resident.getUnit().getId() : null;
+        Long facilityId = resident.getUnit() != null ? resident.getUnit().getFacility().getId() : null;
+
         return new ResidentResponse(
-                r.getId(),
-                r.getFacilityId(),
-                r.getFirstName(),
-                r.getLastName(),
-                r.getDateOfBirth(),
-                r.getRoomNumber(),
-                r.getCreatedAt()
+                resident.getId(),
+                facilityId,
+                unitId,
+                resident.getFirstName(),
+                resident.getLastName(),
+                resident.getDateOfBirth(),
+                resident.getRoomNumber(),
+                resident.getCreatedAt()
         );
     }
+
+    public ResidentResponse createUnderUnit(Long unitId, ResidentCreateRequest request) {
+        Unit unit = unitRepo.findById(unitId)
+                .orElseThrow(() -> new NotFoundException("Unit not found with id " + unitId));
+
+        long current = residentRepo.countByUnitId(unitId);
+        if (current >= unit.getCapacity()) {
+            throw new IllegalStateException("Unit is full (capacity " + unit.getCapacity() + ")");
+        }
+
+        Resident resident = new Resident();
+        resident.setFirstName(request.firstName());
+        resident.setLastName(request.lastName());
+        resident.setDateOfBirth(request.dateOfBirth());
+        resident.setRoomNumber(request.roomNumber());
+        resident.setUnit(unit);
+
+        Resident saved = residentRepo.save(resident);
+        return toResponse(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ResidentResponse> listByUnit(Long unitId) {
+        if (!unitRepo.existsById(unitId)) {
+            throw new NotFoundException("Unit not found with id " + unitId);
+        }
+
+        return residentRepo.findByUnitId(unitId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+    @Transactional
+    public ResidentResponse transfer(Long residentId, ResidentTransferRequest req) {
+        Resident resident = residentRepo.findById(residentId)
+                .orElseThrow(() -> new NotFoundException("Resident not found: " + residentId));
+
+        Unit toUnit = unitRepo.findById(req.toUnitId())
+                .orElseThrow(() -> new NotFoundException("Unit not found: " + req.toUnitId()));
+
+        long current = residentRepo.countByUnitIdAndIdNot(toUnit.getId(), resident.getId());
+        if (current >= toUnit.getCapacity()) {
+            throw new IllegalStateException("Unit is full (capacity " + toUnit.getCapacity() + ")");
+        }
+
+        resident.setUnit(toUnit);
+
+        if (req.roomNumber() != null) {
+            resident.setRoomNumber(req.roomNumber());
+        }
+
+        return toResponse(residentRepo.save(resident));
+    }
+
+
 }

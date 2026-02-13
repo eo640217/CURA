@@ -3,11 +3,10 @@ package com.cura.resident.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 
 public record ResidentCreateRequest(
-        @NotNull
-        Long facilityId,
         @NotBlank @Size(max = 100)
         String firstName,
 
@@ -17,4 +16,5 @@ public record ResidentCreateRequest(
 
         @Size(max = 50)
         String roomNumber
-) {}
+) {
+}
