@@ -4,12 +4,8 @@ import com.cura.common.NotFoundException;
 import com.cura.facility.dto.FacilityCreateRequest;
 import com.cura.facility.dto.FacilityResponse;
 import com.cura.facility.dto.FacilityUpdateRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import java.util.List;
 
 @Service
@@ -22,8 +18,6 @@ public class FacilityService {
         this.facilityRepository = facilityRepository;
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public FacilityResponse create(FacilityCreateRequest request) {
         Facility facility = new Facility();
         facility.setName(request.name());

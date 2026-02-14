@@ -19,7 +19,7 @@ export type ResidentCreateRequest = {
 };
 
 export async function listResidentsByUnit(unitId: number): Promise<Resident[]> {
-  const res = await http.get<Resident[]>(`/api/v1/units/${unitId}/residents`);
+  const res = await http.get<Resident[]>(`/units/${unitId}/residents`);
   return res.data;
 }
 
@@ -27,7 +27,7 @@ export async function createResidentUnderUnit(
   unitId: number,
   payload: ResidentCreateRequest
 ): Promise<Resident> {
-  const res = await http.post<Resident>(`/api/v1/units/${unitId}/residents`, payload);
+  const res = await http.post<Resident>(`/units/${unitId}/residents`, payload);
   return res.data;
 }
 
@@ -36,9 +36,11 @@ export type ResidentTransferRequest = {
   roomNumber?: string | null;
 };
 
-export async function transferResident(residentId: number, payload: ResidentTransferRequest): Promise<Resident> {
-  const res = await http.patch(`/api/v1/residents/${residentId}/transfer`, payload);
-
+export async function transferResident(
+  residentId: number,
+  payload: ResidentTransferRequest
+): Promise<Resident> {
+  const res = await http.patch<Resident>(`/residents/${residentId}/transfer`, payload);
   return res.data;
 }
 

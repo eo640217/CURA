@@ -7,6 +7,7 @@ import com.cura.unit.dto.UnitCreateRequest;
 import com.cura.unit.dto.UnitResponse;
 import com.cura.unit.dto.UnitUpdateRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -34,17 +35,10 @@ public class UnitService {
 
         return new UnitResponse(unitRepository.save(unit));
     }
-
+    
+    @Transactional(readOnly = true)
     public List<UnitResponse> listByFacility(Long facilityId) {
-        // Optional: validate facility exists so you return 404 instead of empty list
-        if (!facilityRepository.existsById(facilityId)) {
-            throw new NotFoundException("Facility not found with id " + facilityId);
-        }
-
-        return unitRepository.findAllByFacilityId(facilityId)
-                .stream()
-                .map(UnitResponse::new)
-                .toList();
+        return unitRepository.listByFacilityWithOccupancy(facilityId);
     }
 
     public UnitResponse get(Long unitId) {
