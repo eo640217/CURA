@@ -6,22 +6,12 @@ export type Facility = {
   address: string;
 };
 
-export type FacilityCreateRequest = {
-  name: string;
-  address: string;
-};
-
 export async function listFacilities(): Promise<Facility[]> {
-  const res = await http.get<Facility[]>("/facilities");
+  const res = await http.get<Facility[]>("/api/v1/facilities");
   return res.data;
 }
 
 export async function getFacility(id: number): Promise<Facility> {
-  const res = await http.get<Facility>(`/facilities/${id}`);
-  return res.data;
-}
-
-export async function createFacility(req: FacilityCreateRequest): Promise<Facility> {
-  const res = await http.post<Facility>("/facilities", req);
+  const res = await http.get<Facility>(`/api/v1/facilities/${id}`);
   return res.data;
 }
