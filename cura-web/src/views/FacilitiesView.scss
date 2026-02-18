@@ -1,0 +1,168 @@
+@use "../styles/theme" as *;
+@use "../styles/ui" as ui;
+
+.facilities {
+  &__top {
+    max-width: $container-lg;
+    margin: 0 auto 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+  }
+
+  &__appTitle {
+    margin: 0 0 6px;
+    font-size: 28px;
+    font-weight: $ultra;
+    letter-spacing: 0.04em;
+    color: $dark-gray;
+    text-transform: uppercase;
+  }
+
+  &__subtitle {
+    margin: 0;
+    opacity: 0.85;
+    color: $gray;
+  }
+
+  &__topActions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    button { @include ui.buttonGhost; }
+  }
+
+  &__grid {
+    max-width: $container-lg;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  &__left,
+  &__right {
+    @include ui.card;
+  }
+
+  &__leftHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  &__panelTitle {
+    margin: 0;
+    font-size: 16px;
+    font-weight: $bold;
+    color: $dark-gray;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  &__leftActions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    button { @include ui.buttonGhost; }
+  }
+
+  &__adminBadge {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: $border;
+    background: rgba($black, 0.04);
+    color: $dark-gray;
+    font-weight: $semibold;
+  }
+
+  &__status {
+    margin-top: 10px;
+    opacity: 0.85;
+  }
+
+  &__error {
+    margin-top: 10px;
+    color: crimson;
+  }
+
+  &__tryAgain {
+    margin-top: 10px;
+    button { @include ui.buttonGhost; }
+  }
+
+  &__empty {
+    margin-top: 10px;
+  }
+
+  &__emptyHint {
+    margin-top: 8px;
+    opacity: 0.85;
+    font-size: 13px;
+  }
+
+  &__facilityBtn {
+    width: 100%;
+    text-align: left;
+    border-radius: $radius-sm;
+    border: $border;
+    background: rgba($white, 0.9);
+    padding: 10px 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: 0.15s ease;
+
+    &:hover {
+      background: rgba($white, 1);
+      box-shadow: 0 6px 18px rgba($black, 0.08);
+    }
+
+    &.isActive {
+      border: 2px solid rgba($accent, 0.75);
+      background: rgba($white, 1);
+    }
+  }
+
+  &__facilityName {
+    font-weight: $bold;
+    color: $dark-gray;
+  }
+
+  &__facilityAddr {
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.8;
+  }
+
+  &__selected {
+    margin: 10px 0 14px;
+    padding: 12px;
+    border-radius: $radius-sm;
+    border: $border;
+    background: rgba($black, 0.03);
+  }
+
+  &__selectedName {
+    font-weight: $ultra;
+    color: $dark-gray;
+    font-size: 18px;
+  }
+
+  &__selectedAddr {
+    margin-top: 4px;
+    opacity: 0.85;
+  }
+
+  @media (max-width: 920px) {
+    &__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

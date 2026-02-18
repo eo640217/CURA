@@ -1,16 +1,16 @@
 import { FormEvent, useState } from "react";
 import { createFacility } from "../api/facilities";
 import { apiErrorMessage } from "../api/api-error";
+import lexicon from "../assets/lexicon";
+import "./CreateFacilityModal.scss";
 
-export default function CreateFacilityModal({
-  open,
-  onClose,
-  onCreated,
-}: {
+type Props = {
   open: boolean;
   onClose: () => void;
   onCreated: () => void;
-}) {
+};
+
+export default function CreateFacilityModal({ open, onClose, onCreated }: Props) {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,14 +22,16 @@ export default function CreateFacilityModal({
     e.preventDefault();
     setError(null);
 
-    if (!name.trim()) return setError("Name is required");
-    if (!address.trim()) return setError("Address is required");
+    if (!name.trim()) return setError(lexicon.createFacility.nameRequired);
+    if (!address.trim()) return setError(lexicon.createFacility.addressRequired);
 
     try {
       setLoading(true);
       await createFacility({ name: name.trim(), address: address.trim() });
+
       onCreated();
       onClose();
+
       setName("");
       setAddress("");
     } catch (err: any) {
@@ -41,63 +43,46 @@ export default function CreateFacilityModal({
 
   return (
     <div
+      className="modalOverlay"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.35)",
-        display: "grid",
-        placeItems: "center",
-        padding: 16,
-      }}
     >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: 520,
-          maxWidth: "100%",
-          background: "white",
-          borderRadius: 12,
-          border: "1px solid #ddd",
-          padding: 16,
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center" }}>
-          <h2 style={{ margin: 0, fontSize: 18 }}>Create Facility</h2>
-          <button onClick={onClose}>✕</button>
+      <div className="modalCard" onClick={(e) => e.stopPropagation()}>
+        <div className="modalHeader">
+          <h2 className="modalTitle">{lexicon.createFacility.title}</h2>
+          <button className="iconBtn" onClick={onClose} aria-label="Close">
+            {lexicon.common.closeX}
+          </button>
         </div>
 
-        <form onSubmit={onSubmit} style={{ marginTop: 12 }}>
-          <div style={{ marginBottom: 10 }}>
-            <label>Name</label>
+        <form onSubmit={onSubmit} className="modalForm">
+          <div className="field">
+            <label className="label">{lexicon.createFacility.nameLabel}</label>
             <input
-              style={{ width: "100%", padding: 10 }}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Cura Care Center"
+              placeholder={lexicon.createFacility.namePlaceholder}
             />
           </div>
 
-          <div style={{ marginBottom: 10 }}>
-            <label>Address</label>
+          <div className="field">
+            <label className="label">{lexicon.createFacility.addressLabel}</label>
             <input
-              style={{ width: "100%", padding: 10 }}
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              placeholder="e.g., 123 King St W, Toronto"
+              placeholder={lexicon.createFacility.addressPlaceholder}
             />
           </div>
 
-          {error && <div style={{ color: "crimson", marginBottom: 10 }}>{error}</div>}
+          {error && <div className="error">{error}</div>}
 
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+          <div className="actions">
             <button type="button" onClick={onClose} disabled={loading}>
-              Cancel
+              {lexicon.common.cancel}
             </button>
-            <button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create"}
+            <button className="primaryBtn" type="submit" disabled={loading}>
+              {loading ? lexicon.common.creating : lexicon.common.create}
             </button>
           </div>
         </form>

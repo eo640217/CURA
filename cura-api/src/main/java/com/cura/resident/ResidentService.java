@@ -7,6 +7,8 @@ import com.cura.unit.Unit;
 import com.cura.unit.UnitRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.cura.resident.dto.ResidentDirectoryItem;
+import org.springframework.data.domain.*;
 
 import java.util.List;
 
@@ -132,6 +134,15 @@ public class ResidentService {
 
         return toResponse(residentRepo.save(resident));
     }
+    @Transactional(readOnly = true)
+    public Page<ResidentDirectoryItem> directory(String q, int page, int size) {
+        return residentRepo.searchDirectory(q, PageRequest.of(page, size));
+    }
 
+    @Transactional(readOnly = true)
+    public ResidentDetailResponse getResidentDetail(Long id) {
+        return residentRepo.findResidentDetail(id)
+                .orElseThrow(() -> new NotFoundException("Resident not found with id " + id));
+    }
 
 }

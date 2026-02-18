@@ -1,0 +1,63 @@
+@use "../styles/theme" as *;
+@use "../styles/ui" as ui;
+
+.resDir {
+  max-width: $container-lg;
+  margin: 24px auto;
+  padding: 16px;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+
+    h2 { margin: 0; color: $dark-gray; font-weight: $bold; }
+    a { font-size: 14px; opacity: 0.85; }
+  }
+
+  &__search {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    input { flex: 1; }
+  }
+
+  &__table { @include ui.card; margin-top: 14px; overflow: hidden; }
+
+  &__thead {
+    display: grid;
+    grid-template-columns: 240px 120px 140px 1fr 1fr;
+    padding: 12px;
+    font-weight: $bold;
+    background: rgba($black, 0.04);
+    border-bottom: $border;
+    color: $dark-gray;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 240px 120px 140px 1fr 1fr;
+    padding: 12px;
+    border-bottom: 1px solid rgba($black, 0.06);
+    align-items: center;
+    cursor: pointer;
+    transition: 0.15s ease;
+    background: rgba($white, 0.85);
+
+    &:hover { background: rgba($white, 0.98); }
+  }
+
+  &__pagination {
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  input { @include ui.input; }
+  button.primary { @include ui.buttonPrimary; }
+  button.ghost { @include ui.buttonGhost; }
+}

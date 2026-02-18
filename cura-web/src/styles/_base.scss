@@ -1,0 +1,20 @@
+@use "./theme" as *;
+@use "./ui" as ui;
+
+.page {
+  min-height: 100%;
+  padding: 24px 16px;
+}
+
+.card {
+  @include ui.card;
+  padding: 14px;
+}
+
+button {
+  @include ui.buttonGhost;
+}
+
+button.primary {
+  @include ui.buttonPrimary;
+}

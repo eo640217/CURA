@@ -35,22 +35,43 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(withDefaults()) // ✅ IMPORTANT: makes Spring Security apply your CorsConfigurationSource
+                .cors(withDefaults()) // makes Spring Security apply your CorsConfigurationSource
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
-                        // ✅ Allow preflight
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                // Allow preflight
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // Public auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                // Public auth
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                // if you have other public auth endpoints, list them here:
+                // .requestMatchers(HttpMethod.POST, "/api/v1/auth/refresh").permitAll()
 
-                        // RBAC examples
-                        .requestMatchers(HttpMethod.POST, "/api/v1/facilities/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/units/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").hasRole("ADMIN")
 
-                        .anyRequest().authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasRole("ADMIN")
+
+
+
+                // ADMIN-only: Facilities mutations
+                .requestMatchers(HttpMethod.POST, "/api/v1/facilities/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/facilities/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/facilities/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/facilities/**").hasRole("ADMIN")
+
+                // ADMIN-only: Units mutations
+                .requestMatchers(HttpMethod.POST, "/api/v1/units/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/units/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/units/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/units/**").hasRole("ADMIN")
+
+                // Everyone authenticated can read + manage residents (matches your UI)
+                // If you later add resident delete and want ADMIN-only:
+                // .requestMatchers(HttpMethod.DELETE, "/api/v1/residents/**").hasRole("ADMIN")
+
+                .anyRequest().authenticated()
                 )
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

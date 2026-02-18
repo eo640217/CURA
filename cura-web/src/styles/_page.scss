@@ -1,0 +1,29 @@
+.page {
+  max-width: 980px;
+  margin: 20px auto;
+  padding: 16px;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  color: var(--text);
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.backLink {
+  font-size: 14px;
+  text-decoration: none;
+  opacity: 0.8;
+
+  &:hover { opacity: 1; }
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  padding: 14px;
+}

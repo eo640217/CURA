@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Facility, getFacility, listFacilities } from "../api/facilities";
 import { UnitsPanel } from "../components/UnitsPanel";
-import { clearAuth, getAuth } from "../auth/auth";
+import { getAuth } from "../auth/auth";
 import { apiErrorMessage } from "../api/api-error";
 import CreateFacilityModal from "../components/CreateFacilityModal";
-
+import lexicon from "../assets/lexicon";
+import "./FacilitiesView.scss";
 
 type LoadState<T> =
   | { status: "idle" }
@@ -13,20 +14,17 @@ type LoadState<T> =
   | { status: "error"; message: string };
 
 export default function FacilitiesView() {
-    const auth = getAuth();
-    const isAdmin = auth.role === "ADMIN";
-    const [createOpen, setCreateOpen] = useState(false);
+  const t = lexicon;
 
+  const auth = getAuth();
+  const isAdmin = auth.role === "ADMIN";
+  const [createOpen, setCreateOpen] = useState(false);
 
-  const [facilitiesState, setFacilitiesState] = useState<LoadState<Facility[]>>({
-    status: "idle",
-  });
+  const [facilitiesState, setFacilitiesState] = useState<LoadState<Facility[]>>({ status: "idle" });
   const [selectedFacilityId, setSelectedFacilityId] = useState<number | null>(null);
   const [facilityState, setFacilityState] = useState<LoadState<Facility>>({ status: "idle" });
 
-  const facilities = useMemo(() => {
-    return facilitiesState.status === "success" ? facilitiesState.data : [];
-  }, [facilitiesState]);
+  const facilities = useMemo(() => (facilitiesState.status === "success" ? facilitiesState.data : []), [facilitiesState]);
 
   const loadFacilities = useCallback(async () => {
     try {
@@ -34,7 +32,6 @@ export default function FacilitiesView() {
       const data = await listFacilities();
       setFacilitiesState({ status: "success", data });
 
-      // Keep selection if possible; otherwise pick first.
       if (data.length === 0) {
         setSelectedFacilityId(null);
         setFacilityState({ status: "idle" });
@@ -60,88 +57,62 @@ export default function FacilitiesView() {
     }
   }, []);
 
-  // Initial load
-  useEffect(() => {
-    loadFacilities();
-  }, [loadFacilities]);
+  useEffect(() => { loadFacilities(); }, [loadFacilities]);
 
-  // Load selected facility details
   useEffect(() => {
     if (selectedFacilityId == null) return;
     loadFacility(selectedFacilityId);
   }, [selectedFacilityId, loadFacility]);
 
-  function logout() {
-    clearAuth();
-    window.location.href = "/login";
-  }
-
   return (
-    <div style={{ padding: 20, fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Arial" }}>
-      {/* Top bar */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+    <div className="page facilities">
+      <div className="facilities__top">
         <div>
-          <h1 style={{ marginBottom: 6 }}>Cura</h1>
- 
-            <p style={{ marginTop: 0, opacity: 0.7 }}>
-            Facilities → Units{" "}
+          <h1 className="facilities__appTitle">{t.facilities.appTitle}</h1>
+          <p className="facilities__subtitle">
+            {t.facilities.subtitle}
             {auth.username && (
               <>
-                · Signed in as <b>{auth.username}</b> ({auth.role ?? "UNKNOWN"})
+                {" "}· {t.facilities.signedInAs} <b>{auth.username}</b> ({auth.role ?? "UNKNOWN"})
               </>
             )}
           </p>
-
         </div>
 
-
-        <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={loadFacilities}>Refresh</button>
-          <button onClick={logout}>Logout</button>
+        <div className="facilities__topActions">
+          <button onClick={loadFacilities}>{t.common.refresh}</button>
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "320px 1fr", gap: 16, alignItems: "start" }}>
-        {/* Left: facilities list */}
-        <div style={{ border: "1px solid #ddd", borderRadius: 10, padding: 12 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-            <h2 style={{ fontSize: 16, marginTop: 0 }}>Facilities</h2>
-            {isAdmin && (
-                <button onClick={() => setCreateOpen(true)}>
-                    + New
-                </button>
-            )}
+      <div className="facilities__grid">
+        <div className="card facilities__left">
+          <div className="facilities__leftHeader">
+            <h2 className="facilities__panelTitle">{t.facilities.facilitiesTitle}</h2>
 
-            {/* Admin-only placeholder for next step */}
-            {isAdmin && (
-              <span style={{ fontSize: 12, opacity: 0.7 }}>
-                Admin controls enabled
-              </span>
-            )}
+            <div className="facilities__leftActions">
+              {isAdmin && <span className="facilities__adminBadge">{t.facilities.adminBadge}</span>}
+              {isAdmin && <button onClick={() => setCreateOpen(true)}>{t.facilities.new}</button>}
+            </div>
           </div>
 
-          {facilitiesState.status === "loading" && <div>Loading…</div>}
+          {facilitiesState.status === "loading" && <div className="facilities__status">{t.common.loading}</div>}
 
           {facilitiesState.status === "error" && (
-            <div style={{ color: "crimson" }}>
+            <div className="facilities__error">
               {facilitiesState.message}
-              <div style={{ marginTop: 8 }}>
-                <button onClick={loadFacilities}>Try again</button>
+              <div className="facilities__tryAgain">
+                <button onClick={loadFacilities}>{t.common.tryAgain}</button>
               </div>
             </div>
           )}
 
           {facilitiesState.status === "success" && facilities.length === 0 && (
-            <div>
-              No facilities yet.
+            <div className="facilities__empty">
+              <div>{t.facilities.noFacilities}</div>
               {isAdmin ? (
-                <div style={{ marginTop: 8, opacity: 0.8 }}>
-                  Next step: we’ll add a “Create Facility” modal for admins.
-                </div>
+                <div className="facilities__emptyHint">{t.facilities.adminNextStep}</div>
               ) : (
-                <div style={{ marginTop: 8, opacity: 0.8 }}>
-                  Ask an admin to create the first facility.
-                </div>
+                <div className="facilities__emptyHint">{t.facilities.staffAskAdmin}</div>
               )}
             </div>
           )}
@@ -149,38 +120,27 @@ export default function FacilitiesView() {
           {facilities.map((f) => (
             <button
               key={f.id}
+              className={`facilities__facilityBtn ${selectedFacilityId === f.id ? "isActive" : ""}`}
               onClick={() => setSelectedFacilityId(f.id)}
-              style={{
-                width: "100%",
-                textAlign: "left",
-                padding: "10px 10px",
-                marginBottom: 8,
-                borderRadius: 8,
-                border: selectedFacilityId === f.id ? "2px solid #111" : "1px solid #ddd",
-                background: "white",
-                cursor: "pointer",
-              }}
             >
-              <div style={{ fontWeight: 600 }}>{f.name}</div>
-              <div style={{ fontSize: 12, opacity: 0.7 }}>{f.address}</div>
+              <div className="facilities__facilityName">{f.name}</div>
+              <div className="facilities__facilityAddr">{f.address}</div>
             </button>
           ))}
         </div>
 
-        {/* Right: facility detail + units */}
-        <div style={{ border: "1px solid #ddd", borderRadius: 10, padding: 12 }}>
-          <h2 style={{ fontSize: 16, marginTop: 0 }}>Selected Facility</h2>
+        <div className="card facilities__right">
+          <h2 className="facilities__panelTitle">{t.facilities.selectedFacilityTitle}</h2>
 
-          {selectedFacilityId == null && <div>Select a facility.</div>}
-
-          {facilityState.status === "loading" && <div>Loading…</div>}
+          {selectedFacilityId == null && <div className="facilities__status">{t.facilities.selectFacility}</div>}
+          {facilityState.status === "loading" && <div className="facilities__status">{t.common.loading}</div>}
 
           {facilityState.status === "error" && (
-            <div style={{ color: "crimson" }}>
+            <div className="facilities__error">
               {facilityState.message}
               {selectedFacilityId != null && (
-                <div style={{ marginTop: 8 }}>
-                  <button onClick={() => loadFacility(selectedFacilityId)}>Try again</button>
+                <div className="facilities__tryAgain">
+                  <button onClick={() => loadFacility(selectedFacilityId)}>{t.common.tryAgain}</button>
                 </div>
               )}
             </div>
@@ -188,9 +148,9 @@ export default function FacilitiesView() {
 
           {facilityState.status === "success" && (
             <>
-              <div style={{ marginBottom: 12 }}>
-                <div style={{ fontWeight: 700, fontSize: 18 }}>{facilityState.data.name}</div>
-                <div style={{ opacity: 0.7 }}>{facilityState.data.address}</div>
+              <div className="facilities__selected">
+                <div className="facilities__selectedName">{facilityState.data.name}</div>
+                <div className="facilities__selectedAddr">{facilityState.data.address}</div>
               </div>
 
               <UnitsPanel facilityId={facilityState.data.id} />
@@ -198,14 +158,14 @@ export default function FacilitiesView() {
           )}
         </div>
       </div>
-          <CreateFacilityModal
-              open={createOpen}
-              onClose={() => setCreateOpen(false)}
-              onCreated={() => {
-                  // refresh list so the new facility appears
-                  loadFacilities();
-              }}
-          />
+
+      {isAdmin && (
+        <CreateFacilityModal
+          open={createOpen}
+          onClose={() => setCreateOpen(false)}
+          onCreated={() => loadFacilities()}
+        />
+      )}
     </div>
   );
 }

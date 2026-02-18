@@ -1,0 +1,201 @@
+@use "./theme";
+@use "./theme" as *;
+
+.curaPage {
+  max-width: 980px;
+  margin: 20px auto;
+  padding: 16px;
+}
+
+.curaTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.curaLink {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.65);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.curaToolbar {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.curaMeta {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.curaInlineBtn {
+  border: 1px solid rgba(0,0,0,0.18);
+  background: white;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  &:hover { background: rgba(0,0,0,0.03); }
+  &:disabled { opacity: 0.65; cursor: not-allowed; }
+}
+
+.curaSectionCard {
+  margin-top: 12px;
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 0 24px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.curaSectionHeader {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.6);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+  }
+}
+
+.curaTableHead,
+.curaTableRow {
+  display: grid;
+  padding: 10px 12px;
+  align-items: center;
+}
+
+.curaTableHead {
+  font-weight: 700;
+  background: rgba(0,0,0,0.02);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.curaTableRow {
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(66, 183, 245, 0.06);
+  }
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.curaPill {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.18);
+  background: rgba(255,255,255,0.7);
+  white-space: nowrap;
+}
+
+.curaEmpty {
+  padding: 14px;
+  opacity: 0.75;
+}
+
+.curaPagination {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+@mixin card {
+  background: $white;
+  border-radius: $radius-md;
+  border: $border;
+  box-shadow: $shadow-sm;
+}
+
+@mixin input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: $radius-sm;
+  border: $border;
+  outline: none;
+  background: rgba($black, 0.06);
+  transition: 0.2s ease;
+  font-weight: $semibold;
+
+  &:focus {
+    background: rgba($black, 0.08);
+    border-color: rgba($accent, 0.6);
+  }
+}
+
+@mixin buttonPrimary {
+  border: 0;
+  background: $accent;
+  color: $white;
+  border-radius: $radius-sm;
+  padding: 12px 14px;
+  font-weight: $semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@mixin buttonGhost {
+  border: $border;
+  background: $white;
+  color: $dark-gray;
+  border-radius: $radius-sm;
+  padding: 10px 12px;
+  font-weight: $semibold;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.label {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: $semibold;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  color: $gray;
+}
+
+.muted { color: $gray; }
+.error { color: crimson; }
+.success { color: #0a7a2f; }
+.pill {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: $border;
+  background: rgba($black, 0.04);
+}
+

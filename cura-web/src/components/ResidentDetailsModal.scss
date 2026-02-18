@@ -1,0 +1,51 @@
+@use "./CreateFacilityModal.scss" as *;
+
+.modalCard--wide {
+  width: min(720px, 100%);
+}
+
+.status {
+  margin-top: 12px;
+  opacity: 0.75;
+}
+
+.detailsGrid {
+  margin-top: 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.detailsName {
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.detailsMeta {
+  font-size: 13px;
+  opacity: 0.75;
+  margin-top: 4px;
+}
+
+.panel {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+}
+
+.panelTitle {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.panelBody {
+  font-size: 13px;
+}
+
+.muted {
+  opacity: 0.8;
+}
+
+.panelSpacer {
+  height: 8px;
+}

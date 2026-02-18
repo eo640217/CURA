@@ -1,0 +1,58 @@
+@use "../styles/theme" as *;
+@use "../styles/ui" as ui;
+
+.tb {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(10px);
+  background: rgba($white, 0.75);
+  border-bottom: $border;
+  padding: 10px 16px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.tb__brand {
+  font-weight: $ultra;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $dark-gray;
+}
+
+.tb__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  button { @include ui.buttonGhost; }
+}
+
+.tb__user {
+  font-size: 12px;
+  opacity: 0.85;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: $border;
+  background: rgba($black, 0.03);
+}
+
+.tb__link,
+.tb__btnLink {
+  font-size: 13px;
+  font-weight: $semibold;
+  opacity: 0.9;
+  padding: 8px 10px;
+  border-radius: $radius-sm;
+  border: $border;
+  background: rgba($white, 0.8);
+  transition: 0.15s ease;
+
+  &:hover {
+    background: rgba($white, 1);
+    box-shadow: 0 10px 22px rgba($black, 0.08);
+  }
+}

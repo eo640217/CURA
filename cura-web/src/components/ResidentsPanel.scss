@@ -1,0 +1,134 @@
+@use "../styles/theme" as *;
+@use "../styles/ui" as ui;
+
+.rp {
+  display: grid;
+  gap: 10px;
+}
+
+.rp__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+
+  button { @include ui.buttonGhost; }
+}
+
+.rp__title {
+  margin: 0;
+  font-weight: $bold;
+  color: $dark-gray;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.rp__sub {
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.rp__auth {
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.rp__full {
+  color: crimson;
+  font-weight: $bold;
+}
+
+.rp__form {
+  @include ui.card;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+  box-shadow: none;
+
+  &--disabled { opacity: 0.65; }
+}
+
+.rp__grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.rp__gridDobRoom {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 10px;
+}
+
+.rp__field {
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: $semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: $gray;
+  }
+
+  input, select { @include ui.input; }
+}
+
+.rp__primary {
+  @include ui.buttonPrimary;
+  justify-self: start;
+}
+
+.rp__hint {
+  font-size: 12px;
+  color: crimson;
+}
+
+.rp__list {
+  @include ui.card;
+  padding: 12px;
+  box-shadow: none;
+}
+
+.rp__status { opacity: 0.85; }
+.rp__error { color: crimson; }
+
+.rp__cards {
+  display: grid;
+  gap: 10px;
+}
+
+.rp__card {
+  border: $border;
+  border-radius: $radius-sm;
+  background: rgba($white, 0.9);
+  padding: 10px;
+}
+
+.rp__name {
+  font-weight: $bold;
+  color: $dark-gray;
+}
+
+.rp__meta {
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.rp__transferRow {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  select { min-width: 260px; }
+  button { @include ui.buttonGhost; }
+}
+
+.rp__warn {
+  font-size: 12px;
+  color: crimson;
+}
