@@ -1,0 +1,24 @@
+@use "./theme" as *;
+@use "./base";
+
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: $base-font-family;
+  font-size: $base-font-size;
+  line-height: $base-line-height;
+  color: $gray;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background: linear-gradient(
+    45deg,
+    rgba(66, 183, 245, 0.80) 0%,
+    rgba(66, 245, 189, 0.40) 100%
+  );
+}
+
+a { color: inherit; text-decoration: none; }
+button, input, select { font-family: inherit; }

@@ -1,0 +1,70 @@
+@use "../styles/theme" as *;
+@use "../styles/ui" as ui;
+
+.loginPage {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+}
+
+.curaCard {
+  width: min(600px, 100%);
+  border-radius: 4px;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  background: $white;
+  border: $border;
+}
+
+.curaPanel {
+  padding: 56px 56px;
+}
+
+.curaHeader {
+  margin-bottom: 28px;
+
+  h1 {
+    margin: 0 0 6px;
+    color: $accent;
+    font-size: 24px;
+    font-weight: $bold;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.85;
+  }
+}
+
+.curaGroup {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: $semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: $gray;
+  }
+
+  input {
+    @include ui.input;
+  }
+}
+
+.curaBtn {
+  @include ui.buttonPrimary;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.curaError {
+  margin-top: 12px;
+  color: crimson;
+  font-weight: $semibold;
+}

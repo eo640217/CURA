@@ -1,4 +1,5 @@
 import { http } from "./http";
+import { UnitType } from "./units";
 
 export type Resident = {
   id: number;
@@ -41,6 +42,28 @@ export async function transferResident(
   payload: ResidentTransferRequest
 ): Promise<Resident> {
   const res = await http.patch<Resident>(`/residents/${residentId}/transfer`, payload);
+  return res.data;
+}
+
+export type ResidentDetailResponse = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string | null;
+  roomNumber: string | null;
+
+  unitId: number;
+  unitName: string;
+  unitType: UnitType;
+  unitCapacity: number | null;
+
+  facilityId: number;
+  facilityName: string;
+  facilityAddress: string | null;
+};
+
+export async function getResidentDetail(id: number): Promise<ResidentDetailResponse> {
+  const res = await http.get<ResidentDetailResponse>(`/residents/${id}`);
   return res.data;
 }
 

@@ -1,15 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Unit,
-  UnitCreateRequest,
-  UnitType,
-  createUnit,
-  deleteUnit,
-  listUnitsByFacility,
-} from "../api/units";
+import { Unit, UnitCreateRequest, UnitType, createUnit, deleteUnit, listUnitsByFacility } from "../api/units";
 import { ResidentsPanel } from "./ResidentsPanel";
 import { getAuth } from "../auth/auth";
 import { apiErrorMessage } from "../api/api-error";
+import lexicon from "../assets/lexicon";
+import "./UnitsPanel.scss";
 
 type LoadState<T> =
   | { status: "idle" }
@@ -36,10 +31,7 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
     capacity: 1,
   });
 
-  const units = useMemo(
-    () => (unitsState.status === "success" ? unitsState.data : []),
-    [unitsState]
-  );
+  const units = useMemo(() => (unitsState.status === "success" ? unitsState.data : []), [unitsState]);
 
   async function load() {
     try {
@@ -59,7 +51,6 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
 
   useEffect(() => {
     if (unitsState.status !== "success") return;
-
     setSelectedUnitId((prev) => {
       if (prev && unitsState.data.some((u) => u.id === prev)) return prev;
       return unitsState.data[0]?.id ?? null;
@@ -79,8 +70,6 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
       });
 
       setForm({ name: "", type: form.type, capacity: form.capacity });
-
-      // reload so occupiedCount stays correct from backend
       await load();
     } catch (e: any) {
       alert(apiErrorMessage(e));
@@ -88,13 +77,12 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
   }
 
   async function onDelete(unitId: number) {
-    const ok = confirm("Delete this unit?");
+    if (!isAdmin) return;
+    const ok = confirm(lexicon.common.deleteConfirmUnit);
     if (!ok) return;
 
     try {
       await deleteUnit(unitId);
-
-      // reload so occupiedCount stays correct
       await load();
 
       setSelectedUnitId((prev) => {
@@ -108,52 +96,29 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
   }
 
   return (
-    <div style={{ display: "grid", gap: 12 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <h3 style={{ margin: 0 }}>Units</h3>
-        <button
-          onClick={load}
-          style={{
-            border: "1px solid #ddd",
-            background: "white",
-            borderRadius: 8,
-            padding: "6px 10px",
-            cursor: "pointer",
-          }}
-        >
-          Refresh
-        </button>
+    <div className="up">
+      <div className="up__header">
+        <h3 className="up__title">{lexicon.units.title}</h3>
+        <button onClick={load}>{lexicon.common.refresh}</button>
       </div>
 
-      {/* Create form (ADMIN only) */}
       {isAdmin ? (
-        <form
-          onSubmit={onCreate}
-          style={{
-            border: "1px solid #eee",
-            borderRadius: 10,
-            padding: 12,
-            display: "grid",
-            gap: 10,
-          }}
-        >
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 160px 120px", gap: 10 }}>
-            <div>
-              <label style={{ fontSize: 12, opacity: 0.7 }}>Name</label>
+        <form className="up__form" onSubmit={onCreate}>
+          <div className="up__formGrid">
+            <div className="up__field">
+              <label>{lexicon.units.nameLabel}</label>
               <input
                 value={form.name}
                 onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                placeholder='e.g. "2A" or "West Wing"'
-                style={{ width: "100%", padding: 8, borderRadius: 8, border: "1px solid #ddd" }}
+                placeholder={lexicon.units.namePlaceholder}
               />
             </div>
 
-            <div>
-              <label style={{ fontSize: 12, opacity: 0.7 }}>Type</label>
+            <div className="up__field">
+              <label>{lexicon.units.typeLabel}</label>
               <select
                 value={form.type}
                 onChange={(e) => setForm((p) => ({ ...p, type: e.target.value as UnitType }))}
-                style={{ width: "100%", padding: 8, borderRadius: 8, border: "1px solid #ddd" }}
               >
                 {UNIT_TYPES.map((t) => (
                   <option key={t} value={t}>
@@ -163,50 +128,37 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
               </select>
             </div>
 
-            <div>
-              <label style={{ fontSize: 12, opacity: 0.7 }}>Capacity</label>
+            <div className="up__field">
+              <label>{lexicon.units.capacityLabel}</label>
               <input
                 type="number"
                 min={1}
                 value={form.capacity}
                 onChange={(e) => setForm((p) => ({ ...p, capacity: Number(e.target.value) }))}
-                style={{ width: "100%", padding: 8, borderRadius: 8, border: "1px solid #ddd" }}
               />
             </div>
           </div>
 
-          <button
-            type="submit"
-            style={{
-              justifySelf: "start",
-              border: "1px solid #111",
-              background: "#111",
-              color: "white",
-              borderRadius: 8,
-              padding: "8px 12px",
-              cursor: "pointer",
-            }}
-          >
-            Add Unit
+          <button className="up__primary" type="submit">
+            {lexicon.units.addUnit}
           </button>
         </form>
       ) : (
-        <div style={{ border: "1px solid #eee", borderRadius: 10, padding: 12, opacity: 0.85 }}>
-          <div style={{ fontWeight: 600, marginBottom: 4 }}>Unit creation is admin-only</div>
-          <div style={{ fontSize: 13, opacity: 0.8 }}>
-            You’re signed in as <b>{auth.username ?? "user"}</b> ({auth.role ?? "UNKNOWN"}).
+        <div className="up__notice">
+          <div className="up__noticeTitle">{lexicon.units.unitCreationAdminOnlyTitle}</div>
+          <div className="up__noticeBody">
+            {lexicon.units.unitCreationAdminOnlyBody} <b>{auth.username ?? "user"}</b> ({auth.role ?? "UNKNOWN"}).
           </div>
         </div>
       )}
 
-      {/* List */}
-      <div style={{ border: "1px solid #eee", borderRadius: 10, padding: 12 }}>
-        {unitsState.status === "loading" && <div>Loading…</div>}
-        {unitsState.status === "error" && <div style={{ color: "crimson" }}>{unitsState.message}</div>}
-        {unitsState.status === "success" && units.length === 0 && <div>No units yet.</div>}
+      <div className="up__list">
+        {unitsState.status === "loading" && <div className="up__status">{lexicon.common.loading}</div>}
+        {unitsState.status === "error" && <div className="up__error">{unitsState.message}</div>}
+        {unitsState.status === "success" && units.length === 0 && <div className="up__status">{lexicon.units.noUnits}</div>}
 
         {unitsState.status === "success" && units.length > 0 && (
-          <div style={{ display: "grid", gap: 10 }}>
+          <div className="up__cards">
             {units.map((u) => {
               const remaining = remainingSpots(u);
               const full = remaining === 0;
@@ -214,59 +166,39 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
               return (
                 <div
                   key={u.id}
+                  className={`up__card ${selectedUnitId === u.id ? "up__card--active" : ""}`}
                   onClick={() => setSelectedUnitId(u.id)}
-                  style={{
-                    cursor: "pointer",
-                    display: "grid",
-                    gridTemplateColumns: "1fr auto",
-                    gap: 10,
-                    alignItems: "center",
-                    padding: 10,
-                    borderRadius: 10,
-                    border: selectedUnitId === u.id ? "2px solid #111" : "1px solid #ddd",
-                  }}
                 >
                   <div>
-                    <div style={{ fontWeight: 700, display: "flex", gap: 8, alignItems: "center" }}>
+                    <div className="up__cardTitle">
                       {u.name}
-                      {full && (
-                        <span style={{ fontSize: 12, padding: "2px 8px", borderRadius: 999, border: "1px solid #ddd" }}>
-                          Full
-                        </span>
-                      )}
+                      {full && <span className="up__pill">{lexicon.units.full}</span>}
                     </div>
 
-                    <div style={{ fontSize: 12, opacity: 0.7 }}>
+                    <div className="up__meta">
                       {u.type} • {u.occupiedCount}/{u.capacity} occupied • {remaining} remaining
                     </div>
                   </div>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDelete(u.id);
-                    }}
-                    style={{
-                      border: "1px solid #ddd",
-                      background: "white",
-                      borderRadius: 8,
-                      padding: "6px 10px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Delete
-                  </button>
+                  {isAdmin ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(u.id);
+                      }}
+                    >
+                      {lexicon.units.delete}
+                    </button>
+                  ) : (
+                    <span className="up__adminOnly">{lexicon.common.adminOnly}</span>
+                  )}
                 </div>
               );
             })}
 
             {selectedUnitId != null && (
-              <div style={{ marginTop: 12 }}>
-                <ResidentsPanel
-                  unitId={selectedUnitId}
-                  availableUnits={units}
-                  onResidentChanged={load}   // ✅ HERE: live update units after add/transfer
-                />
+              <div className="up__residentPanel">
+                <ResidentsPanel unitId={selectedUnitId} availableUnits={units} onResidentChanged={load} />
               </div>
             )}
           </div>

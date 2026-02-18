@@ -1,8 +1,12 @@
 import { FormEvent, useState } from "react";
 import { login } from "../api/api-auth";
 import { setAuth } from "../auth/auth";
+import lexicon from "../assets/lexicon";
+import "./LoginView.scss";
 
 export default function LoginView() {
+  const t = lexicon;
+
   const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("password");
   const [error, setError] = useState<string | null>(null);
@@ -18,10 +22,7 @@ export default function LoginView() {
       setAuth({ token: data.token, username: data.username, role: data.role });
       window.location.href = "/";
     } catch (err: any) {
-      const msg =
-        err?.response?.data?.message ??
-        err?.message ??
-        "Login failed";
+      const msg = err?.response?.data?.message ?? err?.message ?? t.login.loginFailed;
       setError(msg);
     } finally {
       setLoading(false);
@@ -29,42 +30,42 @@ export default function LoginView() {
   }
 
   return (
-    <div style={{ maxWidth: 420, margin: "60px auto", padding: 16 }}>
-      <h1 style={{ fontSize: 28, marginBottom: 8 }}>CURA</h1>
-      <p style={{ marginBottom: 16 }}>Sign in to continue.</p>
-
-      <form onSubmit={onSubmit}>
-        <div style={{ marginBottom: 10 }}>
-          <label>Username</label>
-          <input
-            style={{ width: "100%", padding: 10 }}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoComplete="username"
-          />
-        </div>
-
-        <div style={{ marginBottom: 10 }}>
-          <label>Password</label>
-          <input
-            style={{ width: "100%", padding: 10 }}
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-          />
-        </div>
-
-        {error && (
-          <div style={{ color: "crimson", marginBottom: 10 }}>
-            {error}
+    <div className="loginPage">
+      <div className="curaCard">
+        <div className="curaPanel">
+          <div className="curaHeader">
+            <h1>{t.login.title}</h1>
+            <p>{t.login.subtitle}</p>
           </div>
-        )}
 
-        <button type="submit" disabled={loading} style={{ width: "100%", padding: 12 }}>
-          {loading ? "Signing in..." : "Sign in"}
-        </button>
-      </form>
+          <form onSubmit={onSubmit}>
+            <div className="curaGroup">
+              <label>{t.login.username}</label>
+              <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+              />
+            </div>
+
+            <div className="curaGroup">
+              <label>{t.login.password}</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+              />
+            </div>
+
+            <button className="curaBtn" type="submit" disabled={loading}>
+              {loading ? t.login.signingIn : t.login.signIn}
+            </button>
+
+            {error && <div className="curaError">{error}</div>}
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

@@ -27,6 +27,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        // Always let preflight through
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) return true;
+
+        // Skip ONLY public endpoints
+        return path.equals("/api/v1/auth/login");
+        // If you add more public endpoints later, add them explicitly:
+        // || path.equals("/api/v1/auth/refresh")
+    }
+
+    @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -58,6 +71,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
+                System.out.println("AUTH OK: " + username + " " + userDetails.getAuthorities());
+
             }
 
             filterChain.doFilter(request, response);

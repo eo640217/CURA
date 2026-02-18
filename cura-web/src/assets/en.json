@@ -1,0 +1,151 @@
+{
+  "common": {
+    "back": "← Back",
+    "search": "Search",
+    "loading": "Loading…",
+    "noData": "No data.",
+    "noResults": "No results found.",
+    "prev": "← Prev",
+    "next": "Next →",
+    "close": "Close",
+    "refresh": "Refresh",
+    "closeX": "✕",
+    "cancel": "Cancel",
+    "create": "Create",
+    "creating": "Creating...",
+    "tryAgain": "Try again",
+    "adminOnly": "Admin only",
+    "deleteConfirmUnit": "Delete this unit?",
+    "pageOf": "Page {page} of {totalPages}",
+    "page": "Page"
+  },
+
+  "topBar": {
+    "brand": "CURA",
+    "users": "Users",
+    "residents": "Residents",
+    "logout": "Logout",
+    "signedInAs": "Signed in as"
+  },
+
+  "login": {
+    "title": "CURA",
+    "subtitle": "Sign in to continue.",
+    "username": "Username",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "loginFailed": "Login failed"
+  },
+
+  "admin": {
+    "title": "Admin",
+    "body": "Admin-only page."
+  },
+
+  "adminUsers": {
+    "title": "Admin · Users",
+    "cardTitle": "Create User",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "e.g. nurse.jane",
+    "tempPasswordLabel": "Temporary password",
+    "tempPasswordHint": "(You can force reset later if you add that flow.)",
+    "roleLabel": "Role",
+    "createUser": "Create User",
+    "creating": "Creating...",
+    "usersTitle": "Users",
+    "searchPlaceholder": "Search by username…",
+    "results": "{count} result(s)",
+    "noUsers": "No users found.",
+    "adminOnlyFooter": "This page is admin-only. If a staff user tries to open it, they’ll be redirected.",
+    "errors": {
+      "usernameRequired": "Username is required",
+      "passwordMin": "Password must be at least 6 characters",
+      "createdMsg": "Created {username} ({role})"
+    },
+    "empty": "No users found.",
+    "create_user": "Create User",
+    "adminOnlyNote": "This page is admin-only. If a staff user tries to open it, they’ll be redirected." 
+  },
+
+  "facilities": {
+    "appTitle": "Cura",
+    "subtitle": "Facilities → Units",
+    "signedInAs": "Signed in as",
+    "facilitiesTitle": "Facilities",
+    "adminBadge": "Admin",
+    "new": "+ New",
+    "noFacilities": "No facilities yet.",
+    "adminNextStep": "Next step: we’ll add a “Create Facility” modal for admins.",
+    "staffAskAdmin": "Ask an admin to create the first facility.",
+    "selectedFacilityTitle": "Selected Facility",
+    "selectFacility": "Select a facility."
+  },
+
+  "createFacility": {
+    "title": "Create Facility",
+    "nameLabel": "Name",
+    "addressLabel": "Address",
+    "namePlaceholder": "e.g., Cura Care Center",
+    "addressPlaceholder": "e.g., 123 King St W, Toronto",
+    "nameRequired": "Name is required",
+    "addressRequired": "Address is required"
+  },
+
+  "units": {
+    "title": "Units",
+    "addUnit": "Add Unit",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g. \"2A\" or \"West Wing\"",
+    "typeLabel": "Type",
+    "capacityLabel": "Capacity",
+    "full": "Full",
+    "noUnits": "No units yet.",
+    "unitCreationAdminOnlyTitle": "Unit creation is admin-only",
+    "unitCreationAdminOnlyBody": "You’re signed in as",
+    "delete": "Delete"
+  },
+
+  "residentsPanel": {
+    "title": "Residents",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "dob": "Date of birth",
+    "roomNumber": "Room number",
+    "roomPlaceholder": "e.g. A12",
+    "addResident": "Add Resident",
+    "unitFull": "Unit Full",
+    "noResidents": "No residents in this unit.",
+    "noRoom": "No room #",
+    "transfer": "Transfer",
+    "noAvailableUnits": "No available units (all full)",
+    "unitCapacityAlert": "This unit is at capacity. Transfer someone out or increase capacity.",
+    "unitCapacityHint": "This unit is at capacity. Transfer someone out or increase unit capacity.",
+    "staffAccess": "Staff access"
+  },
+
+  "residentsDirectory": {
+    "title": "Residents",
+    "searchPlaceholder": "Search by name or room number…",
+    "count": "{count} resident(s)",
+    "columns": {
+      "name": "Name",
+      "dob": "DOB",
+      "room": "Room",
+      "unit": "Unit",
+      "facility": "Facility"
+    },
+    "noResidents": "No residents found.",
+    "countSuffix": "resident(s)"
+  },
+
+  "residentDetails": {
+    "title": "Resident Details",
+    "dobPrefix": "DOB:",
+    "roomPrefix": "Room:",
+    "currentPlacement": "Current Placement",
+    "facilityLabel": "Facility:",
+    "unitLabel": "Unit:",
+    "capacityLabel": "Capacity"
+  }
+}

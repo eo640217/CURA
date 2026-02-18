@@ -42,7 +42,7 @@ public class JwtService {
 
         return Jwts.builder()
                 .subject(principal.getUsername())
-                .claim("role", principal.getRole())
+                .claim("role", "ROLE_" + principal.getRole())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(exp))
                 .signWith(key)   // 0.12.x: algorithm inferred for HMAC keys

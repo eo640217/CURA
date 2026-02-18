@@ -2,6 +2,7 @@ package com.cura.resident;
 
 import com.cura.resident.dto.*;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,9 +26,8 @@ public class ResidentController {
 //    }
 
     @GetMapping("/{id}")
-    public ResidentResponse get(
-            @PathVariable Long id) {
-        return residentService.get(id);
+    public ResidentDetailResponse get(@PathVariable Long id) {
+        return residentService.getResidentDetail(id);
     }
 
     @GetMapping
@@ -73,5 +73,18 @@ public class ResidentController {
         return residentService.transfer(id, req);
     }
 
+    // GET /api/v1/residents/directory?q=john&page=0&size=25
+    @GetMapping("/directory")
+    public Page<ResidentDirectoryItem> directory(
+            @RequestParam(required = false) String q,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "25") int size
+    ) {
+        return residentService.directory(q, page, size);
+    }
 
+    @GetMapping("/api/v1/residents/{id}/details")
+    public ResidentDetailResponse details(@PathVariable Long id) {
+        return residentService.getResidentDetail(id);
+    }
 }

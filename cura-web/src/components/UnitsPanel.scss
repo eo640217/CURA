@@ -1,0 +1,145 @@
+@use "../styles/theme" as *;
+@use "../styles/ui" as ui;
+
+.up {
+  display: grid;
+  gap: 12px;
+}
+
+.up__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+
+  button { @include ui.buttonGhost; }
+}
+
+.up__title {
+  margin: 0;
+  font-weight: $bold;
+  color: $dark-gray;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.up__form {
+  @include ui.card;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+  box-shadow: none;
+}
+
+.up__formGrid {
+  display: grid;
+  grid-template-columns: 1fr 160px 120px;
+  gap: 10px;
+}
+
+.up__field {
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: $semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: $gray;
+  }
+
+  input, select { @include ui.input; }
+}
+
+.up__primary {
+  @include ui.buttonPrimary;
+  justify-self: start;
+}
+
+.up__notice {
+  @include ui.card;
+  padding: 12px;
+  box-shadow: none;
+  background: rgba($black, 0.03);
+}
+
+.up__noticeTitle {
+  font-weight: $bold;
+  color: $dark-gray;
+  margin-bottom: 4px;
+}
+
+.up__noticeBody {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.up__list {
+  @include ui.card;
+  padding: 12px;
+  box-shadow: none;
+}
+
+.up__status { opacity: 0.85; }
+.up__error { color: crimson; }
+
+.up__cards {
+  display: grid;
+  gap: 10px;
+}
+
+.up__card {
+  border: $border;
+  border-radius: $radius-sm;
+  padding: 10px;
+  background: rgba($white, 0.9);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.15s ease;
+
+  &:hover {
+    background: rgba($white, 1);
+    box-shadow: 0 10px 22px rgba($black, 0.08);
+  }
+
+  button { @include ui.buttonGhost; }
+}
+
+.up__card--active {
+  border: 2px solid rgba($accent, 0.75);
+}
+
+.up__cardTitle {
+  font-weight: $bold;
+  color: $dark-gray;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.up__pill {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: $border;
+  background: rgba($black, 0.03);
+  opacity: 0.95;
+}
+
+.up__meta {
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.up__adminOnly {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.up__residentPanel {
+  margin-top: 12px;
+}
