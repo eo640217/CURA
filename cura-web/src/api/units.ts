@@ -30,3 +30,13 @@ export async function createUnit(facilityId: number, payload: UnitCreateRequest)
 export async function deleteUnit(unitId: number): Promise<void> {
   await http.delete(`/units/${unitId}`);
 }
+
+export type UnitPatchRequest = Partial<Pick<Unit, "name" | "type" | "capacity">>;
+
+export async function patchUnit(unitId: number, payload: UnitPatchRequest): Promise<Unit> {
+  const res = await http.patch<Unit>(`/units/${unitId}`, payload);
+  return res.data;
+}
+
+
+

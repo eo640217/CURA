@@ -165,4 +165,61 @@
       grid-template-columns: 1fr;
     }
   }
+
+  /* Right-side edit form */
+  &__editCard {
+    margin: 10px 0 14px;
+    padding: 12px;
+    border-radius: $radius-sm;
+    border: $border;
+    background: rgba($black, 0.03);
+  }
+
+  &__editGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+    @media (max-width: 720px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__editField {
+    min-width: 0;
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: $semibold;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: $gray;
+    }
+
+    input {
+      @include ui.input;
+      width: 100%;
+    }
+  }
+
+  &__editActions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    align-items: center;
+
+    .facilities__saveBtn { @include ui.buttonPrimary; }
+    .facilities__cancelBtn { @include ui.buttonGhost; }
+  }
+
+  /* Make the right header action button align nicely */
+  &__rightHeaderActions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    button { @include ui.buttonGhost; }
+  }
 }

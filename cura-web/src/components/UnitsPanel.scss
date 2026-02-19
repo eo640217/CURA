@@ -35,9 +35,16 @@
   display: grid;
   grid-template-columns: 1fr 160px 120px;
   gap: 10px;
+  align-items: end;
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .up__field {
+  min-width: 0;
+
   label {
     display: block;
     margin-bottom: 8px;
@@ -48,8 +55,16 @@
     color: $gray;
   }
 
-  input, select { @include ui.input; }
+  input, select {
+    @include ui.input;
+    width: 100%;
+  }
 }
+
+.name__field { width: 220px; }
+.type__field { max-width: 160px; }
+.capacity__field { max-width: 40px; }
+
 
 .up__primary {
   @include ui.buttonPrimary;
@@ -99,6 +114,7 @@
   align-items: center;
   cursor: pointer;
   transition: 0.15s ease;
+  min-width: 0;
 
   &:hover {
     background: rgba($white, 1);
@@ -106,6 +122,15 @@
   }
 
   button { @include ui.buttonGhost; }
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+    align-items: start;
+
+    > button {
+      justify-self: start;
+    }
+  }
 }
 
 .up__card--active {
@@ -118,6 +143,8 @@
   display: flex;
   gap: 10px;
   align-items: center;
+  min-width: 0;
+  flex-wrap: wrap; // prevents overlap when edit controls appear
 }
 
 .up__pill {
@@ -142,4 +169,43 @@
 
 .up__residentPanel {
   margin-top: 12px;
+}
+
+/* small "pencil" button */
+.up__linkBtn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.7;
+  margin-left: 8px;
+  padding: 2px 6px;
+  border-radius: 8px;
+
+  &:hover {
+    opacity: 1;
+    background: rgba($black, 0.05);
+  }
+}
+
+/* INLINE EDIT (rename) controls inside card title */
+.up__editRow {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.up__editInput {
+  @include ui.input;
+  width: min(260px, 70vw);
+}
+
+.up__editActions {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+
+  .up__saveBtn { @include ui.buttonPrimary; }
+  .up__cancelBtn { @include ui.buttonGhost; }
 }

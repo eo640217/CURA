@@ -70,7 +70,7 @@
 
   "facilities": {
     "appTitle": "Cura",
-    "subtitle": "Facilities → Units",
+    "subtitle": "Facilities",
     "signedInAs": "Signed in as",
     "facilitiesTitle": "Facilities",
     "adminBadge": "Admin",
@@ -79,7 +79,9 @@
     "adminNextStep": "Next step: we’ll add a “Create Facility” modal for admins.",
     "staffAskAdmin": "Ask an admin to create the first facility.",
     "selectedFacilityTitle": "Selected Facility",
-    "selectFacility": "Select a facility."
+    "selectFacility": "Select a facility.",
+    "edit": "Edit",
+    "save": "Save"
   },
 
   "createFacility": {
@@ -103,7 +105,13 @@
     "noUnits": "No units yet.",
     "unitCreationAdminOnlyTitle": "Unit creation is admin-only",
     "unitCreationAdminOnlyBody": "You’re signed in as",
-    "delete": "Delete"
+    "delete": "Delete",
+    "roomLabel": "Room",
+    "wingLabel": "Wing",
+    "floorLabel": "Floor",
+    "roomDescription":"Individual Rooms",
+    "wingDescription":"Group of rooms / ward",
+    "floorDescription":"Entire floor"
   },
 
   "residentsPanel": {
@@ -121,7 +129,8 @@
     "noAvailableUnits": "No available units (all full)",
     "unitCapacityAlert": "This unit is at capacity. Transfer someone out or increase capacity.",
     "unitCapacityHint": "This unit is at capacity. Transfer someone out or increase unit capacity.",
-    "staffAccess": "Staff access"
+    "staffAccess": "Staff access",
+    "create_resident": "Create Resident"
   },
 
   "residentsDirectory": {

@@ -1,0 +1,161 @@
+@use "../styles/theme" as *;
+@use "../styles/ui" as ui;
+
+.ms {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  position: relative;
+}
+
+.ms__label {
+  display: block;
+  font-size: 12px;
+  font-weight: $semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: $gray;
+}
+
+.ms__native {
+  display: none;
+}
+
+.ms__control {
+  position: relative;
+}
+
+/* TOGGLE (closed state) */
+.ms__toggle {
+  @include ui.input;
+  width: 100%;
+  text-align: left;
+
+  font-family: $base-font-family;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+
+  // caret
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='rgba(0,0,0,0.55)' d='M7 10l5 5l5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 18px;
+  background-position: calc(100% - 10px) 50%;
+  padding-right: 36px;
+}
+
+.ms__toggleText {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.25;
+
+  /* keep it on one line in the button (prevents tall/awkward button) */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* MENU (open state) */
+.ms__menu {
+  font-family: $base-font-family;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  z-index: 20;
+
+  border: $border;
+  border-radius: $radius-md;
+  background: rgba($white, 1);
+
+  opacity: 0;
+  transform: translateY(-6px) scaleY(0.94);
+  transform-origin: top;
+  pointer-events: none;
+
+  transition: 0.16s ease;
+  box-shadow: 0 14px 30px rgba($black, 0.12);
+}
+
+.ms--open .ms__menu {
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
+  pointer-events: auto;
+}
+
+.ms__item {
+  display: grid;
+  column-gap: 10px;
+  align-items: start;
+
+  padding: 10px;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  outline: none;
+
+  &:hover,
+  &:focus {
+    background: rgba($accent, 0.08);
+  }
+}
+
+.ms__icon {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  color: rgba($black, 0.55);
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.ms__text {
+  min-width: 0; /* critical */
+}
+
+.ms__name {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word; /* wraps at spaces, only breaks long words if needed */
+}
+
+.ms__desc {
+  margin-top: 2px;
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 0.85;
+
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.ms__item.isSelected {
+  background: rgba($accent, 0.12);
+
+  .ms__icon,
+  .ms__name {
+    color: rgba($accent, 0.95);
+  }
+}
+
+.ms--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}

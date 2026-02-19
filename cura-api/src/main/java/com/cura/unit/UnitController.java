@@ -1,9 +1,11 @@
 package com.cura.unit;
 
 import com.cura.unit.dto.UnitCreateRequest;
+import com.cura.unit.dto.UnitPatchRequest;
 import com.cura.unit.dto.UnitResponse;
 import com.cura.unit.dto.UnitUpdateRequest;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,6 +49,12 @@ public class UnitController {
     @DeleteMapping("/units/{unitId}")
     public void delete(@PathVariable Long unitId) {
         unitService.delete(unitId);
+    }
+
+    @PatchMapping("/{unitId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public UnitResponse patch(@PathVariable Long unitId, @Valid @RequestBody UnitPatchRequest req) {
+        return unitService.patch(unitId, req);
     }
 
 }

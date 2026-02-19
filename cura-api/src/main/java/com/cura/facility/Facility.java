@@ -17,27 +17,56 @@ public class Facility {
     @Column(nullable = false, length = 255)
     private String address;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(length = 40)
+    private String phone;
+
+    @Column(length = 120)
+    private String email;
+
+    @Column(name = "license_number", length = 80)
+    private String licenseNumber;
+
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
+
+    @Column(nullable = false)
+    private Instant updatedAt;
 
     protected Facility() {}
 
-    public Facility(String name, String address, Instant createdAt) {
+    public Facility(String name, String address) {
         this.name = name;
         this.address = address;
-        this.createdAt = createdAt;
     }
 
     @PrePersist
-    void prePersist() {
-        if (createdAt == null) createdAt = Instant.now();
+    void onCreate() {
+        Instant now = Instant.now();
+        this.createdAt = now;
+        this.updatedAt = now;
     }
+
+    @PreUpdate
+    void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
+
+    // Getters
 
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getAddress() { return address; }
+    public String getPhone() { return phone; }
+    public String getEmail() { return email; }
+    public String getLicenseNumber() { return licenseNumber; }
     public Instant getCreatedAt() { return createdAt; }
+    public Instant getUpdatedAt() { return updatedAt; }
+
+    // Setters
 
     public void setName(String name) { this.name = name; }
     public void setAddress(String address) { this.address = address; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public void setEmail(String email) { this.email = email; }
+    public void setLicenseNumber(String licenseNumber) { this.licenseNumber = licenseNumber; }
 }

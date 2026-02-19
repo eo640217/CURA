@@ -25,3 +25,11 @@ export async function createFacility(req: FacilityCreateRequest): Promise<Facili
   const res = await http.post<Facility>("/facilities", req);
   return res.data;
 }
+
+export type FacilityUpdateRequest = Partial<Pick<Facility, "name" | "address">>;
+
+export async function patchFacility(facilityId: number, payload: FacilityUpdateRequest): Promise<Facility> {
+  const res = await http.patch<Facility>(`/facilities/${facilityId}`, payload);
+  return res.data;
+}
+

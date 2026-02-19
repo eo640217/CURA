@@ -3,7 +3,9 @@ package com.cura.facility;
 import com.cura.facility.dto.FacilityCreateRequest;
 import com.cura.facility.dto.FacilityResponse;
 import com.cura.facility.dto.FacilityUpdateRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,14 +36,15 @@ public class FacilityController {
         return service.list();
     }
 
-    @PutMapping("/{id}")
-    public FacilityResponse update(@PathVariable Long id, @RequestBody FacilityUpdateRequest request) {
-        return service.update(id, request);
-    }
-
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         service.delete(id);
+    }
+
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public FacilityResponse update(@PathVariable Long id, @Valid @RequestBody FacilityUpdateRequest req) {
+        return service.update(id, req);
     }
 }
