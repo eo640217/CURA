@@ -132,3 +132,100 @@
   font-size: 12px;
   color: crimson;
 }
+
+.rp__gridDobRoom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: end;
+
+  // Tablet
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Ensure consistent vertical spacing */
+.rp__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 220px;
+}
+
+/* Optional: better width control */
+.dob__field input,
+.rm_number__field input {
+  width: 100%;
+}
+
+.rp__headerActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  & button { 
+    min-height: 45px !important;
+    &:hover {
+      background: rgba($accent, 0.08);
+    }
+  }
+}
+
+.rp__modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 9999;
+}
+
+.rp__modal {
+  width: min(640px, 100%);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  padding: 16px;
+}
+
+.rp__modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.rp__modalTitle {
+  margin: 0;
+}
+
+.rp__modalClose {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.rp__modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+@media (max-width: 520px) {
+  .rp__modal {
+    padding: 14px;
+  }
+  .rp__modalActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+

@@ -4,6 +4,7 @@ import com.cura.common.NotFoundException;
 import com.cura.facility.Facility;
 import com.cura.facility.FacilityRepository;
 import com.cura.unit.dto.UnitCreateRequest;
+import com.cura.unit.dto.UnitPatchRequest;
 import com.cura.unit.dto.UnitResponse;
 import com.cura.unit.dto.UnitUpdateRequest;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,19 @@ public class UnitService {
         unit.setCapacity(request.getCapacity());
 
         return new UnitResponse(unitRepository.save(unit));
+    }
+
+    @Transactional
+    public UnitResponse patch(Long unitId, UnitPatchRequest req) {
+        Unit unit = unitRepository.findById(unitId)
+                .orElseThrow(() -> new NotFoundException("Unit not found with id " + unitId));
+
+        if (req.getName() != null) unit.setName(req.getName());
+        if (req.getType() != null) unit.setType(req.getType());
+        if (req.getCapacity() != null) unit.setCapacity(req.getCapacity());
+
+        Unit saved = unitRepository.save(unit);
+        return new UnitResponse(saved);
     }
 
     public void delete(Long unitId) {

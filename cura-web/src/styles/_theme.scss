@@ -1,5 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;500;600;700;800&display=swap");
+
 // Font Family
-$body-font: "Roboto";
+$body-font: "Montserrat";
 
 // Font Weights
 $thin: 100;
@@ -181,7 +183,7 @@ body {
 }
 
 // Font Family
-$body-font: "Roboto";
+$body-font: "Montserrat";
 
 // Font Weights
 $thin: 100;
@@ -192,7 +194,7 @@ $bold: 700;
 $ultra: 800;
 
 // Base
-$base-font-family: $body-font, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+$base-font-family: $body-font, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
 $base-font-size: 14px;
 $base-line-height: 1.6em;
 

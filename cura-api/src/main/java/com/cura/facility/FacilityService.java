@@ -51,15 +51,17 @@ public class FacilityService {
         );
     }
 
-    public FacilityResponse update(Long id, FacilityUpdateRequest request) {
-        Facility facility = facilityRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Facility not found: " + id));
 
-        facility.setName(request.name());
-        facility.setAddress(request.address());
+    @Transactional
+    public FacilityResponse update(Long id, FacilityUpdateRequest req) {
+        Facility f = facilityRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Facility not found with id " + id));
 
-        Facility saved = facilityRepository.save(facility);
-        return toResponse(saved);
+        if (req.name() != null) f.setName(req.name());
+        if (req.address() != null) f.setAddress(req.address());
+
+        Facility saved = facilityRepository.save(f);
+        return FacilityResponse.from(saved);
     }
 
     public void delete(Long id) {
