@@ -49,15 +49,15 @@
     "usernameLabel": "Username",
     "usernamePlaceholder": "e.g. nurse.jane",
     "tempPasswordLabel": "Temporary password",
-    "tempPasswordHint": "(You can force reset later if you add that flow.)",
+    "tempPasswordHint": "",
     "roleLabel": "Role",
     "createUser": "Create User",
     "creating": "Creating...",
     "usersTitle": "Users",
     "searchPlaceholder": "Search by username…",
-    "results": "{count} result(s)",
+    "results": "result(s)",
     "noUsers": "No users found.",
-    "adminOnlyFooter": "This page is admin-only. If a staff user tries to open it, they’ll be redirected.",
+    "adminOnlyFooter": "Admin-only Page.",
     "errors": {
       "usernameRequired": "Username is required",
       "passwordMin": "Password must be at least 6 characters",
@@ -65,7 +65,7 @@
     },
     "empty": "No users found.",
     "create_user": "Create User",
-    "adminOnlyNote": "This page is admin-only. If a staff user tries to open it, they’ll be redirected." 
+    "adminOnlyNote": "Admin-only Page." 
   },
 
   "facilities": {
