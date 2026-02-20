@@ -3,6 +3,7 @@ import { apiErrorMessage } from "../api/api-error";
 import { registerUser, listUsers, UserResponse } from "../api/api-users";
 import lexicon from "../assets/lexicon";
 import "./AdminUsersView.scss";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function AdminUsersView() {
   const t = lexicon;
@@ -67,8 +68,8 @@ export default function AdminUsersView() {
   return (
     <div className="adminUsers">
       <div className="adminUsers__header">
+        <a className="adminUsers__backLink" href="/"><ArrowBackIcon fontSize="small" /></a>
         <h2>{t.adminUsers.title}</h2>
-        <a href="/">{t.common.back}</a>
       </div>
 
       <div className="adminUsers__card">

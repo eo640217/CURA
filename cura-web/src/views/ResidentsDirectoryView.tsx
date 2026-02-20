@@ -4,6 +4,8 @@ import { listResidentDirectory, ResidentDirectoryItem } from "../api/api-residen
 import ResidentDetailsModal from "../components/ResidentDetailsModal";
 import lexicon from "../assets/lexicon";
 import "./ResidentsDirectoryView.scss";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 
 export default function ResidentsDirectoryView() {
   const t = lexicon;
@@ -63,8 +65,8 @@ export default function ResidentsDirectoryView() {
   return (
     <div className="resDir">
       <div className="resDir__header">
+         <a className="resDir__backLink" href="/"><ArrowBackIcon fontSize="small" /></a>
         <h2>{t.residentsDirectory.title}</h2>
-        <a href="/">{t.common.back}</a>
       </div>
 
       <div className="resDir__search">

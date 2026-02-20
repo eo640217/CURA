@@ -57,7 +57,31 @@
     align-items: center;
   }
 
-  input { @include ui.input; }
-  button.primary { @include ui.buttonPrimary; }
-  button.ghost { @include ui.buttonGhost; }
-}
+    input {
+      @include ui.input;
+    }
+  
+    button.primary {
+      @include ui.buttonPrimary;
+    }
+  
+    button.ghost {
+      @include ui.buttonGhost;
+    }
+  
+    .resDir__backLink {
+      font-size: 13px;
+      font-weight: $semibold;
+      opacity: 0.9;
+      padding: 8px 10px;
+      border-radius: $radius-sm;
+      border: $border;
+      background: rgba($white, 0.8);
+      transition: 0.15s ease;
+  
+      &:hover {
+        background: rgba($white, 1);
+        box-shadow: 0 10px 22px rgba($black, 0.08);
+      }
+    }
+    }
