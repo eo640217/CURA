@@ -83,8 +83,22 @@ public class ResidentController {
         return residentService.directory(q, page, size);
     }
 
-    @GetMapping("/api/v1/residents/{id}/details")
+    @GetMapping("/{id}/details")
     public ResidentDetailResponse details(@PathVariable Long id) {
         return residentService.getResidentDetail(id);
+    }
+
+    @GetMapping("/{id}/notes")
+    public List<ResidentNoteResponse> listNotes(@PathVariable Long id) {
+        return residentService.listNotes(id);
+    }
+
+    @PostMapping("/{id}/notes")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResidentNoteResponse addNote(
+            @PathVariable Long id,
+            @Valid @RequestBody ResidentNoteCreateRequest req
+    ) {
+        return residentService.addNote(id, req, null);
     }
 }

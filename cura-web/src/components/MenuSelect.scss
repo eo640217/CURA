@@ -25,7 +25,6 @@
   position: relative;
 }
 
-/* TOGGLE (closed state) */
 .ms__toggle {
   @include ui.input;
   width: 100%;
@@ -37,7 +36,6 @@
   letter-spacing: 0;
   text-transform: none;
 
-  // caret
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='rgba(0,0,0,0.55)' d='M7 10l5 5l5-5z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-size: 18px;
@@ -52,13 +50,11 @@
   text-transform: none;
   line-height: 1.25;
 
-  /* keep it on one line in the button (prevents tall/awkward button) */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* MENU (open state) */
 .ms__menu {
   font-family: $base-font-family;
   margin: 0;
@@ -120,7 +116,7 @@
 }
 
 .ms__text {
-  min-width: 0; /* critical */
+  min-width: 0;
 }
 
 .ms__name {
@@ -131,7 +127,7 @@
 
   white-space: normal;
   word-break: normal;
-  overflow-wrap: break-word; /* wraps at spaces, only breaks long words if needed */
+  overflow-wrap: break-word;
 }
 
 .ms__desc {

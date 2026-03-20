@@ -65,6 +65,18 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/units/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/units/**").hasRole("ADMIN")
 
+                // Residents: allow reads for any authenticated user
+                .requestMatchers(HttpMethod.GET, "/api/v1/residents/**").authenticated()
+
+// Residents: allow create/update/transfer for any authenticated user (or restrict if you want)
+                .requestMatchers(HttpMethod.POST, "/api/v1/residents/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/residents/**").authenticated()
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/residents/**").authenticated()
+
+// Residents delete: admin only (optional)
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/residents/**").hasRole("ADMIN")
+
+
                 // Everyone authenticated can read + manage residents (matches your UI)
                 // If you later add resident delete and want ADMIN-only:
                 // .requestMatchers(HttpMethod.DELETE, "/api/v1/residents/**").hasRole("ADMIN")

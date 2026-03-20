@@ -65,7 +65,7 @@ export default function ResidentsDirectoryView() {
   return (
     <div className="resDir">
       <div className="resDir__header">
-         <a className="resDir__backLink" href="/"><ArrowBackIcon fontSize="small" /></a>
+        {/* <a className="resDir__backLink" href="/"><ArrowBackIcon fontSize="small" /></a> */}
         <h2>{t.residentsDirectory.title}</h2>
       </div>
 
@@ -97,21 +97,26 @@ export default function ResidentsDirectoryView() {
 
         {items.map((r) => (
           <div
-            key={r.id}
+            key={r.residentId}
             className="resDir__row"
             role="button"
             tabIndex={0}
-            onClick={() => openDetails(r.id)}
-            onKeyDown={(e) => (e.key === "Enter" || e.key === " " ? openDetails(r.id) : null)}
+            onClick={() => openDetails(r.residentId)}
+            onKeyDown={(e) =>
+              e.key === "Enter" || e.key === " "
+                ? openDetails(r.residentId)
+                : null
+            }
           >
-            <div style={{ fontWeight: 700, color: "rgba(0,0,0,0.8)" }}>{r.firstName} {r.lastName}</div>
+            <div style={{ fontWeight: 700, color: "rgba(0,0,0,0.8)" }}>
+              {r.firstName} {r.lastName}
+            </div>
             <div className="muted" style={{ fontSize: 13 }}>{r.dateOfBirth ?? "—"}</div>
             <div className="muted" style={{ fontSize: 13 }}>{r.roomNumber ?? "—"}</div>
             <div className="muted" style={{ fontSize: 13 }}>{r.unitName} ({r.unitType})</div>
             <div className="muted" style={{ fontSize: 13 }}>{r.facilityName}</div>
           </div>
         ))}
-
         {!loading && items.length === 0 && (
           <div style={{ padding: 14 }} className="muted">
             {t.common.noResults}

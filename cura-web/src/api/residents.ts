@@ -7,9 +7,9 @@ export type Resident = {
   unitId: number | null;
   firstName: string;
   lastName: string;
-  dateOfBirth: string | null; // ISO date: "YYYY-MM-DD"
+  dateOfBirth: string | null;
   roomNumber: string | null;
-  createdAt: string; // ISO instant
+  createdAt: string;
 };
 
 export type ResidentCreateRequest = {

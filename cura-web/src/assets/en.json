@@ -25,7 +25,9 @@
     "users": "Users",
     "residents": "Residents",
     "logout": "Logout",
-    "signedInAs": "Signed in as"
+    "signedInAs": "Signed in as",
+    "home": "Home",
+    "facilities": "Facilities"
   },
 
   "login": {

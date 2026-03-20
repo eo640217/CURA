@@ -1,6 +1,10 @@
 @use "../styles/theme" as *;
 @use "../styles/ui" as ui;
 
+
+.facilities__container{
+  font-family: var(--body-font);
+}
 .facilities {
   &__top {
     max-width: $container-lg;
