@@ -31,6 +31,11 @@
   button { @include ui.buttonGhost; }
 }
 
+.tb__logo {
+  height: 62px;
+  width: auto;
+}
+
 .tb__user {
   font-size: 12px;
   opacity: 0.85;

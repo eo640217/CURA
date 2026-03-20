@@ -1,34 +1,44 @@
+import { Link, useNavigate } from "react-router-dom";
 import { clearAuth, getAuth } from "../auth/auth";
 import lexicon from "../assets/lexicon";
 import "./TopBar.scss";
+import cura_logo from "../assets/images/cura_logo_2.png";
 
 export default function TopBar() {
   const { token, username, role } = getAuth();
+  const navigate = useNavigate();
+
   if (!token) return null;
 
   return (
     <div className="tb">
-      <div className="tb__brand">{lexicon.topBar.brand}</div>
+      <Link to="/" className="tb__brand">
+        <img src={cura_logo} alt="Cura Logo" className="tb__logo" />
+      </Link>
 
       <div className="tb__right">
         <span className="tb__user">
           {username} · {role}
         </span>
-
-        {role === "ADMIN" && (
-          <a className="tb__link" href="/admin/users">
-            {lexicon.topBar.users}
-          </a>
-        )}
-
-        <a className="tb__btnLink" href="/residents">
+        <Link className="tb__link" to="/">
+          {lexicon.topBar.home}
+        </Link>
+        <Link className="tb__link" to="/facilities">
+          {lexicon.topBar.facilities}
+        </Link>
+        <Link className="tb__btnLink" to="/residents">
           {lexicon.topBar.residents}
-        </a>
+        </Link>
+        {role === "ADMIN" && (
+          <Link className="tb__link" to="/admin/users">
+            {lexicon.topBar.users}
+          </Link>
+        )}
 
         <button
           onClick={() => {
             clearAuth();
-            window.location.href = "/login";
+            navigate("/login");
           }}
         >
           {lexicon.topBar.logout}

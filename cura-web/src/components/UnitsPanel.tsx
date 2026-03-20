@@ -65,7 +65,6 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
     setEditingUnitId(null);
     setEditName("");
     setRenameError(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [facilityId]);
 
   useEffect(() => {
@@ -141,7 +140,6 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
     try {
       const updated = await patchUnit(u.id, { name: nextName });
 
-      // update list in-place (no full reload needed)
       setUnitsState((prev) => {
         if (prev.status !== "success") return prev;
         return {

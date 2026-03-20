@@ -18,11 +18,14 @@ public class ResidentService {
     private final ResidentRepository residentRepo;
     private final FacilityRepository facilityRepo;
     private final UnitRepository unitRepo;
+    private final ResidentNoteRepository residentNoteRepository;
 
-    public ResidentService(ResidentRepository residentRepo, FacilityRepository facilityRepo, UnitRepository unitRepo) {
+    public ResidentService(ResidentRepository residentRepo, FacilityRepository facilityRepo, UnitRepository unitRepo, ResidentNoteRepository residentNoteRepository) {
         this.residentRepo = residentRepo;
         this.facilityRepo = facilityRepo;
         this.unitRepo = unitRepo;
+        this.residentNoteRepository = residentNoteRepository;
+
     }
 
     @Transactional(readOnly = true)
@@ -144,5 +147,43 @@ public class ResidentService {
         return residentRepo.findResidentDetail(id)
                 .orElseThrow(() -> new NotFoundException("Resident not found with id " + id));
     }
+
+    @Transactional(readOnly = true)
+    public List<ResidentNoteResponse> listNotes(Long residentId) {
+        // Ensure resident exists (optional but good)
+        residentRepo.findById(residentId).orElseThrow(() -> new NotFoundException("Resident not found with id " + residentId));
+
+        return residentNoteRepository.findByResidentIdOrderByCreatedAtDesc(residentId)
+                .stream()
+                .map(n -> new ResidentNoteResponse(
+                        n.getId(),
+                        n.getResidentId(),
+                        n.getBody(),
+                        n.getCreatedAt(),
+                        n.getCreatedBy()
+                ))
+                .toList();
+    }
+
+    @Transactional
+    public ResidentNoteResponse addNote(Long residentId, ResidentNoteCreateRequest req, String createdBy) {
+        residentRepo.findById(residentId).orElseThrow(() -> new NotFoundException("Resident not found with id " + residentId));
+
+        ResidentNote n = new ResidentNote();
+        n.setResidentId(residentId);
+        n.setBody(req.body());
+        n.setCreatedBy(createdBy); // can be null for MVP
+
+        ResidentNote saved = residentNoteRepository.save(n);
+
+        return new ResidentNoteResponse(
+                saved.getId(),
+                saved.getResidentId(),
+                saved.getBody(),
+                saved.getCreatedAt(),
+                saved.getCreatedBy()
+        );
+    }
+
 
 }

@@ -1,191 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;500;600;700;800&display=swap");
 
-// Font Family
+// Font
 $body-font: "Montserrat";
+// $body-font: "Arial";
 
-// Font Weights
-$thin: 100;
-$light: 300;
-$regular: 400;
-$semibold: 500;
-$bold: 700;
-$ultra: 800;
-
-// Base Font
-$base-font-family: $body-font, sans-serif;
-$base-font-size: 14px;
-$base-line-height: 1.6em;
-
-// Colors
-$black: #000000;
-$dark-gray: rgba($black, 0.8);
-$gray: rgba($black, 0.6);
-$light-gray: rgba($black, 0.4);
-$lighter-gray: rgba($black, 0.2);
-$white: #ffffff;
-$accent: #4285f4;
-
-// Layout
-$max-width: 600px;
-$gutters: 24px;
-
-
-:root {
-  --accent: #{$accent};
-  --text: #{$gray};
-  --text-strong: #{$dark-gray};
-  --border: rgba(0, 0, 0, 0.15);
-  --card: #{$white};
-}
-
-html,
-body {
-  width: 100%;
-  height: 100%;
-}
-
-body {
-  background: linear-gradient(
-    45deg,
-    rgba(66, 183, 245, 0.8) 0%,
-    rgba(66, 245, 189, 0.4) 100%
-  );
-  color: var(--text);
-  font-family: $base-font-family;
-  font-size: $base-font-size;
-  line-height: $base-line-height;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-// Reusable "form card"
-.curaCard {
-  background: var(--card);
-  width: min(#{$max-width}, 100%);
-  border-radius: 8px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.10);
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.curaPanel {
-  padding: 60px calc(5% + 60px) 60px 60px;
-  box-sizing: border-box;
-
-  @media (max-width: 720px) {
-    padding: 28px;
-  }
-}
-
-.curaHeader {
-  margin: 0 0 28px;
-
-  h1 {
-    margin: 0;
-    padding: 4px 0;
-    color: var(--accent);
-    font-size: 24px;
-    font-weight: $bold;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-
-  p {
-    margin: 6px 0 0;
-    opacity: 0.9;
-  }
-}
-
-.curaGroup {
-  margin: 0 0 18px;
-
-  label {
-    display: block;
-    margin: 0 0 10px;
-    color: var(--text);
-    font-size: 12px;
-    font-weight: $semibold;
-    line-height: 1;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-  }
-
-  input,
-  select {
-    outline: none;
-    display: block;
-    background: rgba(0, 0, 0, 0.08);
-    width: 100%;
-    border: 0;
-    border-radius: 6px;
-    box-sizing: border-box;
-    padding: 12px 16px;
-    color: var(--text);
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: $semibold;
-    line-height: inherit;
-    transition: 0.25s ease;
-
-    &:focus {
-      color: var(--text-strong);
-      background: rgba(0, 0, 0, 0.06);
-    }
-
-    &::placeholder {
-      color: rgba(0, 0, 0, 0.35);
-      font-weight: $regular;
-    }
-  }
-}
-
-.curaBtn {
-  outline: none;
-  background: var(--accent);
-  width: 100%;
-  border: 0;
-  border-radius: 6px;
-  padding: 12px 16px;
-  color: #fff;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: $semibold;
-  line-height: inherit;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-  transition: 0.2s ease;
-
-  &:hover {
-    filter: brightness(0.95);
-  }
-
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-}
-
-.curaError {
-  margin-top: 12px;
-  color: #c62828;
-  font-weight: $semibold;
-}
-
-.curaInput {
-  outline: none;
-  background: rgba(0, 0, 0, 0.08);
-  border: 0;
-  border-radius: 10px;
-  padding: 10px 14px;
-  width: 100%;
-  font-weight: 500;
-}
-
-// Font Family
-$body-font: "Montserrat";
-
-// Font Weights
+// Weights
 $thin: 100;
 $light: 300;
 $regular: 400;
@@ -200,11 +19,12 @@ $base-line-height: 1.6em;
 
 // Colors
 $black: #000000;
+$white: #ffffff;
+
 $dark-gray: rgba($black, 0.8);
 $gray: rgba($black, 0.6);
 $light-gray: rgba($black, 0.4);
 $lighter-gray: rgba($black, 0.2);
-$white: #ffffff;
 
 $accent: #4285F4;
 $accent-2: #42f5bd;
@@ -220,7 +40,36 @@ $shadow-md: 0 0 30px rgba($black, 0.12);
 $border: 1px solid rgba($black, 0.10);
 $border-strong: 1px solid rgba($black, 0.18);
 
+// Layout
 $container-md: 720px;
 $container-lg: 980px;
+$gutters: 24px;
 
+:root {
+  --accent: #{$accent};
+  --text: #{$gray};
+  --text-strong: #{$dark-gray};
+  --border: rgba(0, 0, 0, 0.15);
+  --card: #{$white};
 
+  --poppins: "Poppins", sans-serif;
+  --lato: "Lato", sans-serif;
+
+  --light: #f9f9f9;
+  --blue: #3c91e6;
+  --light-blue: #cfe8ff;
+  --grey: #eee;
+  --dark-grey: #aaaaaa;
+  --dark: #342e37;
+  --red: #db504a;
+  --yellow: #ffce26;
+  --light-yellow: #fff2c6;
+  --orange: #fd7238;
+  --light-orange: #ffe0d3;
+}
+
+body.dark {
+  --light: #0c0c1e;
+  --grey: #060714;
+  --dark: #fbfbfb;
+}

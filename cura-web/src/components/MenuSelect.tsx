@@ -47,11 +47,9 @@ export default function MenuSelect<T extends string>({
   function commit(next: T) {
     onChange(next);
     close();
-    // restore focus to button for accessibility
     requestAnimationFrame(() => btnRef.current?.focus());
   }
 
-  // click outside to close
   useEffect(() => {
     function onDocMouseDown(e: MouseEvent) {
       const target = e.target as Node | null;
@@ -63,7 +61,6 @@ export default function MenuSelect<T extends string>({
     return () => document.removeEventListener("mousedown", onDocMouseDown);
   }, []);
 
-  // keyboard on button
   function onButtonKeyDown(e: React.KeyboardEvent) {
     if (disabled) return;
 
@@ -71,7 +68,6 @@ export default function MenuSelect<T extends string>({
       e.preventDefault();
       setOpen(true);
       requestAnimationFrame(() => {
-        // focus selected option if open
         const el = menuRef.current?.querySelector<HTMLLIElement>(`li[data-value="${value}"]`);
         (el ?? menuRef.current?.querySelector("li"))?.focus();
       });
@@ -82,7 +78,6 @@ export default function MenuSelect<T extends string>({
     }
   }
 
-  // keyboard on items
   function onItemKeyDown(e: React.KeyboardEvent<HTMLLIElement>, idx: number) {
     const items = menuRef.current?.querySelectorAll<HTMLLIElement>("li[role='option']");
     if (!items || items.length === 0) return;
@@ -111,7 +106,6 @@ export default function MenuSelect<T extends string>({
       requestAnimationFrame(() => btnRef.current?.focus());
     }
     if (e.key === "Tab") {
-      // allow tab, but close menu
       close();
     }
   }
@@ -121,8 +115,6 @@ export default function MenuSelect<T extends string>({
       <label className="ms__label" id={`${id}-label`}>
         {label}
       </label>
-
-      {/* keep a real <select> for forms/autofill if you want; hidden visually */}
       <select className="ms__native" value={value} onChange={(e) => onChange(e.target.value as T)} disabled={disabled}>
         {options.map((o) => (
           <option key={o.value} value={o.value}>

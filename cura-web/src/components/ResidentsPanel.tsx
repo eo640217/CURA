@@ -106,7 +106,6 @@ export function ResidentsPanel({
     setForm({ firstName: "", lastName: "", dateOfBirth: null, roomNumber: "" });
     setTransferTo({});
     setIsCreateOpen(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unitId]);
 
   useEffect(() => {

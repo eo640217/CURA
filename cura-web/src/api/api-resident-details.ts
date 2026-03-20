@@ -1,4 +1,4 @@
-import { http } from "./http";
+import { http, apiPut, apiGet} from "./http";
 
 export type ResidentDetailsResponse = {
   id: number;
@@ -17,7 +17,10 @@ export type ResidentDetailsResponse = {
   facilityAddress: string;
 };
 
-export async function getResidentDetails(id: number): Promise<ResidentDetailsResponse> {
-  const res = await http.get<ResidentDetailsResponse>(`/residents/${id}/details`);
-  return res.data;
+export function getResidentDetails(id: number) {
+  return apiGet<ResidentDetailsResponse>(`/residents/${id}`);
+}
+
+export function updateResident(id: number, payload: { roomNumber?: string }) {
+  return apiPut(`/residents/${id}`, payload);
 }

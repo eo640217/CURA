@@ -1,0 +1,220 @@
+@use "../styles/theme" as *;
+
+.dashPage {
+  padding: 6px 2px;
+}
+
+.dashTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.dashTitle {
+  margin: 0;
+  font-size: 28px;
+  font-weight: $bold;
+  color: var(--text-strong);
+}
+
+.dashSub {
+  margin-top: 4px;
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+.dashActions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Widget frame */
+.dashWidgetFrame {
+  height: 100%;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 16px;
+  box-shadow: 0 0 24px rgba(0,0,0,0.10);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashWidgetFrame__bar {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.65);
+}
+
+.dashWidget__dragHandle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: $bold;
+  color: var(--text-strong);
+  cursor: grab;
+  user-select: none;
+}
+
+.dashHint {
+  font-size: 12px;
+  opacity: 0.65;
+}
+
+.dashWidgetFrame__body {
+  padding: 12px;
+  flex: 1;
+  overflow: auto;
+}
+
+/* Recent Activity widget */
+.dashWidget__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: $bold;
+    color: var(--text-strong);
+  }
+}
+
+.dashIconBtn {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.8;
+  padding: 6px;
+
+  &:hover { opacity: 1; }
+}
+
+.dashWidget__empty {
+  padding: 10px;
+  opacity: 0.75;
+}
+
+/* Table */
+.dashTable {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    font-size: 12px;
+    opacity: 0.7;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.10);
+  }
+
+  td {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    vertical-align: middle;
+  }
+
+  tr:hover {
+    background: rgba(66, 183, 245, 0.06);
+  }
+}
+
+.dashTable__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  img {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    object-fit: cover;
+  }
+}
+
+/* Status pills matching your earlier template */
+.status {
+  font-size: 10px;
+  padding: 6px 12px;
+  color: #fff;
+  border-radius: 999px;
+  font-weight: $bold;
+  white-space: nowrap;
+}
+
+.status.completed { background: #4285f4; }
+.status.process { background: #ffce26; color: #1a1a1a; }
+.status.pending { background: #fd7238; }
+
+/* Stats widget */
+.dashStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.dashStatCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.75);
+
+  i {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    font-size: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &:nth-child(1) i { background: rgba(66,133,244,0.18); color: #4285f4; }
+  &:nth-child(2) i { background: rgba(255,206,38,0.22); color: #ffce26; }
+  &:nth-child(3) i { background: rgba(253,114,56,0.20); color: #fd7238; }
+
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: $bold;
+    color: var(--text-strong);
+  }
+
+  p {
+    margin: 2px 0 0;
+    opacity: 0.8;
+  }
+}
+
+/* Todos */
+.dashTodos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+
+  li {
+    background: rgba(0,0,0,0.04);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &.completed { border-left: 10px solid #4285f4; }
+    &.not-completed { border-left: 10px solid #fd7238; }
+
+    p { margin: 0; color: var(--text-strong); }
+  }
+}

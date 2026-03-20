@@ -1,4 +1,5 @@
 @use "./CreateFacilityModal.scss" as *;
+@use "../styles/ui" as ui;
 
 .modalCard--wide {
   width: min(720px, 100%);
@@ -48,4 +49,215 @@
 
 .panelSpacer {
   height: 8px;
+}
+
+.modalCard--wide {
+  width: min(980px, 96vw);
+  max-height: min(86vh, 860px);
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader--profile {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.modalProfile {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.modalAvatar {
+  width: 200px;
+  height: 200px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: rgba(255,255,255,0.6);
+}
+
+
+.modalProfileText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modalTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.modalTitle {
+  margin: 0;
+}
+
+.modalPill {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.14);
+  background: rgba(255,255,255,0.75);
+  white-space: nowrap;
+}
+
+.modalMeta {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.modalX {
+  border: 1px solid rgba(0,0,0,0.14);
+  background: rgba(255,255,255,0.7);
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.modalTabs {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.55);
+}
+
+.modalTabs button {
+  border: 1px solid rgba(0,0,0,0.12);
+  background: rgba(255,255,255,0.70);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.modalTabs button.active {
+  opacity: 1;
+  border-color: rgba(66, 133, 244, 0.35);
+  background: rgba(66, 133, 244, 0.12);
+}
+
+.modalBody {
+  padding: 12px;
+  overflow: auto;
+}
+
+.modalGrid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 12px;
+}
+
+.modalSectionHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.modalSectionHeaderActions {
+  display: flex;
+  gap: 8px;
+}
+
+.modalKV {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px 12px;
+  align-items: start;
+  margin-top: 8px;
+}
+
+.modalKV .k {
+  opacity: 0.9;
+  font-size: 13px;
+}
+
+.modalKV .v {
+  font-size: 13px;
+}
+
+.modalActions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.modalQuick {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.modalInput {
+  width: 100%;
+  outline: none;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: rgba(0,0,0,0.08);
+  font-weight: 600;
+}
+
+.modalList {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+
+
+.modalListRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.75);
+
+}
+.modalListRow,.modalRowActions, .modalQuick, .modalActions{
+  button{
+    @include ui.buttonGhost;
+  }
+}
+.modalRowActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.modalNoteComposer {
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.70);
+}
+
+.modalTextarea {
+  width: 100%;
+  border: 0;
+  outline: none;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(0,0,0,0.06);
+  font-weight: 600;
+  resize: vertical;
+}
+
+@media (max-width: 860px) {
+  .modalGrid { grid-template-columns: 1fr; }
+  .modalKV { grid-template-columns: 1fr; }
 }

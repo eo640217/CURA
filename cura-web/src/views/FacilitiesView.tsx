@@ -179,7 +179,7 @@ export default function FacilitiesView() {
   }
 
   return (
-    <div className="page facilities">
+    <div className="facilities__container">
       <div className="facilities__top">
         <div>
           <h1 className="facilities__appTitle">{t.facilities.appTitle}</h1>

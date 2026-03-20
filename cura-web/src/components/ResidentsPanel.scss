@@ -90,6 +90,7 @@
   @include ui.card;
   padding: 12px;
   box-shadow: none;
+  background-color: var(--dark-grey);
 }
 
 .rp__status { opacity: 0.85; }
@@ -145,7 +146,6 @@
   }
 }
 
-/* Ensure consistent vertical spacing */
 .rp__field {
   display: flex;
   flex-direction: column;
@@ -153,7 +153,6 @@
   width: 220px;
 }
 
-/* Optional: better width control */
 .dob__field input,
 .rm_number__field input {
   width: 100%;

@@ -1,26 +1,26 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginView from "./views/LoginView";
 import RequireAuth from "./auth/RequireAuth";
 import RequireRole from "./auth/RequireRole";
+
+import AppShell from "./layout/AppShell";
+import DashboardView from "./views/DashboardView";
 import FacilitiesView from "./views/FacilitiesView";
-import TopBar from "./components/TopBar";
-import "./index.scss";
+import ResidentsDirectoryView from "./views/ResidentsDirectoryView";
+import UnitsView from "./views/UnitsView";
+import HoursView from "./views/HoursView";
 
-
-// Example admin page (create later if you don’t have it yet)
 import AdminView from "./views/AdminView";
 import AdminUsersView from "./views/AdminUsersView";
-import ResidentsDirectoryView from "./views/ResidentsDirectoryView";
+import "./App.scss";
 
 export default function App() {
   return (
     <BrowserRouter>
-      <TopBar />
-
       <Routes>
         <Route path="/login" element={<LoginView />} />
 
-        {/* ADMIN-only route example */}
+        {/* ADMIN */}
         <Route
           path="/admin"
           element={
@@ -31,7 +31,6 @@ export default function App() {
             </RequireAuth>
           }
         />
-
         <Route
           path="/admin/users"
           element={
@@ -43,24 +42,22 @@ export default function App() {
           }
         />
 
+        {/* AUTH APP */}
         <Route
-          path="/residents"
           element={
             <RequireAuth>
-              <ResidentsDirectoryView />
+              <AppShell />
             </RequireAuth>
           }
-        />
+        >
+          <Route path="/" element={<DashboardView />} />
+          <Route path="/facilities" element={<FacilitiesView />} />
+          <Route path="/residents" element={<ResidentsDirectoryView />} />
+          <Route path="/units" element={<UnitsView />} />
+          <Route path="/hours" element={<HoursView />} />
+        </Route>
 
-        {/* everything else requires login */}
-        <Route
-          path="/*"
-          element={
-            <RequireAuth>
-              <FacilitiesView />
-            </RequireAuth>
-          }
-        />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
