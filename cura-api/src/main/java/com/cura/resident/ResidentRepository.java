@@ -33,10 +33,11 @@ public interface ResidentRepository extends JpaRepository<Resident, Long> {
       from Resident r
       join r.unit u
       join u.facility f
-      where (:q is null or :q = ''
-        or lower(r.firstName) like lower(concat('%', :q, '%'))
-        or lower(r.lastName) like lower(concat('%', :q, '%'))
-        or lower(r.roomNumber) like lower(concat('%', :q, '%'))
+      WHERE (
+        :q IS NULL\s
+        OR LOWER(r.firstName) LIKE LOWER(CONCAT('%', :q, '%'))
+        OR LOWER(r.lastName) LIKE LOWER(CONCAT('%', :q, '%'))
+        OR LOWER(r.roomNumber) LIKE LOWER(CONCAT('%', :q, '%'))
       )
       order by r.lastName asc, r.firstName asc
 """)

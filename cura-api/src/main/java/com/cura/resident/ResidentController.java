@@ -3,6 +3,8 @@ package com.cura.resident;
 import com.cura.resident.dto.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,12 +79,11 @@ public class ResidentController {
     @GetMapping("/directory")
     public Page<ResidentDirectoryItem> directory(
             @RequestParam(required = false) String q,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "25") int size
+            @PageableDefault(size = 25, sort = "lastName")
+            Pageable pageable
     ) {
-        return residentService.directory(q, page, size);
+        return residentService.directory(q, pageable);
     }
-
     @GetMapping("/{id}/details")
     public ResidentDetailResponse details(@PathVariable Long id) {
         return residentService.getResidentDetail(id);

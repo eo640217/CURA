@@ -85,20 +85,20 @@ public class ResidentService {
         );
     }
 
-    public ResidentResponse createUnderUnit(Long unitId, ResidentCreateRequest request) {
+    public ResidentResponse createUnderUnit(Long unitId, ResidentCreateRequest residentCreateRequest) {
         Unit unit = unitRepo.findById(unitId)
                 .orElseThrow(() -> new NotFoundException("Unit not found with id " + unitId));
 
-        long current = residentRepo.countByUnitId(unitId);
-        if (current >= unit.getCapacity()) {
+        long currentUnitCount = residentRepo.countByUnitId(unitId);
+        if (currentUnitCount >= unit.getCapacity()) {
             throw new IllegalStateException("Unit is full (capacity " + unit.getCapacity() + ")");
         }
 
         Resident resident = new Resident();
-        resident.setFirstName(request.firstName());
-        resident.setLastName(request.lastName());
-        resident.setDateOfBirth(request.dateOfBirth());
-        resident.setRoomNumber(request.roomNumber());
+        resident.setFirstName(residentCreateRequest.firstName());
+        resident.setLastName(residentCreateRequest.lastName());
+        resident.setDateOfBirth(residentCreateRequest.dateOfBirth());
+        resident.setRoomNumber(residentCreateRequest.roomNumber());
         resident.setUnit(unit);
 
         Resident saved = residentRepo.save(resident);
@@ -138,8 +138,12 @@ public class ResidentService {
         return toResponse(residentRepo.save(resident));
     }
     @Transactional(readOnly = true)
-    public Page<ResidentDirectoryItem> directory(String q, int page, int size) {
-        return residentRepo.searchDirectory(q, PageRequest.of(page, size));
+    public Page<ResidentDirectoryItem> directory(String q,Pageable pageable) {
+        if (q == null || q.trim().isEmpty()) {
+            return residentRepo.searchDirectory(null, pageable); // will return all residents paginated
+        } else {
+            return residentRepo.searchDirectory(q, pageable);
+        }
     }
 
     @Transactional(readOnly = true)
