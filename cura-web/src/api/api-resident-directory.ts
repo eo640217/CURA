@@ -1,7 +1,7 @@
 import { http } from "./http";
 
 export type ResidentDirectoryItem = {
-  id: number;
+  residentId: number;
   firstName: string;
   lastName: string;
   dateOfBirth: string | null;

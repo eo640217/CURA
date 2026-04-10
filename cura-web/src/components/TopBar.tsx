@@ -26,7 +26,7 @@ export default function TopBar() {
         <Link className="tb__link" to="/facilities">
           {lexicon.topBar.facilities}
         </Link>
-        <Link className="tb__btnLink" to="/residents">
+        <Link className="tb__btnLink" to="/residents/directory">
           {lexicon.topBar.residents}
         </Link>
         {role === "ADMIN" && (

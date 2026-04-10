@@ -66,7 +66,7 @@ export default function AppShell() {
 
         <ul className="side-menu top">
           <li>
-            <NavLink to="/" end className={({ isActive }) => (isActive ? "activeLink" : "")}>
+            <NavLink to="/dashboard" end className={({ isActive }) => (isActive ? "activeLink" : "")}>
               <i className="bx bxs-dashboard bx-sm" />
               <span className="text">Dashboard</span>
             </NavLink>
@@ -80,7 +80,7 @@ export default function AppShell() {
           </li>
 
           <li>
-            <NavLink to="/residents" className={({ isActive }) => (isActive ? "activeLink" : "")}>
+            <NavLink to="/residents/directory" className={({ isActive }) => (isActive ? "activeLink" : "")}>
               <i className="bx bxs-group bx-sm" />
               <span className="text">Residents</span>
             </NavLink>

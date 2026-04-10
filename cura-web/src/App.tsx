@@ -51,8 +51,9 @@ export default function App() {
           }
         >
           <Route path="/" element={<DashboardView />} />
+          <Route path="/dashboard" element={<DashboardView />} />
           <Route path="/facilities" element={<FacilitiesView />} />
-          <Route path="/residents" element={<ResidentsDirectoryView />} />
+          <Route path="/residents/directory" element={<ResidentsDirectoryView />} />
           <Route path="/units" element={<UnitsView />} />
           <Route path="/hours" element={<HoursView />} />
         </Route>
