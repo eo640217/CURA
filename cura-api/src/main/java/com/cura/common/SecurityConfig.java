@@ -51,6 +51,9 @@ public class SecurityConfig {
 
                 .requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasRole("ADMIN")
 
+                // Public resident directory (used by UI search/listing)
+                .requestMatchers(HttpMethod.GET, "/api/v1/residents/directory", "/api/v1/residents/directory/**").hasRole("ADMIN")
+
 
 
                 // ADMIN-only: Facilities mutations

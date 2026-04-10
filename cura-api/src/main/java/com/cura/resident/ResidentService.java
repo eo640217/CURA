@@ -40,7 +40,6 @@ public class ResidentService {
                 .toList();
     }
 
-
     @Transactional(readOnly = true)
     public ResidentResponse get(Long id) {
         Resident r = residentRepo.findById(id)
@@ -138,12 +137,11 @@ public class ResidentService {
         return toResponse(residentRepo.save(resident));
     }
     @Transactional(readOnly = true)
-    public Page<ResidentDirectoryItem> directory(String q,Pageable pageable) {
+    public Page<ResidentDirectoryItem> directory(String q, Pageable pageable) {
         if (q == null || q.trim().isEmpty()) {
-            return residentRepo.searchDirectory(null, pageable); // will return all residents paginated
-        } else {
-            return residentRepo.searchDirectory(q, pageable);
+            return residentRepo.findAllDirectory(pageable);
         }
+        return residentRepo.searchDirectory(q.trim(), pageable);
     }
 
     @Transactional(readOnly = true)
