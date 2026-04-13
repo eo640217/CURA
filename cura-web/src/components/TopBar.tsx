@@ -12,7 +12,7 @@ export default function TopBar() {
 
   return (
     <div className="tb">
-      <Link to="/" className="tb__brand">
+      <Link to="/dashboard" className="tb__brand">
         <img src={cura_logo} alt="Cura Logo" className="tb__logo" />
       </Link>
 
@@ -20,7 +20,7 @@ export default function TopBar() {
         <span className="tb__user">
           {username} · {role}
         </span>
-        <Link className="tb__link" to="/">
+        <Link className="tb__link" to="/dashboard">
           {lexicon.topBar.home}
         </Link>
         <Link className="tb__link" to="/facilities">

@@ -71,7 +71,7 @@ export default function AdminUsersView() {
       <TopBar />
       <div className="adminUsers">
         <div className="adminUsers__header">
-          <a className="adminUsers__backLink" href="/"><ArrowBackIcon fontSize="small" /></a>
+            <a className="adminUsers__backLink" href="/dashboard"><ArrowBackIcon fontSize="small" /></a>
           <h2>{t.adminUsers.title}</h2>
         </div>
 

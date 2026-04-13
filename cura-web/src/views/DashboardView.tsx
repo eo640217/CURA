@@ -52,7 +52,7 @@ export default function DashboardView() {
           <h1>Dashboard</h1>
           <ul className="breadcrumb">
             <li>
-              <Link to="/">Dashboard</Link>
+                <Link to="/dashboard">Dashboard</Link>
             </li>
             <li>
               <i className="bx bx-chevron-right" />

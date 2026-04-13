@@ -9,6 +9,7 @@ import FacilitiesView from "./views/FacilitiesView";
 import ResidentsDirectoryView from "./views/ResidentsDirectoryView";
 import UnitsView from "./views/UnitsView";
 import HoursView from "./views/HoursView";
+import HomeView from "./views/HomeView";
 
 import AdminView from "./views/AdminView";
 import AdminUsersView from "./views/AdminUsersView";
@@ -18,6 +19,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<HomeView />} />
         <Route path="/login" element={<LoginView />} />
 
         {/* ADMIN */}
@@ -50,7 +52,6 @@ export default function App() {
             </RequireAuth>
           }
         >
-          <Route path="/" element={<DashboardView />} />
           <Route path="/dashboard" element={<DashboardView />} />
           <Route path="/facilities" element={<FacilitiesView />} />
           <Route path="/residents/directory" element={<ResidentsDirectoryView />} />

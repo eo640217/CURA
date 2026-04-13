@@ -60,7 +60,7 @@ export default function AppShell() {
     <div className={`hub ${sidebarHidden ? "hub--sidebarHidden" : ""}`}>
       {/* SIDEBAR */}
       <aside id="sidebar" className={sidebarHidden ? "hide" : ""}>
-        <NavLink to="/" className="brand">
+        <NavLink to="/dashboard" className="brand">
           <img src={cura_logo} alt="Cura Logo" className="logo" />
         </NavLink>
 
