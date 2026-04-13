@@ -1,6 +1,17 @@
 server:
   port: 8080
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5433/cura
