@@ -42,6 +42,9 @@ public class SecurityConfig {
                 // Allow preflight
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
+                // Actuator health (used by Docker/k8s probes)
+                .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+
                 // Public auth
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                 // if you have other public auth endpoints, list them here:
