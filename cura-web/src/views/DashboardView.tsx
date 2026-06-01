@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { listRecentActivity, ActivityItem } from "../api/activity";
+import { useAuthState } from "../auth/useAuth";
+import { actionItems, worklets, quickActions } from "./homeData";
+import ActionStrip from "../components/ActionStrip";
+import WorkletCard from "../components/WorkletCard";
+import QuickAction from "../components/QuickAction";
 import "./DashboardView.scss";
 
 type LoadState =
@@ -9,107 +13,132 @@ type LoadState =
   | { status: "success"; data: ActivityItem[] }
   | { status: "error"; message: string };
 
-function fmtDate(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toISOString().slice(0, 10);
+function getGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
 }
 
-function statusClass(s: ActivityItem["status"]) {
+function getShift(): { label: string; variant: "day" | "evening" | "night" } {
+  const h = new Date().getHours();
+  if (h >= 8 && h < 16)  return { label: "Day Shift",     variant: "day"     };
+  if (h >= 16 && h < 24) return { label: "Evening Shift", variant: "evening" };
+  return                         { label: "Night Shift",   variant: "night"   };
+}
+
+function fmtDate(iso: string): string {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime())
+    ? iso
+    : d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+function statusVariant(s: ActivityItem["status"]) {
   if (s === "COMPLETED") return "completed";
-  if (s === "IN_REVIEW") return "process";
+  if (s === "IN_REVIEW")  return "process";
   return "pending";
 }
 
 function statusLabel(s: ActivityItem["status"]) {
-  if (s === "IN_REVIEW") return "In Review";
+  if (s === "IN_REVIEW")  return "In Review";
   if (s === "COMPLETED") return "Completed";
   return "Pending";
 }
 
-export default function DashboardView() {
-  const [state, setState] = useState<LoadState>({ status: "idle" });
+const TODAY = new Date().toLocaleDateString("en-GB", {
+  weekday: "long",
+  day:     "numeric",
+  month:   "long",
+  year:    "numeric",
+});
 
-  const load = async () => {
+export default function DashboardView() {
+  const { username } = useAuthState();
+  const [actState, setActState] = useState<LoadState>({ status: "idle" });
+  const shift = getShift();
+
+  const loadActivity = async () => {
     try {
-      setState({ status: "loading" });
+      setActState({ status: "loading" });
       const data = await listRecentActivity(10);
-      setState({ status: "success", data });
-    } catch (e: any) {
-      setState({ status: "error", message: e?.message || "Failed to load activity" });
+      setActState({ status: "success", data });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Failed to load activity";
+      setActState({ status: "error", message: msg });
     }
   };
 
   useEffect(() => {
-    load();
+    loadActivity();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <>
-      <div className="head-title">
-        <div className="left">
-          <h1>Dashboard</h1>
-          <ul className="breadcrumb">
-            <li>
-                <Link to="/dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <i className="bx bx-chevron-right" />
-            </li>
-            <li>
-              <span className="active">Home</span>
-            </li>
-          </ul>
+    <div className="dashboard">
+
+      {/* ── Greeting ──────────────────────────────────────────────────── */}
+      <section className="dashboard__greeting">
+        <div>
+          <h1 className="dashboard__greeting-title">
+            {getGreeting()}, {username ?? "there"}
+          </h1>
+          <p className="dashboard__greeting-sub">
+            Sunrise Care Home &nbsp;·&nbsp; {TODAY}
+          </p>
+        </div>
+        <span className={`dashboard__shift-badge dashboard__shift-badge--${shift.variant}`}>
+          {shift.label}
+        </span>
+      </section>
+
+      {/* ── Awaiting action ───────────────────────────────────────────── */}
+      <section className="dashboard__section">
+        <div className="dashboard__section-head">
+          <h2 className="dashboard__section-title">Awaiting your action</h2>
+          <span className="dashboard__count-badge" aria-label={`${actionItems.length} items`}>
+            {actionItems.length}
+          </span>
+        </div>
+        <ActionStrip items={actionItems} />
+      </section>
+
+      {/* ── Overview worklets ──────────────────────────────────────────── */}
+      <section className="dashboard__section">
+        <h2 className="dashboard__section-title">Overview</h2>
+        <div className="dashboard__worklets">
+          {worklets.map((w) => (
+            <WorkletCard key={w.id} data={w} />
+          ))}
+        </div>
+      </section>
+
+      {/* ── Quick actions ──────────────────────────────────────────────── */}
+      <section className="dashboard__section">
+        <h2 className="dashboard__section-title">Quick actions</h2>
+        <div className="dashboard__quick-actions">
+          {quickActions.map((qa) => (
+            <QuickAction key={qa.id} data={qa} />
+          ))}
+        </div>
+      </section>
+
+      {/* ── Recent activity ────────────────────────────────────────────── */}
+      <section className="dashboard__section">
+        <div className="dashboard__section-head">
+          <h2 className="dashboard__section-title">Recent activity</h2>
+          <button
+            type="button"
+            className="dashboard__refresh-btn"
+            onClick={loadActivity}
+            title="Refresh activity"
+          >
+            ↻ Refresh
+          </button>
         </div>
 
-        {/* <a className="btn-download" href="#" onClick={(e) => e.preventDefault()}>
-          <i className="bx bxs-cloud-download bx-fade-down-hover" />
-          <span className="text">CURA v1</span>
-        </a> */}
-      </div>
-
-      <ul className="box-info">
-        <li>
-          <i className="bx bxs-calendar-check" />
-          <span className="text">
-            <h3>12</h3>
-            <p>Open Tasks</p>
-          </span>
-        </li>
-        <li>
-          <i className="bx bxs-group" />
-          <span className="text">
-            <h3>284</h3>
-            <p>Residents</p>
-          </span>
-        </li>
-        <li>
-          <i className="bx bxs-dollar-circle" />
-          <span className="text">
-            <h3>38.5</h3>
-            <p>Hours This Week</p>
-          </span>
-        </li>
-      </ul>
-
-      <div className="table-data">
-        <div className="order">
-          <div className="head">
-            <h3>Recent Activity</h3>
-
-            {/* refresh button using your icon style */}
-            <i
-              className="bx bx-refresh"
-              title="Refresh"
-              role="button"
-              onClick={load}
-              style={{ cursor: "pointer" }}
-            />
-            <i className="bx bx-filter" />
-          </div>
-
-          <table>
+        <div className="dashboard__activity">
+          <table className="dashboard__table">
             <thead>
               <tr>
                 <th>Item</th>
@@ -117,41 +146,31 @@ export default function DashboardView() {
                 <th>Status</th>
               </tr>
             </thead>
-
             <tbody>
-              {state.status === "loading" && (
+              {actState.status === "loading" && (
                 <tr>
-                  <td colSpan={3}>
-                    <p style={{ opacity: 0.75 }}>Loading…</p>
+                  <td colSpan={3} className="dashboard__table-msg">Loading…</td>
+                </tr>
+              )}
+              {actState.status === "error" && (
+                <tr>
+                  <td colSpan={3} className="dashboard__table-msg dashboard__table-msg--error">
+                    {actState.message}
                   </td>
                 </tr>
               )}
-
-              {state.status === "error" && (
+              {actState.status === "success" && actState.data.length === 0 && (
                 <tr>
-                  <td colSpan={3}>
-                    <p style={{ color: "crimson" }}>Error: {state.message}</p>
-                  </td>
+                  <td colSpan={3} className="dashboard__table-msg">No recent activity.</td>
                 </tr>
               )}
-
-              {state.status === "success" && state.data.length === 0 && (
-                <tr>
-                  <td colSpan={3}>
-                    <p style={{ opacity: 0.75 }}>No recent activity.</p>
-                  </td>
-                </tr>
-              )}
-
-              {state.status === "success" &&
-                state.data.map((row) => (
+              {actState.status === "success" &&
+                actState.data.map((row) => (
                   <tr key={row.id}>
-                    <td>
-                      <p>{row.title}</p>
-                    </td>
+                    <td>{row.title}</td>
                     <td>{fmtDate(row.createdAt)}</td>
                     <td>
-                      <span className={`status ${statusClass(row.status)}`}>
+                      <span className={`dashboard__status dashboard__status--${statusVariant(row.status)}`}>
                         {statusLabel(row.status)}
                       </span>
                     </td>
@@ -160,34 +179,7 @@ export default function DashboardView() {
             </tbody>
           </table>
         </div>
-
-        <div className="todo">
-          <div className="head">
-            <h3>Todos</h3>
-            <i className="bx bx-plus icon" />
-            <i className="bx bx-filter" />
-          </div>
-
-          <ul className="todo-list">
-            <li className="completed">
-              <p>Review unit capacity</p>
-              <i className="bx bx-dots-vertical-rounded" />
-            </li>
-            <li className="completed">
-              <p>Check expiring documents</p>
-              <i className="bx bx-dots-vertical-rounded" />
-            </li>
-            <li className="not-completed">
-              <p>Follow up: incident #124</p>
-              <i className="bx bx-dots-vertical-rounded" />
-            </li>
-            <li className="not-completed">
-              <p>Submit hours for approval</p>
-              <i className="bx bx-dots-vertical-rounded" />
-            </li>
-          </ul>
-        </div>
-      </div>
-    </>
+      </section>
+    </div>
   );
 }

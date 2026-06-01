@@ -1,0 +1,84 @@
+.worklet-card {
+  background: var(--surface, #fff);
+  border: 0.5px solid var(--border-color, #dde3ec);
+  border-radius: var(--radius-worklet, 10px);
+  padding: 18px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 168px;
+  transition: border-color 0.15s;
+
+  &:hover { border-color: #b8c8e0; }
+
+  // ── Header row: icon + pill ─────────────────────────────────────────
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  &__icon-wrap {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--bg-page, #f0f2f5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--navy, #1e3a5f);
+    flex-shrink: 0;
+  }
+
+  &__pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+
+    &--green { background: #e5f7ed; color: #287a44; }
+    &--red   { background: #fde8e8; color: #c03838; }
+    &--amber { background: #fdf3e0; color: #a06000; }
+    &--blue  { background: #e8f0fb; color: #2060b0; }
+  }
+
+  // ── Body ────────────────────────────────────────────────────────────
+
+  &__stat {
+    font-family: var(--font-heading, "Fraunces", Georgia, serif);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--navy, #1e3a5f);
+    line-height: 1;
+  }
+
+  &__title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy, #1e3a5f);
+    margin-top: 2px;
+  }
+
+  &__sub {
+    font-size: 12px;
+    color: var(--text-muted, #6b7a8d);
+    line-height: 1.4;
+    flex: 1;
+    margin: 0;
+  }
+
+  &__link {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent-blue, #4a90d9);
+    text-decoration: none;
+    margin-top: 10px;
+    display: inline-block;
+    transition: color 0.15s;
+
+    &:hover { color: var(--navy, #1e3a5f); }
+  }
+}

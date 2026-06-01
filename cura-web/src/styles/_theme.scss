@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
 
 // Font
 $body-font: "Montserrat";
@@ -51,6 +52,23 @@ $gutters: 24px;
   --text-strong: #{$dark-gray};
   --border: rgba(0, 0, 0, 0.15);
   --card: #{$white};
+
+  // Sky & Linen design system
+  --font-heading: "Fraunces", Georgia, serif;
+  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+  --bg-page: #f0f2f5;
+  --navy: #1e3a5f;
+  --accent-blue: #4a90d9;
+  --border-color: #dde3ec;
+  --surface: #ffffff;
+  --text-muted: #6b7a8d;
+  --text-primary: #1e3a5f;
+  --urgency-red: #e05050;
+  --urgency-amber: #e8a032;
+  --urgency-green: #3ab06a;
+  --urgency-blue: #4a90d9;
+  --radius-card: 12px;
+  --radius-worklet: 10px;
 
   --poppins: "Poppins", sans-serif;
   --lato: "Lato", sans-serif;
