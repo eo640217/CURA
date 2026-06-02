@@ -1,0 +1,128 @@
+.dwc {
+  background: var(--cura-surface, #fff);
+  border: 0.5px solid var(--cura-border, #dde3ec);
+  border-radius: var(--cura-radius-md, 10px);
+  position: relative;
+  transition: border-color var(--cura-transition-fast, 120ms ease),
+              transform var(--cura-transition-fast, 120ms ease);
+
+  &:not(.dwc--edit):hover {
+    border-color: var(--cura-blue-mid, #c0d4ec);
+    transform: translateY(-1px);
+  }
+
+  &--edit {
+    border: 1.5px dashed var(--cura-blue, #4a90d9);
+    background: #fafcff;
+    transition: border-color var(--cura-transition-fast, 120ms ease);
+  }
+
+  // Drag handle — top-left
+  &__drag-handle {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    background: rgba(30, 58, 95, 0.06);
+    border: none;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cura-text-muted, #7a8fa6);
+    z-index: 2;
+    transition: background 0.15s;
+
+    &:hover { background: rgba(30, 58, 95, 0.12); }
+    &:active { cursor: grabbing; }
+  }
+
+  // Red × remove — top-right
+  &__remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--cura-red, #e05050);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: opacity 0.15s;
+
+    &:hover { opacity: 0.8; }
+  }
+
+  // Locks pointer events on tile body during edit mode
+  &__content-locked {
+    pointer-events: none;
+  }
+
+  // ── Widget body ─────────────────────────────────────────────────────────────
+  // Used by widgetRegistry WidgetTile components
+
+  &__body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    border-radius: var(--cura-radius-md, 10px);
+
+    &:hover {
+      background: #fafbfd;
+    }
+  }
+
+  .dwc--edit &__body {
+    padding-top: 28px; // push content below drag handle
+    cursor: default;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  &__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--cura-radius-sm, 8px);
+    background: var(--cura-blue-light, #eef4fb);
+    color: var(--cura-navy, #1e3a5f);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__stat {
+    font-family: var(--font-heading, 'Fraunces', Georgia, serif);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--cura-navy, #1e3a5f);
+    line-height: 1;
+  }
+
+  &__label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--cura-text-secondary, #5a7a9a);
+  }
+
+  &__link {
+    font-size: 12px;
+    color: var(--cura-blue, #4a90d9);
+    font-weight: 600;
+    margin-top: 4px;
+  }
+}

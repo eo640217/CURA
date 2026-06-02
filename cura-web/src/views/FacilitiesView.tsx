@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Facility, getFacility, listFacilities, patchFacility } from "../api/facilities";
 import { UnitsPanel } from "../components/UnitsPanel";
 import { getAuth } from "../auth/auth";
@@ -6,7 +7,8 @@ import { apiErrorMessage } from "../api/api-error";
 import CreateFacilityModal from "../components/CreateFacilityModal";
 import lexicon from "../assets/lexicon";
 import "./FacilitiesView.scss";
-import CachedIcon from '@mui/icons-material/Cached';
+import CachedIcon from "@mui/icons-material/Cached";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 type LoadState<T> =
   | { status: "idle" }
@@ -16,23 +18,19 @@ type LoadState<T> =
 
 export default function FacilitiesView() {
   const t = lexicon;
-
   const auth = getAuth();
   const isAdmin = auth.role === "ADMIN";
+  const reduced = useReducedMotion();
+
   const [createOpen, setCreateOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [facilitiesState, setFacilitiesState] = useState<LoadState<Facility[]>>({ status: "idle" });
   const [selectedFacilityId, setSelectedFacilityId] = useState<number | null>(null);
   const [facilityState, setFacilityState] = useState<LoadState<Facility>>({ status: "idle" });
 
-  // --- edit facility UI state ---
   const [editing, setEditing] = useState(false);
-  const [editForm, setEditForm] = useState<{ name: string; address: string; phone: string; email: string }>({
-    name: "",
-    address: "",
-    phone: "",
-    email: "",
-  });
+  const [editForm, setEditForm] = useState({ name: "", address: "", phone: "", email: "" });
   const [saving, setSaving] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
 
@@ -40,6 +38,12 @@ export default function FacilitiesView() {
     () => (facilitiesState.status === "success" ? facilitiesState.data : []),
     [facilitiesState]
   );
+
+  const filteredFacilities = useMemo(() => {
+    if (!searchQuery.trim()) return facilities;
+    const q = searchQuery.toLowerCase();
+    return facilities.filter((f) => f.name?.toLowerCase().includes(q));
+  }, [facilities, searchQuery]);
 
   const loadFacilities = useCallback(async () => {
     try {
@@ -67,8 +71,6 @@ export default function FacilitiesView() {
       setFacilityState({ status: "loading" });
       const data = await getFacility(id);
       setFacilityState({ status: "success", data });
-
-      // seed edit form any time a new facility loads
       setEditing(false);
       setEditError(null);
       setEditForm({
@@ -94,7 +96,6 @@ export default function FacilitiesView() {
   function startEdit() {
     if (!isAdmin) return;
     if (facilityState.status !== "success") return;
-
     const f = facilityState.data;
     setEditError(null);
     setEditing(true);
@@ -125,7 +126,6 @@ export default function FacilitiesView() {
   async function saveEdit() {
     if (!isAdmin) return;
     if (facilityState.status !== "success") return;
-
     const current = facilityState.data;
 
     const next = {
@@ -140,7 +140,6 @@ export default function FacilitiesView() {
       return;
     }
 
-    // patch only changed fields
     const payload: any = {};
     if (next.name !== (current.name ?? "")) payload.name = next.name;
     if (next.address !== (current.address ?? "")) payload.address = next.address;
@@ -157,11 +156,7 @@ export default function FacilitiesView() {
 
     try {
       const updated = await patchFacility(current.id, payload);
-
-      // update right panel
       setFacilityState({ status: "success", data: updated });
-
-      // update left list (so name/address immediately reflect)
       setFacilitiesState((prev) => {
         if (prev.status !== "success") return prev;
         return {
@@ -169,7 +164,6 @@ export default function FacilitiesView() {
           data: prev.data.map((f) => (f.id === updated.id ? { ...f, ...updated } : f)),
         };
       });
-
       setEditing(false);
     } catch (e: any) {
       setEditError(apiErrorMessage(e));
@@ -179,156 +173,295 @@ export default function FacilitiesView() {
   }
 
   return (
-    <div className="facilities__container">
-      <div className="facilities__top">
-        <div>
-          <h1 className="facilities__appTitle">{t.facilities.appTitle}</h1>
-          <p className="facilities__subtitle">
-            {auth.username && (
-              <>
-                {t.facilities.signedInAs} <b>{auth.username}</b> ({auth.role ?? "UNKNOWN"})
-              </>
-            )}
+    <div className="fv">
+      {/* ── Page header ──────────────────────────────────────────────────────── */}
+      <div className="fv__header">
+        <div className="fv__headerLeft">
+          <h1 className="fv__title">{t.facilities.facilitiesTitle}</h1>
+          <p className="fv__subtitle">
+            {facilities.length} {t.facilities.facilitiesTitle.toLowerCase()}
           </p>
         </div>
-
-        <div className="facilities__topActions">
-          <button onClick={loadFacilities} type="button" aria-label={t.common.refresh}>
-            <CachedIcon fontSize="small" />
+        <div className="fv__headerRight">
+          <button
+            className="fv__refreshBtn"
+            onClick={loadFacilities}
+            type="button"
+            aria-label={t.common.refresh}
+          >
+            <CachedIcon sx={{ fontSize: 16 }} />
           </button>
+          {isAdmin && (
+            <button
+              className="fv__newBtn"
+              onClick={() => setCreateOpen(true)}
+              type="button"
+            >
+              {t.facilities.new}
+            </button>
+          )}
         </div>
       </div>
 
-      <div className="facilities__grid">
-        <div className="card facilities__left">
-          <div className="facilities__leftHeader">
-            <h2 className="facilities__panelTitle">{t.facilities.facilitiesTitle}</h2>
+      {/* ── Body: left list + right detail ───────────────────────────────────── */}
+      <div className="fv__body">
 
-            <div className="facilities__leftActions">
-              {isAdmin && <span className="facilities__adminBadge">{t.facilities.adminBadge}</span>}
-              {isAdmin && <button onClick={() => setCreateOpen(true)}>{t.facilities.new}</button>}
-            </div>
+        {/* LEFT: facility list */}
+        <div className="fv__left">
+          <div className="fv__leftHeader">
+            <input
+              className="fv__search"
+              type="search"
+              placeholder={`${t.common.search}…`}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
 
-          {facilitiesState.status === "loading" && <div className="facilities__status">{t.common.loading}</div>}
+          <div className="fv__facilityList">
+            {facilitiesState.status === "loading" && (
+              <div className="fv__status">{t.common.loading}</div>
+            )}
 
-          {facilitiesState.status === "error" && (
-            <div className="facilities__error">
-              {facilitiesState.message}
-              <div className="facilities__tryAgain">
-                <button onClick={loadFacilities}>{t.common.tryAgain}</button>
+            {facilitiesState.status === "error" && (
+              <div className="fv__listError">
+                <div className="fv__listErrorMsg">{facilitiesState.message}</div>
+                <button className="fv__tryAgainBtn" onClick={loadFacilities} type="button">
+                  {t.common.tryAgain}
+                </button>
               </div>
-            </div>
-          )}
+            )}
 
-          {facilitiesState.status === "success" && facilities.length === 0 && (
-            <div className="facilities__empty">
-              <div>{t.facilities.noFacilities}</div>
-              {isAdmin ? (
-                <div className="facilities__emptyHint">{t.facilities.adminNextStep}</div>
-              ) : (
-                <div className="facilities__emptyHint">{t.facilities.staffAskAdmin}</div>
+            {facilitiesState.status === "success" && facilities.length === 0 && (
+              <div className="fv__empty">
+                <div className="fv__emptyMsg">{t.facilities.noFacilities}</div>
+                <div className="fv__emptyHint">
+                  {isAdmin ? t.facilities.adminNextStep : t.facilities.staffAskAdmin}
+                </div>
+              </div>
+            )}
+
+            {facilitiesState.status === "success" &&
+              facilities.length > 0 &&
+              filteredFacilities.length === 0 && (
+                <div className="fv__empty">
+                  <div className="fv__emptyMsg">{t.common.noResults}</div>
+                </div>
               )}
-            </div>
-          )}
 
-          {facilities.map((f) => (
-            <button
-              key={f.id}
-              className={`facilities__facilityBtn ${selectedFacilityId === f.id ? "isActive" : ""}`}
-              onClick={() => setSelectedFacilityId(f.id)}
-            >
-              <div className="facilities__facilityName">{f.name}</div>
-              <div className="facilities__facilityAddr">{f.address}</div>
-            </button>
-          ))}
+            <AnimatePresence>
+              {filteredFacilities.map((f, idx) => (
+                <motion.button
+                  key={f.id}
+                  type="button"
+                  className={`fv__facilityItem${selectedFacilityId === f.id ? " fv__facilityItem--active" : ""}`}
+                  onClick={() => setSelectedFacilityId(f.id)}
+                  initial={reduced ? false : { opacity: 0, x: -4 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={reduced ? undefined : { opacity: 0, x: 4 }}
+                  transition={{ duration: 0.15, delay: reduced ? 0 : idx * 0.04 }}
+                >
+                  <span className="fv__facilityItemName">{f.name}</span>
+                  <span className="fv__facilityItemAddr">{f.address}</span>
+                </motion.button>
+              ))}
+            </AnimatePresence>
+          </div>
         </div>
 
-        <div className="card facilities__right">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
-            <h2 className="facilities__panelTitle">{t.facilities.selectedFacilityTitle}</h2>
+        {/* RIGHT: facility detail + units + residents */}
+        <div className="fv__right">
+          {selectedFacilityId == null && facilityState.status === "idle" && (
+            <div className="fv__selectPrompt">{t.facilities.selectFacility}</div>
+          )}
 
-            {isAdmin && facilityState.status === "success" && !editing && (
-              <button onClick={startEdit}>{t.facilities.edit}</button>
+          <AnimatePresence mode="wait">
+            {facilityState.status === "loading" && (
+              <motion.div
+                key="fv-loading"
+                className="fv__detailLoading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
+                {t.common.loading}
+              </motion.div>
             )}
-          </div>
 
-          {selectedFacilityId == null && <div className="facilities__status">{t.facilities.selectFacility}</div>}
-          {facilityState.status === "loading" && <div className="facilities__status">{t.common.loading}</div>}
+            {facilityState.status === "error" && (
+              <motion.div
+                key="fv-error"
+                className="fv__detailError"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
+                <div>{facilityState.message}</div>
+                {selectedFacilityId != null && (
+                  <button
+                    className="fv__tryAgainBtn"
+                    onClick={() => loadFacility(selectedFacilityId)}
+                    type="button"
+                  >
+                    {t.common.tryAgain}
+                  </button>
+                )}
+              </motion.div>
+            )}
 
-          {facilityState.status === "error" && (
-            <div className="facilities__error">
-              {facilityState.message}
-              {selectedFacilityId != null && (
-                <div className="facilities__tryAgain">
-                  <button onClick={() => loadFacility(selectedFacilityId)}>{t.common.tryAgain}</button>
+            {facilityState.status === "success" && (
+              <motion.div
+                key={facilityState.data.id}
+                className="fv__detailContent"
+                initial={reduced ? false : { opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduced ? undefined : { opacity: 0, y: -4 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+              >
+                {/* ── Facility detail card ──────────────────────────────── */}
+                <div className="fv__detailCard">
+                  <div className="fv__detailHeader">
+                    <h2 className="fv__detailName">{facilityState.data.name}</h2>
+                    <div className="fv__detailHeaderRight">
+                      {editing && (
+                        <span className="fv__unsavedDot" title="Unsaved changes" />
+                      )}
+                      {isAdmin && !editing && (
+                        <button
+                          className="fv__editBtn"
+                          onClick={startEdit}
+                          type="button"
+                        >
+                          <EditOutlinedIcon sx={{ fontSize: 13 }} />
+                          {t.facilities.edit}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* View mode — info grid */}
+                  {!editing && (
+                    <div className="fv__infoGrid">
+                      <div className="fv__infoField">
+                        <div className="fv__infoLabel">Address</div>
+                        <div className="fv__infoValue">
+                          {facilityState.data.address || "—"}
+                        </div>
+                      </div>
+                      <div className="fv__infoField">
+                        <div className="fv__infoLabel">Phone</div>
+                        <div className="fv__infoValue">
+                          {(facilityState.data as any).phone || "—"}
+                        </div>
+                      </div>
+                      <div className="fv__infoField">
+                        <div className="fv__infoLabel">Email</div>
+                        <div className="fv__infoValue">
+                          {(facilityState.data as any).email || "—"}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Edit mode — slide-down form */}
+                  <AnimatePresence>
+                    {editing && (
+                      <motion.div
+                        className="fv__editForm"
+                        initial={reduced ? false : { height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={reduced ? undefined : { height: 0, opacity: 0 }}
+                        transition={{ duration: 0.22, ease: "easeOut" }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <div className="fv__editFormInner">
+                          <div className="fv__editGrid">
+                            <div className="fv__editField">
+                              <label className="fv__editLabel">Name</label>
+                              <input
+                                className="fv__editInput"
+                                value={editForm.name}
+                                onChange={(e) =>
+                                  setEditForm((p) => ({ ...p, name: e.target.value }))
+                                }
+                              />
+                            </div>
+                            <div className="fv__editField">
+                              <label className="fv__editLabel">Address</label>
+                              <input
+                                className="fv__editInput"
+                                value={editForm.address}
+                                onChange={(e) =>
+                                  setEditForm((p) => ({ ...p, address: e.target.value }))
+                                }
+                              />
+                            </div>
+                            <div className="fv__editField">
+                              <label className="fv__editLabel">Phone</label>
+                              <input
+                                className="fv__editInput"
+                                value={editForm.phone}
+                                onChange={(e) =>
+                                  setEditForm((p) => ({ ...p, phone: e.target.value }))
+                                }
+                              />
+                            </div>
+                            <div className="fv__editField">
+                              <label className="fv__editLabel">Email</label>
+                              <input
+                                className="fv__editInput"
+                                value={editForm.email}
+                                onChange={(e) =>
+                                  setEditForm((p) => ({ ...p, email: e.target.value }))
+                                }
+                              />
+                            </div>
+                          </div>
+
+                          {editError && (
+                            <div className="fv__editError">{editError}</div>
+                          )}
+
+                          <div className="fv__editActions">
+                            <button
+                              className="fv__saveBtn"
+                              onClick={saveEdit}
+                              disabled={saving}
+                              type="button"
+                            >
+                              {saving ? t.common.loading : t.facilities.save}
+                            </button>
+                            <button
+                              className="fv__cancelBtn"
+                              onClick={cancelEdit}
+                              disabled={saving}
+                              type="button"
+                            >
+                              {t.common.cancel}
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              )}
-            </div>
-          )}
 
-          {facilityState.status === "success" && (
-            <>
-              {!editing ? (
-                <div className="facilities__selected">
-                  <div className="facilities__selectedName">{facilityState.data.name}</div>
-                  <div className="facilities__selectedAddr">{facilityState.data.address}</div>
-                </div>
-              ) : (
-                <div className="facilities__editCard" style={{ display: "grid", gap: 10, marginBottom: 14 }}>
-                  <div style={{ display: "grid", gap: 6 }}>
-                    <label>Name</label>
-                    <input
-                      value={editForm.name}
-                      onChange={(e) => setEditForm((p) => ({ ...p, name: e.target.value }))}
-                    />
-                  </div>
-
-                  <div style={{ display: "grid", gap: 6 }}>
-                    <label>Address</label>
-                    <input
-                      value={editForm.address}
-                      onChange={(e) => setEditForm((p) => ({ ...p, address: e.target.value }))}
-                    />
-                  </div>
-
-                  <div style={{ display: "grid", gap: 6 }}>
-                    <label>Phone</label>
-                    <input
-                      value={editForm.phone}
-                      onChange={(e) => setEditForm((p) => ({ ...p, phone: e.target.value }))}
-                    />
-                  </div>
-
-                  <div style={{ display: "grid", gap: 6 }}>
-                    <label>Email</label>
-                    <input
-                      value={editForm.email}
-                      onChange={(e) => setEditForm((p) => ({ ...p, email: e.target.value }))}
-                    />
-                  </div>
-
-                  {editError && <div className="facilities__error">{editError}</div>}
-
-                  <div style={{ display: "flex", gap: 10 }}>
-                    <button onClick={saveEdit} disabled={saving}>
-                      {saving ? t.common.loading : t.facilities.save}
-                    </button>
-                    <button onClick={cancelEdit} disabled={saving}>
-                      {t.common.cancel}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <UnitsPanel facilityId={facilityState.data.id} />
-            </>
-          )}
+                {/* ── Units + Residents ─────────────────────────────────── */}
+                <UnitsPanel facilityId={facilityState.data.id} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
       {isAdmin && (
-        <CreateFacilityModal open={createOpen} onClose={() => setCreateOpen(false)} onCreated={() => loadFacilities()} />
+        <CreateFacilityModal
+          open={createOpen}
+          onClose={() => setCreateOpen(false)}
+          onCreated={() => loadFacilities()}
+        />
       )}
     </div>
   );

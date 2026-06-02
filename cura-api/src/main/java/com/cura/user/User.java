@@ -1,5 +1,6 @@
 package com.cura.user;
 
+import com.cura.organization.Organization;
 import jakarta.persistence.*;
 
 @Entity
@@ -19,6 +20,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private UserRole role;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "organization_id", nullable = false)
+    private Organization organization;
 
     // getters & setters
 
@@ -49,4 +54,8 @@ public class User {
     public void setRole(UserRole role) {
         this.role = role;
     }
+
+    public Organization getOrganization() { return organization; }
+
+    public void setOrganization(Organization organization) { this.organization = organization; }
 }

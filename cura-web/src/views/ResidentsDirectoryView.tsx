@@ -3,9 +3,10 @@ import { useSearchParams } from "react-router-dom";
 import { apiErrorMessage } from "../api/api-error";
 import { listResidentDirectory, ResidentDirectoryItem } from "../api/api-resident-directory";
 import ResidentDetailsModal from "../components/ResidentDetailsModal";
+import CreateResidentModal from "../components/CreateResidentModal";
 import lexicon from "../assets/lexicon";
 import "./ResidentsDirectoryView.scss";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 
 
 export default function ResidentsDirectoryView() {
@@ -26,6 +27,8 @@ export default function ResidentsDirectoryView() {
 
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [detailsId, setDetailsId] = useState<number | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   function setParam(updates: Record<string, string | number | undefined>) {
     setSearchParams((prev) => {
@@ -68,7 +71,7 @@ export default function ResidentsDirectoryView() {
     const tmr = setTimeout(() => load(), 250);
     return () => clearTimeout(tmr);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [q, page, size]);
+  }, [q, page, size, refreshKey]);
 
   function openDetails(id: number) {
     setDetailsId(id);
@@ -82,8 +85,15 @@ export default function ResidentsDirectoryView() {
   return (
     <div className="resDir">
       <div className="resDir__header">
-        {/* <a className="resDir__backLink" href="/"><ArrowBackIcon fontSize="small" /></a> */}
         <h2>{t.residentsDirectory.title}</h2>
+        <button
+          type="button"
+          className="resDir__newBtn"
+          onClick={() => setCreateOpen(true)}
+        >
+          <PersonAddAltOutlinedIcon sx={{ fontSize: 15 }} />
+          New Resident
+        </button>
       </div>
 
       <div className="resDir__search">
@@ -156,6 +166,15 @@ export default function ResidentsDirectoryView() {
       </div>
 
       <ResidentDetailsModal open={detailsOpen} residentId={detailsId} onClose={closeDetails} />
+
+      <CreateResidentModal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreated={() => {
+          setCreateOpen(false);
+          setRefreshKey((k) => k + 1);
+        }}
+      />
     </div>
   );
 }

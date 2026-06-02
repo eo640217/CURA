@@ -26,7 +26,7 @@ export default function WorkletCard({ data }: WorkletCardProps) {
       <p className="worklet-card__sub">{data.subLabel}</p>
 
       <Link to={data.route} className="worklet-card__link">
-        View more →
+        View more
       </Link>
     </article>
   );

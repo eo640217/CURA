@@ -1,67 +1,28 @@
-@use "../styles/theme";
+@use '../styles/theme';
 
-// ── Global resets (scoped to app shell) ─────────────────────────────────────
-* { margin: 0; padding: 0; box-sizing: border-box; }
+// Global resets for app shell
+*, *::before, *::after { box-sizing: border-box; }
 a { text-decoration: none; }
 li { list-style: none; }
 html { overflow-x: hidden; }
 
 body {
-  background: var(--bg-page, #f0f2f5);
-  font-family: var(--font-body, "Plus Jakarta Sans", system-ui, sans-serif);
+  background: var(--cura-bg, #f0f2f5);
+  font-family: var(--font-body, 'Plus Jakarta Sans', system-ui, sans-serif);
   font-size: 14px;
-  color: var(--navy, #1e3a5f);
+  color: var(--cura-text-primary, #1e3a5f);
   overflow-x: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 body.dark {
-  --bg-page:    #060714;
-  --surface:    #0c0c1e;
-  --border-color: rgba(255,255,255,0.08);
-  --navy:       #e8edf5;
-  --text-muted: #8892a4;
-  --text-primary: #e8edf5;
+  --cura-bg: #060714;
+  --cura-surface: #0c0c1e;
+  --cura-border: rgba(255, 255, 255, 0.08);
+  --cura-navy: #e8edf5;
+  --cura-text-primary: #e8edf5;
+  --cura-text-muted: #8892a4;
   background: #060714;
   color: #e8edf5;
-
-  .sidebar,
-  .app-topbar {
-    background: #0c0c1e;
-    border-color: rgba(255,255,255,0.08);
-  }
-}
-
-// ── Layout skeleton ─────────────────────────────────────────────────────────
-
-.hub {
-  width: 100%;
-  min-height: 100vh;
-}
-
-.app-content {
-  margin-left: 56px;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.app-main {
-  flex: 1;
-  padding: 28px 28px 48px;
-  overflow-y: auto;
-  max-height: calc(100vh - 56px);
-}
-
-// ── Mobile: sidebar becomes bottom nav ──────────────────────────────────────
-
-@media (max-width: 768px) {
-  .app-content {
-    margin-left: 0;
-    padding-bottom: 56px;  // clear the fixed bottom nav
-  }
-
-  .app-main {
-    padding: 20px 16px 24px;
-    max-height: none;
-  }
 }

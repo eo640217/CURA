@@ -1,0 +1,197 @@
+.cura-sidebar {
+  width: var(--cura-sidebar-width, 56px);
+  flex-shrink: 0;
+  height: 100vh;
+  background: var(--cura-surface, #fff);
+  border-right: 0.5px solid var(--cura-border, #dde3ec);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+
+  // ── Brand ─────────────────────────────────────────────────────────────────
+
+  &__brand {
+    height: 56px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 0.5px solid var(--cura-border, #dde3ec);
+
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+  }
+
+  &__logo {
+    width: 32px;
+    height: 32px;
+    background: var(--cura-navy, #1e3a5f);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+
+  // ── Nav ───────────────────────────────────────────────────────────────────
+
+  &__nav {
+    flex: 1;
+    padding: 10px 0;
+    list-style: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__nav-bottom {
+    padding: 10px 0;
+    list-style: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-top: 0.5px solid var(--cura-border, #dde3ec);
+  }
+
+  &__divider {
+    height: 0.5px;
+    background: var(--cura-border, #dde3ec);
+    margin: 4px 8px;
+  }
+
+  // ── Items ─────────────────────────────────────────────────────────────────
+
+  &__item {
+    position: relative;
+
+    a,
+    button {
+      width: 100%;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cura-text-muted, #7a8fa6);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color var(--cura-transition-fast, 120ms ease),
+                  background-color var(--cura-transition-fast, 120ms ease);
+      position: relative;
+
+      &:hover {
+        color: var(--cura-blue, #4a90d9);
+        background-color: var(--cura-blue-light, #eef4fb);
+      }
+    }
+
+    // Accent bar: always present, animated via scaleY
+    a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 3px;
+      background: var(--cura-navy, #1e3a5f);
+      border-radius: 0 2px 2px 0;
+      transform: scaleY(0);
+      transform-origin: center;
+      transition: transform var(--cura-transition-base, 200ms ease);
+    }
+
+    a.active {
+      color: var(--cura-navy, #1e3a5f);
+      background-color: var(--cura-blue-light, #eef4fb);
+
+      &::before { transform: scaleY(1); }
+    }
+  }
+
+  &__logout {
+    color: var(--cura-red, #e05050) !important;
+    &:hover {
+      color: #c03838 !important;
+      background: #fff0f0 !important;
+    }
+  }
+}
+
+// ── Mobile: bottom nav ────────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  .cura-sidebar {
+    width: 100%;
+    height: 56px;
+    flex-direction: row;
+    border-right: none;
+    border-top: 0.5px solid var(--cura-border, #dde3ec);
+
+    &__brand { display: none; }
+    &__divider { display: none; }
+
+    &__nav {
+      flex: 1;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    &__nav-bottom {
+      flex-direction: row;
+      align-items: center;
+      padding: 0;
+      border-top: none;
+      border-left: 0.5px solid var(--cura-border, #dde3ec);
+      gap: 0;
+    }
+
+    &__item {
+      flex: 1;
+
+      a,
+      button {
+        height: 56px;
+        width: 100%;
+      }
+
+      a::before {
+        top: 0;
+        bottom: auto;
+        left: 50%;
+        width: 24px;
+        height: 3px;
+        border-radius: 0 0 2px 2px;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform var(--cura-transition-base, 200ms ease);
+      }
+
+      a.active::before { transform: scaleX(1); }
+    }
+  }
+}
+
+body.dark .cura-sidebar {
+  background: #0c0c1e;
+  border-color: rgba(255, 255, 255, 0.08);
+}

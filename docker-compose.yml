@@ -23,9 +23,9 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://cura-postgres:5432/cura
+      SPRING_DATASOURCE_URL: jdbc:postgresql://cura.cubosq2y43fj.us-east-1.rds.amazonaws.com:5432/cura
       SPRING_DATASOURCE_USERNAME: eman
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_PASSWORD: ${AWS_RDS_DB_PASSWORD}
     depends_on:
       cura-postgres:
         condition: service_healthy
@@ -35,6 +35,11 @@ services:
       timeout: 5s
       retries: 5
       start_period: 45s
+    aws:
+      access_key_id: ${AWS_ACCESS_KEY_ID}
+      secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+      s3:
+        bucket_name: ${AWS_S3_BUCKET_NAME}
 
 volumes:
   cura_pgdata:

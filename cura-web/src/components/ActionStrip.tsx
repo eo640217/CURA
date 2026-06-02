@@ -29,7 +29,7 @@ export default function ActionStrip({ items }: ActionStripProps) {
               {URGENCY_LABEL[item.urgency]}
             </span>
             <button type="button" className="action-strip__review">
-              Review →
+              Review
             </button>
           </div>
         </article>

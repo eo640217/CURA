@@ -1,4 +1,4 @@
-.dashboard {
+.dash {
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -14,34 +14,34 @@
   }
 
   &__greeting-title {
-    font-family: var(--font-heading, "Fraunces", Georgia, serif);
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--navy, #1e3a5f);
+    font-family: var(--font-heading, 'Fraunces', Georgia, serif);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--cura-navy, #1e3a5f);
     line-height: 1.2;
     margin: 0;
   }
 
   &__greeting-sub {
     font-size: 13px;
-    color: var(--text-muted, #6b7a8d);
+    color: var(--cura-text-muted, #7a8fa6);
     margin: 4px 0 0;
   }
 
   &__shift-badge {
     font-size: 12px;
     font-weight: 600;
-    padding: 5px 13px;
+    padding: 5px 14px;
     border-radius: 20px;
     white-space: nowrap;
     align-self: center;
 
-    &--day     { background: #e5f7ed; color: #287a44; }
-    &--evening { background: #fdf3e0; color: #a06000; }
-    &--night   { background: #eaecf5; color: var(--navy, #1e3a5f); }
+    &--day     { background: var(--cura-green-bg, #e6f5ec); color: var(--cura-green-text, #1a6b3a); }
+    &--evening { background: var(--cura-amber-bg, #fef3e0); color: var(--cura-amber-text, #7a4800); }
+    &--night   { background: var(--cura-blue-light, #eef4fb); color: var(--cura-navy, #1e3a5f); }
   }
 
-  // ── Section layout ────────────────────────────────────────────────────────
+  // ── Sections ─────────────────────────────────────────────────────────────
 
   &__section {
     display: flex;
@@ -58,7 +58,7 @@
   &__section-title {
     font-size: 15px;
     font-weight: 600;
-    color: var(--navy, #1e3a5f);
+    color: var(--cura-navy, #1e3a5f);
     margin: 0;
   }
 
@@ -66,7 +66,7 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: var(--navy, #1e3a5f);
+    background: var(--cura-navy, #1e3a5f);
     color: #fff;
     font-size: 11px;
     font-weight: 700;
@@ -76,29 +76,188 @@
     flex-shrink: 0;
   }
 
-  // ── Worklets grid ─────────────────────────────────────────────────────────
+  // ── Action strip ──────────────────────────────────────────────────────────
+
+  &__action-strip {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__action-card {
+    background: var(--cura-surface, #fff);
+    border: 0.5px solid var(--cura-border, #dde3ec);
+    border-radius: var(--cura-radius-md, 10px);
+    padding: 14px 16px;
+    min-width: 220px;
+    max-width: 240px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    &--urgent  { border-left: 3px solid var(--cura-red, #e05050); }
+    &--monitor { border-left: 3px solid var(--cura-amber, #e8a032); }
+    &--info    { border-left: 3px solid var(--cura-blue, #4a90d9); }
+    &--stable  { border-left: 3px solid var(--cura-green, #3ab06a); }
+  }
+
+  &__action-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cura-navy, #1e3a5f);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  &__action-detail {
+    font-size: 12px;
+    color: var(--cura-text-muted, #7a8fa6);
+    margin: 0;
+  }
+
+  &__action-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+
+  &__action-review {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--cura-blue, #4a90d9);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    transition: opacity 0.15s;
+    &:hover { opacity: 0.7; }
+  }
+
+  // ── Worklets ──────────────────────────────────────────────────────────────
 
   &__worklets {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
+    gap: 12px;
   }
 
-  // ── Quick actions row ─────────────────────────────────────────────────────
+  &__worklet {
+    background: var(--cura-surface, #fff);
+    border: 0.5px solid var(--cura-border, #dde3ec);
+    border-radius: var(--cura-radius-md, 10px);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+
+    &:hover {
+      border-color: var(--cura-blue-mid, #c0d4ec);
+      background: #fafbfd;
+    }
+  }
+
+  &__worklet-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  &__worklet-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--cura-radius-sm, 8px);
+    background: var(--cura-blue-light, #eef4fb);
+    color: var(--cura-navy, #1e3a5f);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__worklet-stat {
+    font-family: var(--font-heading, 'Fraunces', Georgia, serif);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--cura-navy, #1e3a5f);
+    line-height: 1;
+  }
+
+  &__worklet-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--cura-text-secondary, #5a7a9a);
+  }
+
+  &__worklet-link {
+    font-size: 12px;
+    color: var(--cura-blue, #4a90d9);
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  // ── Quick actions ─────────────────────────────────────────────────────────
 
   &__quick-actions {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
   }
 
-  // ── Recent activity table ─────────────────────────────────────────────────
+  &__qa {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    background: var(--cura-surface, #fff);
+    border: 0.5px solid var(--cura-border, #dde3ec);
+    border-radius: var(--cura-radius-md, 10px);
+    cursor: pointer;
+    flex: 1;
+    min-width: 100px;
+    font-family: inherit;
+    transition: border-color 0.15s, background 0.15s;
+
+    &:hover {
+      border-color: var(--cura-blue-mid, #c0d4ec);
+      background: var(--cura-blue-light, #eef4fb);
+    }
+  }
+
+  &__qa-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--cura-radius-sm, 8px);
+    background: var(--cura-blue-light, #eef4fb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cura-navy, #1e3a5f);
+  }
+
+  &__qa-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--cura-navy, #1e3a5f);
+    text-align: center;
+  }
+
+  // ── Recent activity ───────────────────────────────────────────────────────
 
   &__refresh-btn {
     margin-left: auto;
     font-size: 12px;
     font-weight: 500;
-    color: var(--accent-blue, #4a90d9);
+    color: var(--cura-blue, #4a90d9);
     background: transparent;
     border: none;
     cursor: pointer;
@@ -106,14 +265,13 @@
     border-radius: 6px;
     font-family: inherit;
     transition: background 0.15s;
-
-    &:hover { background: #e8f0fb; }
+    &:hover { background: var(--cura-blue-light, #eef4fb); }
   }
 
   &__activity {
-    background: var(--surface, #fff);
-    border: 0.5px solid var(--border-color, #dde3ec);
-    border-radius: var(--radius-card, 12px);
+    background: var(--cura-surface, #fff);
+    border: 0.5px solid var(--cura-border, #dde3ec);
+    border-radius: var(--cura-radius-lg, 12px);
     overflow: hidden;
   }
 
@@ -125,57 +283,136 @@
       padding: 11px 16px;
       font-size: 12px;
       font-weight: 600;
-      color: var(--text-muted, #6b7a8d);
+      color: var(--cura-text-muted, #7a8fa6);
       text-align: left;
-      background: var(--bg-page, #f8f9fb);
-      border-bottom: 0.5px solid var(--border-color, #dde3ec);
+      background: #f8f9fb;
+      border-bottom: 0.5px solid var(--cura-border, #dde3ec);
     }
 
     td {
       padding: 12px 16px;
       font-size: 13px;
-      color: var(--navy, #1e3a5f);
-      border-bottom: 0.5px solid #f0f2f5;
+      color: var(--cura-text-primary, #1e3a5f);
+      border-bottom: 0.5px solid var(--cura-border-subtle, #eef2f7);
       vertical-align: middle;
     }
 
     tbody tr:last-child td { border-bottom: none; }
-    tbody tr:hover td { background: var(--bg-page, #f8f9fb); }
+    tbody tr:hover td { background: #fafbfd; }
   }
 
   &__table-msg {
     text-align: center;
     padding: 24px !important;
-    color: var(--text-muted, #6b7a8d);
+    color: var(--cura-text-muted, #7a8fa6);
 
-    &--error { color: var(--urgency-red, #e05050); }
+    &--error { color: var(--cura-red, #e05050); }
   }
+}
 
-  &__status {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 9px;
-    border-radius: 20px;
+// ── Screen-lock overlay ───────────────────────────────────────────────────────
 
-    &--completed { background: #e5f7ed; color: #287a44; }
-    &--process   { background: #fdf3e0; color: #a06000; }
-    &--pending   { background: var(--bg-page, #f0f2f5); color: var(--text-muted, #6b7a8d); }
-  }
+.dash__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 58, 95, 0.4);
+  z-index: 100;
+  pointer-events: all;
+  cursor: default;
+}
+
+// ── Edit mode banner (sticky, floats above overlay) ───────────────────────────
+
+.dash__edit-banner-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 102;
+  // Bleed to edges of the scrollable content area, cancel parent padding
+  margin: -28px -28px 0;
+  padding: 16px 28px 8px;
+  background: var(--cura-bg, #f5f7fa);
+}
+
+// ── My apps section — raised above overlay in edit mode ───────────────────────
+
+.dash__section--apps-edit {
+  position: relative;
+  z-index: 101;
+}
+
+// ── Customise button ──────────────────────────────────────────────────────────
+
+.dash__customise-btn {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cura-blue, #4a90d9);
+  background: transparent;
+  border: 0.5px solid var(--cura-blue, #4a90d9);
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover { background: var(--cura-blue, #4a90d9); color: #fff; }
+}
+
+// ── Unsaved changes indicator ─────────────────────────────────────────────────
+
+.dash__unsaved {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cura-amber, #e8a032);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+// ── Save toast ────────────────────────────────────────────────────────────────
+
+// Toast outer: fixed, full-width, flex-centred — FM owns transform (translateY)
+// so we centre with flexbox rather than left:50% + translateX(-50%)
+.dash__toast {
+  position: fixed;
+  bottom: 32px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 200;
+}
+
+.dash__toast-pill {
+  background: var(--cura-navy, #1e3a5f);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: auto;
+}
+
+.dash__toast-check {
+  color: var(--cura-green, #3ab06a);
+  display: flex;
+  align-items: center;
 }
 
 // ── Responsive ────────────────────────────────────────────────────────────────
 
 @media (max-width: 1280px) {
-  .dashboard__worklets { grid-template-columns: repeat(2, 1fr); }
+  .dash__worklets { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 640px) {
-  .dashboard__worklets { grid-template-columns: 1fr; }
-
-  .dashboard__greeting-title { font-size: 22px; }
-
-  .dashboard__quick-actions .quick-action {
-    min-width: calc(33.33% - 8px);
-  }
+  .dash__worklets { grid-template-columns: 1fr; }
+  .dash__greeting-title { font-size: 22px; }
+  .dash__qa { min-width: calc(33.33% - 8px); }
 }

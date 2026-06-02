@@ -59,7 +59,7 @@ export const worklets: WorkletData[] = [
     subLabel: "124 stable · 3 monitoring",
     pill: "Stable",
     pillVariant: "green",
-    route: "/residents/directory",
+    route: "/residents",
   },
   {
     id: 2,
@@ -79,7 +79,7 @@ export const worklets: WorkletData[] = [
     subLabel: "Full coverage — all wards staffed",
     pill: "Good Coverage",
     pillVariant: "green",
-    route: "/hours",
+    route: "/scheduling",
   },
   {
     id: 4,
@@ -99,7 +99,7 @@ export const worklets: WorkletData[] = [
     subLabel: "Next: Physio at 14:30",
     pill: "4 Remaining",
     pillVariant: "blue",
-    route: "/hours",
+    route: "/scheduling",
   },
   {
     id: 6,
@@ -109,7 +109,7 @@ export const worklets: WorkletData[] = [
     subLabel: "3 overdue for review",
     pill: "Reviews Due",
     pillVariant: "amber",
-    route: "/residents/directory",
+    route: "/care-plans",
   },
   {
     id: 7,
@@ -129,7 +129,7 @@ export const worklets: WorkletData[] = [
     subLabel: "Today · 0 unresolved",
     pill: "All Resolved",
     pillVariant: "green",
-    route: "/dashboard",
+    route: "/incidents",
   },
 ];
 
@@ -143,10 +143,10 @@ export interface QuickActionData {
 }
 
 export const quickActions: QuickActionData[] = [
-  { id: 1, icon: UserPlus,      label: "Add Resident",   route: "/residents/directory" },
-  { id: 2, icon: AlertTriangle, label: "Log Incident",   route: "/dashboard" },
-  { id: 3, icon: CalendarPlus,  label: "Schedule Task",  route: "/hours" },
-  { id: 4, icon: FilePlus,      label: "New Care Plan",  route: "/residents/directory" },
+  { id: 1, icon: UserPlus,      label: "Add Resident",   route: "/residents" },
+  { id: 2, icon: AlertTriangle, label: "Log Incident",   route: "/incidents" },
+  { id: 3, icon: CalendarPlus,  label: "Schedule Task",  route: "/scheduling" },
+  { id: 4, icon: FilePlus,      label: "New Care Plan",  route: "/care-plans" },
   { id: 5, icon: Bell,          label: "Raise Alert",    route: "/dashboard" },
   { id: 6, icon: BarChart2,     label: "Run Report",     route: "/dashboard" },
 ];

@@ -9,11 +9,34 @@
   &__header {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     gap: 12px;
 
     h2 { margin: 0; color: $dark-gray; font-weight: $bold; }
     a { font-size: 14px; opacity: 0.85; }
+  }
+
+  &__newBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 14px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--cura-navy);
+    color: #fff;
+    border: none;
+    border-radius: var(--cura-radius-sm);
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: background var(--cura-transition-fast);
+    flex-shrink: 0;
+
+    &:hover {
+      background: var(--cura-blue-dark);
+    }
   }
 
   &__search {

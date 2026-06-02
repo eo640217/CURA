@@ -1,229 +1,545 @@
-@use "../styles/theme" as *;
-@use "../styles/ui" as ui;
+// ── Root ─────────────────────────────────────────────────────────────────────
 
-
-.facilities__container{
-  font-family: var(--body-font);
+.fv {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
-.facilities {
-  &__top {
-    max-width: $container-lg;
-    margin: 0 auto 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 14px;
+
+// ── Page header ───────────────────────────────────────────────────────────────
+
+.fv__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.fv__headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fv__title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--cura-navy);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.fv__subtitle {
+  font-size: 12px;
+  color: var(--cura-text-muted);
+  margin: 0;
+}
+
+.fv__headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// Refresh icon button — 34×34
+.fv__refreshBtn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  background: transparent;
+  color: var(--cura-text-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+  }
+}
+
+// "New facility" primary button
+.fv__newBtn {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--cura-navy);
+  color: #fff;
+  border: none;
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-blue-dark);
+  }
+}
+
+// ── Body: left list + right detail ───────────────────────────────────────────
+
+.fv__body {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start; // needed for left panel sticky
+}
+
+// ── Left panel — facility list ────────────────────────────────────────────────
+
+.fv__left {
+  width: 300px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  max-height: calc(100vh - var(--cura-topbar-height) - 56px);
+  display: flex;
+  flex-direction: column;
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-lg);
+  overflow: hidden; // clip rounded corners
+
+  @media (max-width: 860px) {
+    width: 240px;
   }
 
-  &__appTitle {
-    margin: 0 0 6px;
-    font-size: 28px;
-    font-weight: $ultra;
-    letter-spacing: 0.04em;
-    color: $dark-gray;
-    text-transform: uppercase;
-  }
-
-  &__subtitle {
-    margin: 0;
-    opacity: 0.85;
-    color: $gray;
-  }
-
-  &__topActions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-
-    button { @include ui.buttonGhost; }
-  }
-
-  &__grid {
-    max-width: $container-lg;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 16px;
-    align-items: start;
-  }
-
-  &__left,
-  &__right {
-    @include ui.card;
-  }
-
-  &__leftHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-
-  &__panelTitle {
-    margin: 0;
-    font-size: 16px;
-    font-weight: $bold;
-    color: $dark-gray;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  &__leftActions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-
-    button { @include ui.buttonGhost; }
-  }
-
-  &__adminBadge {
-    font-size: 12px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    border: $border;
-    background: rgba($black, 0.04);
-    color: $dark-gray;
-    font-weight: $semibold;
-  }
-
-  &__status {
-    margin-top: 10px;
-    opacity: 0.85;
-  }
-
-  &__error {
-    margin-top: 10px;
-    color: crimson;
-  }
-
-  &__tryAgain {
-    margin-top: 10px;
-    button { @include ui.buttonGhost; }
-  }
-
-  &__empty {
-    margin-top: 10px;
-  }
-
-  &__emptyHint {
-    margin-top: 8px;
-    opacity: 0.85;
-    font-size: 13px;
-  }
-
-  &__facilityBtn {
+  @media (max-width: 680px) {
+    position: static;
     width: 100%;
-    text-align: left;
-    border-radius: $radius-sm;
-    border: $border;
-    background: rgba($white, 0.9);
-    padding: 10px 10px;
-    margin-top: 10px;
-    cursor: pointer;
-    transition: 0.15s ease;
+    max-height: none;
+    overflow: visible;
+  }
+}
 
-    &:hover {
-      background: rgba($white, 1);
-      box-shadow: 0 6px 18px rgba($black, 0.08);
-    }
+// Search input row at top of left panel
+.fv__leftHeader {
+  padding: 10px 12px;
+  border-bottom: 0.5px solid var(--cura-border);
+  flex-shrink: 0;
+}
 
-    &.isActive {
-      border: 2px solid rgba($accent, 0.75);
-      background: rgba($white, 1);
-    }
+.fv__search {
+  width: 100%;
+  background: var(--cura-bg);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--cura-navy);
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color var(--cura-transition-fast);
+
+  &::placeholder {
+    color: var(--cura-text-hint);
   }
 
-  &__facilityName {
-    font-weight: $bold;
-    color: $dark-gray;
+  &:focus {
+    border-color: var(--cura-blue);
+    background: var(--cura-surface);
   }
 
-  &__facilityAddr {
-    margin-top: 4px;
-    font-size: 12px;
-    opacity: 0.8;
+  // hide native clear button on webkit
+  &::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
+}
+
+// Scrollable list area
+.fv__facilityList {
+  flex: 1;
+  overflow-y: auto;
+  // thin scrollbar
+  scrollbar-width: thin;
+  scrollbar-color: var(--cura-border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--cura-border);
+    border-radius: 999px;
+  }
+}
+
+// ── Facility list items ───────────────────────────────────────────────────────
+
+.fv__facilityItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-bottom: 0.5px solid var(--cura-border-subtle);
+  border-radius: 0;
+  padding: 11px 14px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:last-of-type {
+    border-bottom: none;
   }
 
-  &__selected {
-    margin: 10px 0 14px;
-    padding: 12px;
-    border-radius: $radius-sm;
-    border: $border;
-    background: rgba($black, 0.03);
+  &:hover {
+    background: var(--cura-hover-bg);
   }
 
-  &__selectedName {
-    font-weight: $ultra;
-    color: $dark-gray;
-    font-size: 18px;
-  }
+  &--active {
+    background: var(--cura-blue-light);
+    border-left: 3px solid var(--cura-blue);
+    padding-left: 11px; // compensate so text stays aligned
 
-  &__selectedAddr {
-    margin-top: 4px;
-    opacity: 0.85;
-  }
-
-  @media (max-width: 920px) {
-    &__grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* Right-side edit form */
-  &__editCard {
-    margin: 10px 0 14px;
-    padding: 12px;
-    border-radius: $radius-sm;
-    border: $border;
-    background: rgba($black, 0.03);
-  }
-
-  &__editGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-
-    @media (max-width: 720px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  &__editField {
-    min-width: 0;
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 12px;
-      font-weight: $semibold;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: $gray;
-    }
-
-    input {
-      @include ui.input;
-      width: 100%;
+    .fv__facilityItemName {
+      color: var(--cura-blue);
     }
   }
+}
 
-  &__editActions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    align-items: center;
+.fv__facilityItemName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cura-navy);
+  transition: color var(--cura-transition-fast);
+  text-align: left;
+}
 
-    .facilities__saveBtn { @include ui.buttonPrimary; }
-    .facilities__cancelBtn { @include ui.buttonGhost; }
+.fv__facilityItemAddr {
+  font-size: 11px;
+  color: var(--cura-text-muted);
+  text-align: left;
+}
+
+// ── States: empty / loading / error ──────────────────────────────────────────
+
+.fv__status {
+  font-size: 13px;
+  color: var(--cura-text-muted);
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.fv__empty {
+  padding: 28px 20px;
+  text-align: center;
+}
+
+.fv__emptyMsg {
+  font-size: 13px;
+  color: var(--cura-text-muted);
+}
+
+.fv__emptyHint {
+  font-size: 12px;
+  color: var(--cura-text-hint);
+  margin-top: 6px;
+}
+
+.fv__listError {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.fv__listErrorMsg {
+  font-size: 12px;
+  color: var(--cura-red-text);
+  background: var(--cura-red-bg);
+  border-radius: 6px;
+  padding: 7px 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.fv__tryAgainBtn {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--cura-text-primary);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+  }
+}
+
+// ── Right column ──────────────────────────────────────────────────────────────
+
+.fv__right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.fv__selectPrompt {
+  font-size: 13px;
+  color: var(--cura-text-muted);
+  text-align: center;
+  padding: 40px 0;
+}
+
+.fv__detailLoading,
+.fv__detailError {
+  font-size: 13px;
+  color: var(--cura-text-muted);
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.fv__detailError {
+  color: var(--cura-red-text);
+}
+
+.fv__detailContent {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+// ── Facility detail card ───────────────────────────────────────────────────────
+
+.fv__detailCard {
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-lg);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fv__detailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.fv__detailName {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--cura-navy);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.fv__detailHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+// Unsaved changes indicator dot
+.fv__unsavedDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cura-amber);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+// Edit button — outline style
+.fv__editBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  background: var(--cura-surface);
+  color: var(--cura-navy);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+  }
+}
+
+// ── Info grid — view mode ─────────────────────────────────────────────────────
+
+.fv__infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px 24px;
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fv__infoField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fv__infoLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--cura-text-muted);
+}
+
+.fv__infoValue {
+  font-size: 13px;
+  color: var(--cura-navy);
+}
+
+// ── Edit form — slide-down ────────────────────────────────────────────────────
+
+.fv__editFormInner {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.fv__editGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 20px;
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fv__editField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fv__editLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--cura-text-muted);
+}
+
+.fv__editInput {
+  width: 100%;
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  padding: 9px 12px;
+  font-size: 13px;
+  color: var(--cura-navy);
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color var(--cura-transition-fast);
+
+  &:focus {
+    border-color: var(--cura-blue);
+  }
+}
+
+// Inline error banner
+.fv__editError {
+  font-size: 12px;
+  color: var(--cura-red-text);
+  background: var(--cura-red-bg);
+  border-radius: 6px;
+  padding: 7px 10px;
+}
+
+// Save / cancel row
+.fv__editActions {
+  display: flex;
+  gap: 8px;
+}
+
+.fv__saveBtn {
+  height: 34px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--cura-navy);
+  color: #fff;
+  border: none;
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-blue-dark);
   }
 
-  /* Make the right header action button align nicely */
-  &__rightHeaderActions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
 
-    button { @include ui.buttonGhost; }
+.fv__cancelBtn {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--cura-text-primary);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ── Reduced motion ────────────────────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+  .fv__facilityItem,
+  .fv__facilityItemName,
+  .fv__refreshBtn,
+  .fv__newBtn,
+  .fv__editBtn,
+  .fv__saveBtn,
+  .fv__cancelBtn,
+  .fv__tryAgainBtn,
+  .fv__search,
+  .fv__editInput {
+    transition: none;
   }
 }
