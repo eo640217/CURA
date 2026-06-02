@@ -27,8 +27,8 @@ spring:
 
 cors:
   allowedOrigins:
-    - "http://localhost:5173"
-    - "http://localhost:3000"
+    - "${CORS_ORIGIN_0:http://localhost:5173}"
+    - "${CORS_ORIGIN_1:http://localhost:3000}"
 flyway:
   enabled: true
   baseline-on-migrate: true
