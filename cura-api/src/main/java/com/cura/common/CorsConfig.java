@@ -12,7 +12,7 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
-    @Value("${cors.allowedOrigins}")
+    @Value("#{'${cors.allowedOrigins}'.split(',\\s*')}")
     private List<String> allowedOrigins;
 
     @Bean
