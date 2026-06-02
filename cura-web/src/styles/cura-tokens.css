@@ -1,0 +1,44 @@
+:root {
+  --cura-bg: #F0F2F5;
+  --cura-surface: #FFFFFF;
+  --cura-border: #DDE3EC;
+  --cura-border-subtle: #EEF2F7;
+
+  --cura-navy: #1E3A5F;
+  --cura-blue: #4A90D9;
+  --cura-blue-dark: #1A4F8A;
+  --cura-blue-light: #EEF4FB;
+  --cura-blue-mid: #C0D4EC;
+  --cura-hover-bg: #F5F9FE;
+
+  --cura-text-primary: #1E3A5F;
+  --cura-text-secondary: #5A7A9A;
+  --cura-text-muted: #7A8FA6;
+  --cura-text-hint: #A0B4C8;
+
+  --cura-red: #E05050;
+  --cura-red-bg: #FEEAEA;
+  --cura-red-text: #9A2020;
+
+  --cura-amber: #E8A032;
+  --cura-amber-bg: #FEF3E0;
+  --cura-amber-text: #7A4800;
+
+  --cura-green: #3AB06A;
+  --cura-green-bg: #E6F5EC;
+  --cura-green-text: #1A6B3A;
+
+  --cura-purple-bg: #EDE8F5;
+  --cura-purple-text: #4A2A8A;
+
+  --cura-radius-sm: 8px;
+  --cura-radius-md: 10px;
+  --cura-radius-lg: 12px;
+
+  --cura-sidebar-width: 56px;
+  --cura-topbar-height: 52px;
+
+  --cura-transition-fast: 120ms ease;
+  --cura-transition-base: 200ms ease;
+  --cura-transition-slow: 320ms ease;
+}

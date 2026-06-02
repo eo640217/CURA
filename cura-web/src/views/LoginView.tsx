@@ -20,7 +20,7 @@ export default function LoginView() {
     try {
       const data = await login({ username, password });
       setAuth({ token: data.token, username: data.username, role: data.role });
-      window.location.href = "/";
+      window.location.href = "/dashboard";
     } catch (err: any) {
       const msg = err?.response?.data?.message ?? err?.message ?? t.login.loginFailed;
       setError(msg);

@@ -1,0 +1,173 @@
+.sidebar {
+  width: 56px;
+  height: 100vh;
+  flex-shrink: 0;
+  background: var(--surface, #fff);
+  border-right: 0.5px solid var(--border-color, #dde3ec);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+
+  // ── Brand area ──────────────────────────────────────────────────────────
+
+  &__brand {
+    height: 56px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 0.5px solid var(--border-color, #dde3ec);
+
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    img {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+    }
+  }
+
+  // ── Nav lists ───────────────────────────────────────────────────────────
+
+  &__nav {
+    flex: 1;
+    padding: 10px 0;
+    list-style: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__nav-bottom {
+    padding: 10px 0;
+    list-style: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-top: 0.5px solid var(--border-color, #dde3ec);
+  }
+
+  // ── Individual items ────────────────────────────────────────────────────
+
+  &__item {
+    position: relative;
+
+    a,
+    button {
+      width: 100%;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted, #6b7a8d);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 0;          // hide any stray text
+      text-decoration: none;
+      transition: color 0.15s ease, background 0.15s ease;
+      position: relative;
+
+      &:hover {
+        color: var(--accent-blue, #4a90d9);
+        background: #f5f7fa;
+      }
+    }
+
+    // Active state: left-accent border + tinted bg
+    a.active {
+      color: var(--accent-blue, #4a90d9);
+      background: #eef3fa;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 8px;
+        bottom: 8px;
+        width: 3px;
+        background: var(--accent-blue, #4a90d9);
+        border-radius: 0 2px 2px 0;
+      }
+    }
+  }
+
+  // Logout gets its own danger colour
+  &__logout {
+    color: #e05050 !important;
+    &:hover {
+      color: #c03838 !important;
+      background: #fff0f0 !important;
+    }
+  }
+}
+
+// ── Mobile: sidebar → bottom nav bar ──────────────────────────────────────
+
+@media (max-width: 768px) {
+  .sidebar {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 56px;
+    flex-direction: row;
+    border-right: none;
+    border-top: 0.5px solid var(--border-color, #dde3ec);
+
+    &__brand { display: none; }
+
+    &__nav {
+      flex: 1;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    &__nav-bottom {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0;
+      border-top: none;
+      border-left: 0.5px solid var(--border-color, #dde3ec);
+      gap: 0;
+    }
+
+    &__item {
+      flex: 1;
+
+      a,
+      button {
+        height: 56px;
+        width: 100%;
+      }
+
+      // Top indicator for bottom nav active state
+      a.active::before {
+        top: 0;
+        bottom: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 24px;
+        height: 3px;
+        border-radius: 0 0 2px 2px;
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+.quick-action {
+  flex: 1;
+  min-width: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  background: var(--surface, #fff);
+  border: 0.5px solid var(--border-color, #dde3ec);
+  border-radius: var(--radius-worklet, 10px);
+  padding: 18px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover {
+    border-color: var(--accent-blue, #4a90d9);
+    background: #f5f8fd;
+
+    .quick-action__icon {
+      background: var(--accent-blue, #4a90d9);
+      color: #fff;
+    }
+  }
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--bg-page, #f0f2f5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--navy, #1e3a5f);
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--navy, #1e3a5f);
+    text-align: center;
+    line-height: 1.3;
+  }
+}

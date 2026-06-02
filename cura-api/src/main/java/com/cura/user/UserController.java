@@ -10,15 +10,15 @@ import java.util.List;
 @RequestMapping("/api/v1/users")
 public class UserController {
 
-    private final UserService users;
+    private final UserService userService;
 
-    public UserController(UserService users) {
-        this.users = users;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<UserResponse> list(@RequestParam(value = "username", required = false) String username) {
-        return users.listUsers(username);
+        return userService.listUsers(username);
     }
 }

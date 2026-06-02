@@ -1,39 +1,111 @@
-@use "../styles/theme" as *;
-@use "../styles/ui" as ui;
+// ── Root ──────────────────────────────────────────────────────────────────────
 
 .up {
-  display: grid;
-  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
+
+// ── Section header ────────────────────────────────────────────────────────────
 
 .up__header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
+  align-items: center;
+  gap: 10px;
+}
 
-  button { @include ui.buttonGhost; }
+.up__headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .up__title {
-  margin: 0;
-  font-weight: $bold;
-  color: $dark-gray;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.8px;
+  color: var(--cura-text-secondary);
 }
 
-.up__form {
-  @include ui.card;
-  padding: 12px;
-  display: grid;
-  gap: 10px;
-  box-shadow: none;
+.up__unitCount {
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--cura-blue-light);
+  color: var(--cura-blue-dark);
+  padding: 2px 7px;
+  border-radius: 20px;
 }
 
-.up__formGrid {
+.up__headerRight {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.up__iconBtn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  background: transparent;
+  color: var(--cura-text-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+  }
+}
+
+.up__addBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 30px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--cura-navy);
+  color: #fff;
+  border: none;
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-blue-dark);
+  }
+
+  &--active {
+    background: var(--cura-blue-dark);
+  }
+}
+
+// ── Collapsible add-unit form ─────────────────────────────────────────────────
+
+.up__addForm {
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-md);
+}
+
+.up__addFormInner {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.up__addFormGrid {
   display: grid;
-  grid-template-columns: 1fr 160px 120px;
+  grid-template-columns: 1fr 160px 90px;
   gap: 10px;
   align-items: end;
 
@@ -43,169 +115,376 @@
 }
 
 .up__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   min-width: 0;
+}
 
-  label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 12px;
-    font-weight: $semibold;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: $gray;
+.up__fieldLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--cura-text-muted);
+}
+
+.up__fieldInput {
+  width: 100%;
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--cura-navy);
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color var(--cura-transition-fast);
+
+  &:focus {
+    border-color: var(--cura-blue);
   }
 
-  input, select {
-    @include ui.input;
-    width: 100%;
+  &[type="number"] {
+    text-align: right;
   }
 }
 
-.name__field { width: 220px; }
-.type__field { max-width: 160px; }
-.capacity__field { max-width: 80px; }
-
-
-.up__primary {
-  @include ui.buttonPrimary;
-  justify-self: start;
+.up__addFormActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
+
+.up__submitBtn {
+  height: 32px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--cura-navy);
+  color: #fff;
+  border: none;
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-blue-dark);
+  }
+}
+
+.up__cancelFormBtn {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--cura-text-primary);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+  }
+}
+
+// ── Staff notice ──────────────────────────────────────────────────────────────
 
 .up__notice {
-  @include ui.card;
-  padding: 12px;
-  box-shadow: none;
-  background: rgba($black, 0.03);
+  background: var(--cura-blue-light);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-md);
+  padding: 12px 14px;
 }
 
 .up__noticeTitle {
-  font-weight: $bold;
-  color: $dark-gray;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cura-navy);
   margin-bottom: 4px;
 }
 
 .up__noticeBody {
+  font-size: 12px;
+  color: var(--cura-text-secondary);
+}
+
+// ── Status / error ────────────────────────────────────────────────────────────
+
+.up__status {
   font-size: 13px;
-  opacity: 0.85;
+  color: var(--cura-text-muted);
+  text-align: center;
+  padding: 24px 0;
 }
 
-.up__list {
-  @include ui.card;
-  padding: 12px;
-  box-shadow: none;
+.up__error {
+  font-size: 12px;
+  color: var(--cura-red-text);
+  background: var(--cura-red-bg);
+  border-radius: var(--cura-radius-sm);
+  padding: 8px 12px;
 }
 
-.up__status { opacity: 0.85; }
-.up__error { color: crimson; }
+// ── 2-column unit card grid ───────────────────────────────────────────────────
 
-.up__cards {
+.up__grid {
   display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
+
+  @media (max-width: 680px) {
+    grid-template-columns: 1fr;
+  }
 }
+
+// ── Unit card ─────────────────────────────────────────────────────────────────
 
 .up__card {
-  border: $border;
-  border-radius: $radius-sm;
-  padding: 10px;
-  background: rgba($white, 0.9);
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-  align-items: center;
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-md);
+  padding: 14px;
   cursor: pointer;
-  transition: 0.15s ease;
+  transition: border-color var(--cura-transition-fast), background var(--cura-transition-fast);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   min-width: 0;
 
   &:hover {
-    background: rgba($white, 1);
-    box-shadow: 0 10px 22px rgba($black, 0.08);
+    background: var(--cura-hover-bg);
   }
 
-  button { @include ui.buttonGhost; }
+  &--selected {
+    border-color: var(--cura-blue);
+    background: var(--cura-blue-light);
 
-  @media (max-width: 520px) {
-    grid-template-columns: 1fr;
-    align-items: start;
-
-    > button {
-      justify-self: start;
+    &:hover {
+      background: var(--cura-blue-light);
     }
   }
 }
 
-.up__card--active {
-  border: 2px solid rgba($accent, 0.75);
-}
-
-.up__cardTitle {
-  font-weight: $bold;
-  color: $dark-gray;
+// Card head row: [name wrap] [type pill + actions]
+.up__cardHead {
   display: flex;
-  gap: 10px;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
   min-width: 0;
-  flex-wrap: wrap; // prevents overlap when edit controls appear
 }
 
-.up__pill {
-  font-size: 12px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  border: $border;
-  background: rgba($black, 0.03);
-  opacity: 0.95;
+.up__cardNameWrap {
+  flex: 1;
+  min-width: 0;
 }
 
-.up__meta {
-  margin-top: 4px;
-  font-size: 12px;
-  opacity: 0.8;
+.up__cardName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cura-navy);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 
-.up__adminOnly {
-  font-size: 12px;
-  opacity: 0.7;
+// Right side of card head: pill + hover actions
+.up__cardRight {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
-.up__residentPanel {
-  margin-top: 12px;
-}
+// Type badge pill
+.up__typePill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 
-/* small "pencil" button */
-.up__linkBtn {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  opacity: 0.7;
-  margin-left: 8px;
-  padding: 2px 6px;
-  border-radius: 8px;
+  &--room {
+    background: var(--cura-blue-light);
+    color: var(--cura-blue-dark);
+  }
 
-  &:hover {
-    opacity: 1;
-    background: rgba($black, 0.05);
+  &--wing {
+    background: var(--cura-amber-bg);
+    color: var(--cura-amber-text);
+  }
+
+  &--floor {
+    background: var(--cura-green-bg);
+    color: var(--cura-green-text);
   }
 }
 
-/* INLINE EDIT (rename) controls inside card title */
-.up__editRow {
-  display: inline-flex;
-  gap: 8px;
+// Hover actions (pencil + trash) — visible on card hover
+.up__cardActions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity var(--cura-transition-fast);
+}
+
+.up__card:hover .up__cardActions {
+  opacity: 1;
+}
+
+.up__actionBtn {
+  width: 24px;
+  height: 24px;
+  display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: center;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--cura-text-muted);
+  cursor: pointer;
+  transition: background var(--cura-transition-fast), color var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+    color: var(--cura-navy);
+  }
+
+  &--danger:hover {
+    background: var(--cura-red-bg);
+    color: var(--cura-red-text);
+  }
+}
+
+// Inline rename input
+.up__renameWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.up__renameInput {
+  width: 100%;
+  max-width: 200px;
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-blue);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cura-navy);
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+.up__renameError {
+  font-size: 11px;
+  color: var(--cura-red-text);
+  margin-top: 2px;
+}
+
+// ── Occupancy bar ─────────────────────────────────────────────────────────────
+
+.up__occupancyBar {
+  height: 4px;
+  background: var(--cura-border-subtle);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.up__occupancyFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width var(--cura-transition-base);
+}
+
+.up__occupancyRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.up__occupancyText {
+  font-size: 11px;
+  color: var(--cura-text-muted);
+  flex: 1;
   min-width: 0;
 }
 
-.up__editInput {
-  @include ui.input;
-  width: min(260px, 70vw);
+.up__fullPill {
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--cura-red-bg);
+  color: var(--cura-red-text);
+  padding: 2px 7px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.up__editActions {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
+// ── Residents section (animated in below unit grid) ───────────────────────────
 
-  .up__saveBtn { @include ui.buttonPrimary; }
-  .up__cancelBtn { @include ui.buttonGhost; }
+.up__residentsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.up__residentsHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.up__residentsTitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--cura-text-secondary);
+}
+
+.up__residentsSubtitle {
+  font-size: 11px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--cura-text-muted);
+}
+
+.up__residentsCard {
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-lg);
+  padding: 16px 20px;
+}
+
+// ── Reduced motion ────────────────────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+  .up__card,
+  .up__addBtn,
+  .up__iconBtn,
+  .up__submitBtn,
+  .up__cancelFormBtn,
+  .up__actionBtn,
+  .up__fieldInput,
+  .up__cardActions,
+  .up__occupancyFill {
+    transition: none;
+  }
 }

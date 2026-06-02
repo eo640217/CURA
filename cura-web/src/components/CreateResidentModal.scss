@@ -1,0 +1,390 @@
+// Full-screen overlay — matches CreateFacilityModal exactly
+.crm__root {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(30, 58, 95, 0.4);
+  backdrop-filter: blur(2px);
+}
+
+// Modal card — slightly wider than cfm to accommodate unit rows
+.crm__card {
+  width: min(500px, 100%);
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-lg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+// Header: title + close button
+.crm__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.crm__title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--cura-navy);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.crm__closeBtn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  background: transparent;
+  color: var(--cura-text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  flex-shrink: 0;
+  transition: background var(--cura-transition-fast), color var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+    color: var(--cura-navy);
+  }
+}
+
+// Step indicator: dots + "Step N of 3 — Title"
+.crm__stepIndicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 18px;
+}
+
+.crm__stepDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cura-border);
+  flex-shrink: 0;
+  transition: background var(--cura-transition-fast);
+
+  &--active {
+    background: var(--cura-navy);
+  }
+}
+
+.crm__stepLabel {
+  font-size: 11px;
+  color: var(--cura-text-muted);
+  margin-left: 4px;
+}
+
+// Step body — fixed min-height to prevent card from jumping between steps
+.crm__stepBody {
+  min-height: 180px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+// ── Facility / unit list (steps 1 and 2) ─────────────────────────────────────
+
+.crm__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.crm__status {
+  font-size: 13px;
+  color: var(--cura-text-muted);
+  text-align: center;
+  padding: 24px 0;
+}
+
+.crm__listError {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+}
+
+.crm__retryBtn {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--cura-text-primary);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+  }
+}
+
+// Each facility / unit row
+.crm__listRow {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background var(--cura-transition-fast), border-color var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-blue-light);
+    border-color: var(--cura-blue-mid);
+  }
+
+  &--selected {
+    background: var(--cura-blue-light);
+    border-color: var(--cura-blue);
+  }
+
+  &--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.crm__listRowName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cura-navy);
+}
+
+.crm__listRowMeta {
+  font-size: 11px;
+  color: var(--cura-text-muted);
+  margin-top: 2px;
+}
+
+.crm__fullPill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--cura-red-bg);
+  color: var(--cura-red-text);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+// ── Step 3: Resident details form ─────────────────────────────────────────────
+
+.crm__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.crm__grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (max-width: 460px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.crm__gridOptional {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (max-width: 460px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.crm__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.crm__label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--cura-text-muted);
+}
+
+.crm__input {
+  width: 100%;
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  padding: 9px 12px;
+  font-size: 13px;
+  color: var(--cura-navy);
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color var(--cura-transition-fast);
+
+  &::placeholder {
+    color: var(--cura-text-hint);
+  }
+
+  &:focus {
+    border-color: var(--cura-blue);
+  }
+}
+
+// Inline error — identical to cfm__error
+.crm__error {
+  font-size: 12px;
+  color: var(--cura-red-text);
+  background: var(--cura-red-bg);
+  border-radius: 6px;
+  padding: 7px 10px;
+}
+
+// ── Success panel ─────────────────────────────────────────────────────────────
+
+.crm__success {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.crm__successMsg {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cura-green-text);
+  background: var(--cura-green-bg);
+  border-radius: var(--cura-radius-sm);
+  padding: 12px 18px;
+  text-align: center;
+}
+
+// ── Action row ────────────────────────────────────────────────────────────────
+
+.crm__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.crm__actionsRight {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+// Back button
+.crm__backBtn {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--cura-text-primary);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Cancel button — outline
+.crm__cancelBtn {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--cura-text-primary);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Next / Submit button — navy primary
+.crm__nextBtn,
+.crm__submitBtn {
+  height: 34px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--cura-navy);
+  color: #fff;
+  border: none;
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-blue-dark);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ── Reduced motion ────────────────────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+  .crm__closeBtn,
+  .crm__stepDot,
+  .crm__listRow,
+  .crm__input,
+  .crm__backBtn,
+  .crm__cancelBtn,
+  .crm__nextBtn,
+  .crm__submitBtn,
+  .crm__retryBtn {
+    transition: none;
+  }
+}

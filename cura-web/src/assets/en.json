@@ -1,12 +1,12 @@
 {
   "common": {
-    "back": "← Back",
+    "back": "Back",
     "search": "Search",
     "loading": "Loading…",
     "noData": "No data.",
     "noResults": "No results found.",
-    "prev": "← Prev",
-    "next": "Next →",
+    "prev": "Prev",
+    "next": "Next",
     "close": "Close",
     "refresh": "Refresh",
     "closeX": "✕",

@@ -1,18 +1,22 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { apiErrorMessage } from "../api/api-error";
 import { listResidentDirectory, ResidentDirectoryItem } from "../api/api-resident-directory";
 import ResidentDetailsModal from "../components/ResidentDetailsModal";
+import CreateResidentModal from "../components/CreateResidentModal";
 import lexicon from "../assets/lexicon";
 import "./ResidentsDirectoryView.scss";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 
 
 export default function ResidentsDirectoryView() {
   const t = lexicon;
 
-  const [q, setQ] = useState("");
-  const [page, setPage] = useState(0);
-  const [size] = useState(25);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const q = searchParams.get("q") ?? "";
+  const page = Number(searchParams.get("page") ?? 0);
+  const size = Number(searchParams.get("size") ?? 25);
 
   const [items, setItems] = useState<ResidentDirectoryItem[]>([]);
   const [total, setTotal] = useState(0);
@@ -23,18 +27,39 @@ export default function ResidentsDirectoryView() {
 
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [detailsId, setDetailsId] = useState<number | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const debouncedQ = useMemo(() => q.trim(), [q]);
+  function setParam(updates: Record<string, string | number | undefined>) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      for (const [key, value] of Object.entries(updates)) {
+        if (value === undefined || value === "" || value === null) {
+          next.delete(key);
+        } else {
+          next.set(key, String(value));
+        }
+      }
+      return next;
+    }, { replace: true });
+  }
 
-  async function load(p = page) {
+  function handleQChange(value: string) {
+    setParam({ q: value || undefined, page: 0 });
+  }
+
+  function goToPage(p: number) {
+    setParam({ page: p });
+  }
+
+  async function load() {
     try {
       setErr(null);
       setLoading(true);
-      const data = await listResidentDirectory({ q: debouncedQ || undefined, page: p, size });
+      const data = await listResidentDirectory({ q: q.trim() || undefined, page, size });
       setItems(data.content);
       setTotal(data.totalElements);
       setTotalPages(data.totalPages);
-      setPage(data.number);
     } catch (e: any) {
       setErr(apiErrorMessage(e));
     } finally {
@@ -43,15 +68,10 @@ export default function ResidentsDirectoryView() {
   }
 
   useEffect(() => {
-    const tmr = setTimeout(() => load(0), 250);
+    const tmr = setTimeout(() => load(), 250);
     return () => clearTimeout(tmr);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedQ]);
-
-  useEffect(() => {
-    load(page);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [q, page, size, refreshKey]);
 
   function openDetails(id: number) {
     setDetailsId(id);
@@ -65,17 +85,24 @@ export default function ResidentsDirectoryView() {
   return (
     <div className="resDir">
       <div className="resDir__header">
-        {/* <a className="resDir__backLink" href="/"><ArrowBackIcon fontSize="small" /></a> */}
         <h2>{t.residentsDirectory.title}</h2>
+        <button
+          type="button"
+          className="resDir__newBtn"
+          onClick={() => setCreateOpen(true)}
+        >
+          <PersonAddAltOutlinedIcon sx={{ fontSize: 15 }} />
+          New Resident
+        </button>
       </div>
 
       <div className="resDir__search">
         <input
           value={q}
-          onChange={(e) => setQ(e.target.value)}
+          onChange={(e) => handleQChange(e.target.value)}
           placeholder={t.residentsDirectory.searchPlaceholder}
         />
-        <button className="primary" onClick={() => load(0)} disabled={loading}>
+        <button className="primary" onClick={() => handleQChange(q)} disabled={loading}>
           {t.common.search}
         </button>
         <span className="muted" style={{ fontSize: 12 }}>
@@ -125,7 +152,7 @@ export default function ResidentsDirectoryView() {
       </div>
 
       <div className="resDir__pagination">
-        <button className="ghost" disabled={loading || page <= 0} onClick={() => load(page - 1)}>
+        <button className="ghost" disabled={loading || page <= 0} onClick={() => goToPage(page - 1)}>
           {t.common.prev}
         </button>
 
@@ -133,12 +160,21 @@ export default function ResidentsDirectoryView() {
           {t.common.page} {page + 1} of {Math.max(1, totalPages)}
         </div>
 
-        <button className="ghost" disabled={loading || page + 1 >= totalPages} onClick={() => load(page + 1)}>
+        <button className="ghost" disabled={loading || page + 1 >= totalPages} onClick={() => goToPage(page + 1)}>
           {t.common.next}
         </button>
       </div>
 
       <ResidentDetailsModal open={detailsOpen} residentId={detailsId} onClose={closeDetails} />
+
+      <CreateResidentModal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreated={() => {
+          setCreateOpen(false);
+          setRefreshKey((k) => k + 1);
+        }}
+      />
     </div>
   );
 }

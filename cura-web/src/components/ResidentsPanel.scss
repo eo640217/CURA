@@ -1,147 +1,269 @@
-@use "../styles/theme" as *;
-@use "../styles/ui" as ui;
+// ── Root ─────────────────────────────────────────────────────────────────────
 
 .rp {
-  display: grid;
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
+
+// ── Header ────────────────────────────────────────────────────────────────────
 
 .rp__header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  gap: 10px;
-
-  button { @include ui.buttonGhost; }
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .rp__title {
-  margin: 0;
-  font-weight: $bold;
-  color: $dark-gray;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.8px;
+  color: var(--cura-text-secondary);
+  margin: 0;
 }
 
 .rp__sub {
   margin-top: 6px;
   font-size: 12px;
-  opacity: 0.9;
+  color: var(--cura-text-muted);
+  line-height: 1.5;
 }
 
-.rp__auth {
-  margin-top: 6px;
-  font-size: 12px;
-  opacity: 0.75;
-}
 
 .rp__full {
-  color: crimson;
-  font-weight: $bold;
+  color: var(--cura-red-text);
+  font-weight: 600;
 }
 
-.rp__form {
-  @include ui.card;
-  padding: 12px;
-  display: grid;
-  gap: 10px;
-  box-shadow: none;
-
-  &--disabled { opacity: 0.65; }
+// Header action buttons
+.rp__headerActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
 }
 
-.rp__grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+// Refresh icon button — matches .up__iconBtn
+.rp__headerActions > button:first-child {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  background: transparent;
+  color: var(--cura-text-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+  }
 }
 
-.rp__gridDobRoom {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 10px;
-}
+// "Create Resident" primary button
+.rp__primary {
+  height: 30px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--cura-navy);
+  color: #fff;
+  border: none;
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
 
-.rp__field {
-  label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 12px;
-    font-weight: $semibold;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: $gray;
+  &:hover {
+    background: var(--cura-blue-dark);
   }
 
-  input, select { @include ui.input; }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
-.rp__primary {
-  @include ui.buttonPrimary;
-  justify-self: start;
-}
-
-.rp__hint {
-  font-size: 12px;
-  color: crimson;
-}
+// ── Resident list ─────────────────────────────────────────────────────────────
 
 .rp__list {
-  @include ui.card;
-  padding: 12px;
-  box-shadow: none;
-  background-color: var(--dark-grey);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
-.rp__status { opacity: 0.85; }
-.rp__error { color: crimson; }
+.rp__status {
+  font-size: 13px;
+  color: var(--cura-text-muted);
+  text-align: center;
+  padding: 20px 0;
+}
+
+.rp__error {
+  font-size: 12px;
+  color: var(--cura-red-text);
+  background: var(--cura-red-bg);
+  border-radius: 6px;
+  padding: 7px 10px;
+}
 
 .rp__cards {
-  display: grid;
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
+// Each resident row
 .rp__card {
-  border: $border;
-  border-radius: $radius-sm;
-  background: rgba($white, 0.9);
-  padding: 10px;
+  background: var(--cura-bg);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-md);
+  padding: 12px 14px;
 }
 
 .rp__name {
-  font-weight: $bold;
-  color: $dark-gray;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cura-navy);
 }
 
 .rp__meta {
-  margin-top: 4px;
-  font-size: 12px;
-  opacity: 0.8;
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--cura-text-muted);
 }
 
+// Transfer row — MenuSelect + Transfer button + optional warning
 .rp__transferRow {
   margin-top: 10px;
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
 
-  select { min-width: 260px; }
-  button { @include ui.buttonGhost; }
+  // Transfer button
+  button {
+    height: 30px;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 500;
+    background: transparent;
+    color: var(--cura-text-primary);
+    border: 0.5px solid var(--cura-border);
+    border-radius: var(--cura-radius-sm);
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: background var(--cura-transition-fast);
+
+    &:hover {
+      background: var(--cura-bg);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
 }
 
 .rp__warn {
-  font-size: 12px;
-  color: crimson;
+  font-size: 11px;
+  color: var(--cura-amber-text);
+  background: var(--cura-amber-bg);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+
+// ── Create Resident modal ─────────────────────────────────────────────────────
+
+.rp__modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 58, 95, 0.4);
+  backdrop-filter: blur(2px);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 50;
+}
+
+.rp__modal {
+  width: min(560px, 100%);
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-lg);
+  padding: 28px;
+}
+
+.rp__modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.rp__modalTitle {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--cura-navy);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.rp__modalClose {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  background: transparent;
+  color: var(--cura-text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  flex-shrink: 0;
+  transition: background var(--cura-transition-fast), color var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+    color: var(--cura-navy);
+  }
+}
+
+// Form inside modal
+.rp__form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rp__grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .rp__gridDobRoom {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px;
   align-items: end;
 
-  // Tablet
-  @media (max-width: 900px) {
+  @media (max-width: 480px) {
     grid-template-columns: 1fr;
   }
 }
@@ -150,7 +272,41 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  width: 220px;
+
+  label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--cura-text-muted);
+  }
+
+  input {
+    width: 100%;
+    background: var(--cura-surface);
+    border: 0.5px solid var(--cura-border);
+    border-radius: var(--cura-radius-sm);
+    padding: 9px 12px;
+    font-size: 13px;
+    color: var(--cura-navy);
+    font-family: inherit;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color var(--cura-transition-fast);
+
+    &::placeholder {
+      color: var(--cura-text-hint);
+    }
+
+    &:focus {
+      border-color: var(--cura-blue);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
 }
 
 .dob__field input,
@@ -158,73 +314,58 @@
   width: 100%;
 }
 
-.rp__headerActions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  & button { 
-    min-height: 45px !important;
-    &:hover {
-      background: rgba($accent, 0.08);
-    }
-  }
-}
-
-.rp__modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  display: grid;
-  place-items: center;
-  padding: 16px;
-  z-index: 9999;
-}
-
-.rp__modal {
-  width: min(640px, 100%);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
-  padding: 16px;
-}
-
-.rp__modalHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.rp__modalTitle {
-  margin: 0;
-}
-
-.rp__modalClose {
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  font-size: 18px;
-  line-height: 1;
-  opacity: 0.8;
+.rp__hint {
+  font-size: 12px;
+  color: var(--cura-amber-text);
+  background: var(--cura-amber-bg);
+  border-radius: 6px;
+  padding: 6px 10px;
 }
 
 .rp__modalActions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 14px;
-}
+  gap: 8px;
+  margin-top: 4px;
 
-@media (max-width: 520px) {
-  .rp__modal {
-    padding: 14px;
+  // Cancel button — outline
+  button:not(.rp__primary) {
+    height: 34px;
+    padding: 0 14px;
+    font-size: 13px;
+    font-weight: 500;
+    background: transparent;
+    color: var(--cura-text-primary);
+    border: 0.5px solid var(--cura-border);
+    border-radius: var(--cura-radius-sm);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background var(--cura-transition-fast);
+
+    &:hover {
+      background: var(--cura-bg);
+    }
   }
-  .rp__modalActions {
+
+  // Primary button overrides for taller modal actions row
+  .rp__primary {
+    height: 34px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 520px) {
     flex-direction: column;
     align-items: stretch;
   }
 }
 
+// ── Reduced motion ────────────────────────────────────────────────────────────
 
+@media (prefers-reduced-motion: reduce) {
+  .rp__primary,
+  .rp__modalClose,
+  .rp__field input,
+  .rp__transferRow button {
+    transition: none;
+  }
+}

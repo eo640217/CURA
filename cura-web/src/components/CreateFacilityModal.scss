@@ -1,73 +1,173 @@
-@use "../styles/theme" as *;
-@use "../styles/ui" as ui;
-
-.modalOverlay {
+// Full-screen overlay — navy tint + blur
+.cfm__root {
   position: fixed;
   inset: 0;
-  background: rgba($black, 0.55);
+  z-index: 50;
   display: grid;
   place-items: center;
   padding: 16px;
-  z-index: 50;
+  background: rgba(30, 58, 95, 0.4);
+  backdrop-filter: blur(2px);
 }
 
-.modalCard {
-  @include ui.card;
-  width: min(520px, 100%);
-  padding: 16px;
+// Modal card
+.cfm__card {
+  width: min(440px, 100%);
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-lg);
+  padding: 28px;
 }
 
-.modalHeader {
+// Header row: title + close button
+.cfm__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  margin-bottom: 20px;
+}
 
-  .modalTitle {
-    margin: 0;
-    color: $dark-gray;
-    font-weight: $bold;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: 16px;
-  }
+.cfm__title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--cura-navy);
+  margin: 0;
+  line-height: 1.2;
+}
 
-  .iconBtn {
-    @include ui.buttonGhost;
-    padding: 8px 10px;
+.cfm__closeBtn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  background: transparent;
+  color: var(--cura-text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  flex-shrink: 0;
+  transition: background var(--cura-transition-fast), color var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+    color: var(--cura-navy);
   }
 }
 
-.modalForm {
-  margin-top: 12px;
+// Form
+.cfm__form {
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
 
-.field {
-  input { @include ui.input; }
+.cfm__field {
+  display: grid;
+  gap: 6px;
 }
 
-.label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 12px;
-  font-weight: $semibold;
+.cfm__label {
+  font-size: 10px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: $gray;
+  letter-spacing: 0.7px;
+  color: var(--cura-text-muted);
 }
 
-.actions {
+.cfm__input {
+  width: 100%;
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  padding: 9px 12px;
+  font-size: 13px;
+  color: var(--cura-navy);
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color var(--cura-transition-fast);
+
+  &::placeholder {
+    color: var(--cura-text-hint);
+  }
+
+  &:focus {
+    border-color: var(--cura-blue);
+  }
+}
+
+// Inline error
+.cfm__error {
+  font-size: 12px;
+  color: var(--cura-red-text);
+  background: var(--cura-red-bg);
+  border-radius: 6px;
+  padding: 7px 10px;
+}
+
+// Action buttons
+.cfm__actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-
-  button { @include ui.buttonGhost; }
-  .primaryBtn { @include ui.buttonPrimary; }
+  gap: 8px;
+  margin-top: 4px;
 }
 
-.error {
-  color: crimson;
-  font-weight: $semibold;
+.cfm__cancelBtn {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--cura-text-primary);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-bg);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.cfm__createBtn {
+  height: 34px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--cura-navy);
+  color: #fff;
+  border: none;
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover {
+    background: var(--cura-blue-dark);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cfm__closeBtn,
+  .cfm__cancelBtn,
+  .cfm__createBtn,
+  .cfm__input {
+    transition: none;
+  }
 }

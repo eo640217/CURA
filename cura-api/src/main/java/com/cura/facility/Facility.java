@@ -1,5 +1,6 @@
 package com.cura.facility;
 
+import com.cura.organization.Organization;
 import jakarta.persistence.*;
 import java.time.Instant;
 
@@ -25,6 +26,10 @@ public class Facility {
 
     @Column(name = "license_number", length = 80)
     private String licenseNumber;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "organization_id", nullable = false)
+    private Organization organization;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
@@ -64,9 +69,12 @@ public class Facility {
 
     // Setters
 
+    public Organization getOrganization() { return organization; }
+
     public void setName(String name) { this.name = name; }
     public void setAddress(String address) { this.address = address; }
     public void setPhone(String phone) { this.phone = phone; }
     public void setEmail(String email) { this.email = email; }
     public void setLicenseNumber(String licenseNumber) { this.licenseNumber = licenseNumber; }
+    public void setOrganization(Organization organization) { this.organization = organization; }
 }

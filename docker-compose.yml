@@ -10,6 +10,36 @@ services:
       - "5433:5432"
     volumes:
       - cura_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eman -d cura"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  cura-api:
+    build: ./cura-api
+    container_name: cura-api
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://cura.cubosq2y43fj.us-east-1.rds.amazonaws.com:5432/cura
+      SPRING_DATASOURCE_USERNAME: eman
+      SPRING_DATASOURCE_PASSWORD: ${AWS_RDS_DB_PASSWORD}
+    depends_on:
+      cura-postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+    aws:
+      access_key_id: ${AWS_ACCESS_KEY_ID}
+      secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+      s3:
+        bucket_name: ${AWS_S3_BUCKET_NAME}
 
 volumes:
   cura_pgdata:

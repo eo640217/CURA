@@ -16,30 +16,42 @@ public interface ResidentRepository extends JpaRepository<Resident, Long> {
     long countByUnitIdAndIdNot(Long unitId, Long id);
     List<Resident> findByUnitFacilityId(Long facilityId);
 
-    @Query("""
-  select new com.cura.resident.dto.ResidentDirectoryItem(
-        r.id,
-        r.firstName,
-        r.lastName,
-        r.dateOfBirth,
-        r.roomNumber,
-        u.id,
-        u.name,
-        u.type,
-        u.capacity,
-        f.id,
-        f.name
-      )
-      from Resident r
-      join r.unit u
-      join u.facility f
-      where (:q is null or :q = ''
-        or lower(r.firstName) like lower(concat('%', :q, '%'))
-        or lower(r.lastName) like lower(concat('%', :q, '%'))
-        or lower(r.roomNumber) like lower(concat('%', :q, '%'))
-      )
-      order by r.lastName asc, r.firstName asc
-""")
+    // Returns all residents (no text filter) — used when q is blank/null
+    @Query(value = """
+      select new com.cura.resident.dto.ResidentDirectoryItem(
+            r.id, r.firstName, r.lastName, r.dateOfBirth, r.roomNumber,
+            u.id, u.name, u.type, u.capacity,
+            f.id, f.name
+          )
+          from Resident r
+          join r.unit u
+          join u.facility f
+      """,
+      countQuery = "select count(r) from Resident r join r.unit u join u.facility f")
+    Page<ResidentDirectoryItem> findAllDirectory(Pageable pageable);
+
+    // Returns filtered residents — only called when q is non-blank
+    @Query(value = """
+      select new com.cura.resident.dto.ResidentDirectoryItem(
+            r.id, r.firstName, r.lastName, r.dateOfBirth, r.roomNumber,
+            u.id, u.name, u.type, u.capacity,
+            f.id, f.name
+          )
+          from Resident r
+          join r.unit u
+          join u.facility f
+          where LOWER(r.firstName)  LIKE LOWER(CONCAT('%', :q, '%'))
+             or LOWER(r.lastName)   LIKE LOWER(CONCAT('%', :q, '%'))
+             or LOWER(r.roomNumber) LIKE LOWER(CONCAT('%', :q, '%'))
+      """,
+      countQuery = """
+          select count(r) from Resident r
+          join r.unit u
+          join u.facility f
+          where LOWER(r.firstName)  LIKE LOWER(CONCAT('%', :q, '%'))
+             or LOWER(r.lastName)   LIKE LOWER(CONCAT('%', :q, '%'))
+             or LOWER(r.roomNumber) LIKE LOWER(CONCAT('%', :q, '%'))
+      """)
     Page<ResidentDirectoryItem> searchDirectory(@Param("q") String q, Pageable pageable);
 
     @Query("""

@@ -8,9 +8,9 @@ export type SidebarItem = {
 };
 
 export const SIDEBAR_ITEMS: SidebarItem[] = [
-  { label: "Dashboard", to: "/", icon: "bx bxs-dashboard bx-sm" },
+  { label: "Dashboard", to: "/dashboard", icon: "bx bxs-dashboard bx-sm" },
   { label: "Facilities", to: "/facilities", icon: "bx bxs-building-house bx-sm" },
-  { label: "Residents", to: "/residents", icon: "bx bxs-group bx-sm" },
+  { label: "Residents", to: "/residents/directory", icon: "bx bxs-group bx-sm" },
   { label: "Units", to: "/units", icon: "bx bxs-home bx-sm" },
   { label: "Hours", to: "/hours", icon: "bx bxs-time-five bx-sm" },
 
