@@ -7,6 +7,7 @@ import EventNoteOutlinedIcon from '@mui/icons-material/EventNoteOutlined';
 import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
 import NotificationAddOutlinedIcon from '@mui/icons-material/NotificationAddOutlined';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
+import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import { useNavigate } from 'react-router-dom';
 import { listRecentActivity, ActivityItem } from '../api/activity';
 import { useAuthState } from '../auth/useAuth';
@@ -80,7 +81,7 @@ function layoutKey(username: string | null) {
 }
 
 export default function DashboardView() {
-  const { username } = useAuthState();
+  const { username, isAdmin } = useAuthState();
   const navigate = useNavigate();
   const [actState, setActState] = useState<LoadState>({ status: 'idle' });
   const shift = getShift();
@@ -294,6 +295,19 @@ export default function DashboardView() {
               </button>
             );
           })}
+          {isAdmin && (
+            <button
+              type="button"
+              className="dash__qa"
+              onClick={() => navigate('/staff')}
+              title="View Staff"
+            >
+              <div className="dash__qa-icon">
+                <BadgeOutlinedIcon sx={{ fontSize: 20 }} />
+              </div>
+              <span className="dash__qa-label">View Staff</span>
+            </button>
+          )}
         </div>
       </section>
 

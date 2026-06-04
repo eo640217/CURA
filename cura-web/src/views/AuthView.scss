@@ -200,6 +200,23 @@
   color: var(--cura-green-text, #1a6b3a);
 }
 
+// ── Footer link ───────────────────────────────────────────────────────────────
+
+.auth-footer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.auth-link {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cura-text-muted, #7a8fa6);
+  text-decoration: none;
+  transition: var(--cura-transition-fast, 120ms ease);
+
+  &:hover { color: var(--cura-navy, #1e3a5f); }
+}
+
 // ── Responsive ────────────────────────────────────────────────────────────────
 
 @media (max-width: 520px) {
