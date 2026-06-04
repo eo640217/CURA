@@ -10,11 +10,10 @@ import com.cura.unit.Unit;
 import com.cura.unit.UnitRepository;
 import com.cura.unit.UnitType;
 import com.cura.user.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
 
@@ -27,56 +26,54 @@ public class DataLoader implements CommandLineRunner {
     private final FacilityRepository facilityRepo;
     private final UnitRepository unitRepo;
     private final ResidentRepository residentRepo;
+    private final UserNumberGenerator numberGenerator;
 
     @Value("${app.demo-seed:false}")
     private boolean demoSeed;
 
     public DataLoader(UserRepository repo, PasswordEncoder encoder, OrganizationRepository orgRepo,
-                      FacilityRepository facilityRepo, UnitRepository unitRepo, ResidentRepository residentRepo) {
+                      FacilityRepository facilityRepo, UnitRepository unitRepo,
+                      ResidentRepository residentRepo, UserNumberGenerator numberGenerator) {
         this.repo = repo;
         this.encoder = encoder;
         this.orgRepo = orgRepo;
         this.facilityRepo = facilityRepo;
         this.unitRepo = unitRepo;
         this.residentRepo = residentRepo;
+        this.numberGenerator = numberGenerator;
     }
 
     @Override
     public void run(String... args) {
         Organization defaultOrg = orgRepo.findAll().stream()
                 .findFirst()
-                .orElseGet(() -> orgRepo.save(new Organization("Default Organization")));
+                .orElseGet(() -> {
+                    Organization o = new Organization("Default Organization");
+                    o.setOrgCode("DEFAULT");
+                    return orgRepo.save(o);
+                });
 
-        if (repo.findByUsername("superadmin").isEmpty()) {
-            User superAdmin = new User();
-            superAdmin.setUsername("superadmin");
-            superAdmin.setPasswordHash(encoder.encode("password"));
-            superAdmin.setRole(UserRole.SUPER_ADMIN);
-            superAdmin.setOrganization(defaultOrg);
-            repo.save(superAdmin);
-        }
-
-        if (repo.findByUsername("admin").isEmpty()) {
-            User admin = new User();
-            admin.setUsername("admin");
-            admin.setPasswordHash(encoder.encode("password"));
-            admin.setRole(UserRole.ADMIN);
-            admin.setOrganization(defaultOrg);
-            repo.save(admin);
-        }
-
-        if (repo.findByUsername("staff").isEmpty()) {
-            User staff = new User();
-            staff.setUsername("staff");
-            staff.setPasswordHash(encoder.encode("password"));
-            staff.setRole(UserRole.STAFF);
-            staff.setOrganization(defaultOrg);
-            repo.save(staff);
-        }
+        seedUser("superadmin", UserRole.SUPER_ADMIN, defaultOrg);
+        seedUser("admin", UserRole.ADMIN, defaultOrg);
+        seedUser("staff", UserRole.STAFF, defaultOrg);
 
         if (demoSeed && facilityRepo.count() == 0) {
             seedDemoData(defaultOrg);
         }
+    }
+
+    private void seedUser(String username, UserRole role, Organization org) {
+        if (repo.findByUsername(username).isPresent()) return;
+        String userNumber = numberGenerator.generate(
+                n -> repo.existsByOrganizationIdAndUserNumber(org.getId(), n));
+        User u = new User();
+        u.setUsername(username);
+        u.setPasswordHash(encoder.encode("password"));
+        u.setRole(role);
+        u.setOrganization(org);
+        u.setUserNumber(userNumber);
+        u.setAccountStatus(AccountStatus.ACTIVE);
+        repo.save(u);
     }
 
     private void seedDemoData(Organization org) {

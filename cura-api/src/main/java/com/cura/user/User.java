@@ -24,6 +24,10 @@ public class User {
     @Column(name = "user_number", nullable = false, length = 6)
     private String userNumber;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "account_status", nullable = false, length = 20)
+    private AccountStatus accountStatus = AccountStatus.ACTIVE;
+
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "organization_id", nullable = false)
     private Organization organization;
@@ -55,6 +59,9 @@ public class User {
 
     public String getUserNumber() { return userNumber; }
     public void setUserNumber(String userNumber) { this.userNumber = userNumber; }
+
+    public AccountStatus getAccountStatus() { return accountStatus; }
+    public void setAccountStatus(AccountStatus accountStatus) { this.accountStatus = accountStatus; }
 
     public Organization getOrganization() { return organization; }
 

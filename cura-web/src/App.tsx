@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginView from "./views/LoginView";
+import LogoutView from "./views/LogoutView";
+import SetupPasswordView from "./views/SetupPasswordView";
 import RequireAuth from "./auth/RequireAuth";
 import RequireRole from "./auth/RequireRole";
 
@@ -29,6 +31,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomeView />} />
         <Route path="/login" element={<LoginView />} />
+        <Route path="/logout" element={<LogoutView />} />
+        <Route path="/setup-password" element={<SetupPasswordView />} />
 
         {/* ADMIN */}
         <Route

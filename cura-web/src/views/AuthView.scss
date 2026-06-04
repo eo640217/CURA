@@ -1,0 +1,208 @@
+// Shared stylesheet for all auth screens (Login, Logout, SetupPassword).
+// Uses the cura-tokens design system — same variables as the dashboard.
+
+.auth-page {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+  background: var(--cura-bg, #f0f2f5);
+}
+
+.auth-card {
+  width: min(440px, 100%);
+  background: var(--cura-surface, #fff);
+  border: 0.5px solid var(--cura-border, #dde3ec);
+  border-radius: var(--cura-radius-lg, 12px);
+  box-shadow: 0 4px 24px rgba(30, 58, 95, 0.07);
+  overflow: hidden;
+}
+
+.auth-panel {
+  padding: 44px 44px 52px;
+}
+
+// ── Brand mark ────────────────────────────────────────────────────────────────
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.auth-brand__mark {
+  width: 32px;
+  height: 32px;
+  background: var(--cura-navy, #1e3a5f);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading, 'Fraunces', Georgia, serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+
+.auth-brand__name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cura-navy, #1e3a5f);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+
+.auth-header {
+  margin-bottom: 28px;
+
+  h1 {
+    font-family: var(--font-heading, 'Fraunces', Georgia, serif);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--cura-navy, #1e3a5f);
+    margin: 0 0 6px;
+    line-height: 1.2;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--cura-text-muted, #7a8fa6);
+    line-height: 1.5;
+  }
+}
+
+// ── Mode tabs ─────────────────────────────────────────────────────────────────
+
+.auth-tabs {
+  display: flex;
+  background: var(--cura-bg, #f0f2f5);
+  border: 0.5px solid var(--cura-border, #dde3ec);
+  border-radius: var(--cura-radius-sm, 8px);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 9px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--cura-text-muted, #7a8fa6);
+  transition: var(--cura-transition-fast, 120ms ease);
+
+  & + & { border-left: 0.5px solid var(--cura-border, #dde3ec); }
+
+  &--active {
+    background: var(--cura-navy, #1e3a5f);
+    color: #fff;
+  }
+
+  &:not(&--active):hover {
+    background: var(--cura-blue-light, #eef4fb);
+    color: var(--cura-navy, #1e3a5f);
+  }
+}
+
+// ── Form fields ───────────────────────────────────────────────────────────────
+
+.auth-group {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    margin: 0 0 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--cura-text-muted, #7a8fa6);
+  }
+
+  input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    border: 0.5px solid var(--cura-border, #dde3ec);
+    border-radius: var(--cura-radius-sm, 8px);
+    background: var(--cura-bg, #f0f2f5);
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--cura-text-primary, #1e3a5f);
+    outline: none;
+    transition: var(--cura-transition-fast, 120ms ease);
+
+    &::placeholder { color: var(--cura-text-hint, #a0b4c8); }
+
+    &:focus {
+      border-color: var(--cura-blue, #4a90d9);
+      background: var(--cura-surface, #fff);
+      box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.12);
+    }
+  }
+}
+
+// ── Primary button ────────────────────────────────────────────────────────────
+
+.auth-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 11px 16px;
+  background: var(--cura-navy, #1e3a5f);
+  color: #fff;
+  border: none;
+  border-radius: var(--cura-radius-sm, 8px);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: var(--cura-transition-fast, 120ms ease);
+
+  &:hover { background: var(--cura-blue-dark, #1a4f8a); }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ── Feedback banners ──────────────────────────────────────────────────────────
+
+.auth-error {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--cura-red-bg, #feeaea);
+  border-radius: var(--cura-radius-sm, 8px);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cura-red-text, #9a2020);
+}
+
+.auth-success {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--cura-green-bg, #e6f5ec);
+  border-radius: var(--cura-radius-sm, 8px);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cura-green-text, #1a6b3a);
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+
+@media (max-width: 520px) {
+  .auth-panel { padding: 32px 24px 40px; }
+  .auth-card { border-radius: var(--cura-radius-md, 10px); }
+}

@@ -9,6 +9,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
     Optional<User> findByOrganizationIdAndUserNumber(Long orgId, String userNumber);
     boolean existsByOrganizationIdAndUserNumber(Long orgId, String userNumber);
+    boolean existsByOrganizationIdAndRole(Long orgId, UserRole role);
     List<User> findByUsernameContainingIgnoreCaseOrderByUsernameAsc(String username);
     List<User> findAllByOrderByUsernameAsc();
     List<User> findByOrganizationIdOrderByUsernameAsc(Long orgId);

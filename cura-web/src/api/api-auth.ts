@@ -16,3 +16,7 @@ export async function login(req: LoginRequest): Promise<LoginResponse> {
   const res = await http.post<LoginResponse>("/auth/login", req);
   return res.data;
 }
+
+export async function setupPassword(token: string, newPassword: string): Promise<void> {
+  await http.post("/auth/setup-password", { token, newPassword });
+}
