@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { login } from "../api/api-auth";
 import { setAuth } from "../auth/auth";
 import "./AuthView.scss";
@@ -125,6 +125,10 @@ export default function LoginView() {
 
             {error && <div className="auth-error">{error}</div>}
           </form>
+
+          <div className="auth-footer">
+            <Link to="/setup-password" className="auth-link">Activate your account</Link>
+          </div>
 
         </div>
       </div>
