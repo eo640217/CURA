@@ -1,11 +1,12 @@
 package com.cura.unit;
 
+import com.cura.common.TenantUtil;
 import com.cura.unit.dto.UnitCreateRequest;
 import com.cura.unit.dto.UnitPatchRequest;
 import com.cura.unit.dto.UnitResponse;
 import com.cura.unit.dto.UnitUpdateRequest;
 import jakarta.validation.Valid;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,40 +22,32 @@ public class UnitController {
     }
 
     @PostMapping("/facilities/{facilityId}/units")
-    public UnitResponse create(
-            @PathVariable Long facilityId,
-            @Valid @RequestBody UnitCreateRequest request
-    ) {
-        return unitService.create(facilityId, request);
+    public UnitResponse create(@PathVariable Long facilityId, @Valid @RequestBody UnitCreateRequest request, Authentication auth) {
+        return unitService.create(facilityId, request, TenantUtil.orgId(auth));
     }
 
     @GetMapping("/facilities/{facilityId}/units")
-    public List<UnitResponse> listByFacility(@PathVariable Long facilityId) {
-        return unitService.listByFacility(facilityId);
+    public List<UnitResponse> listByFacility(@PathVariable Long facilityId, Authentication auth) {
+        return unitService.listByFacility(facilityId, TenantUtil.orgId(auth));
     }
 
     @GetMapping("/units/{unitId}")
-    public UnitResponse get(@PathVariable Long unitId) {
-        return unitService.get(unitId);
+    public UnitResponse get(@PathVariable Long unitId, Authentication auth) {
+        return unitService.get(unitId, TenantUtil.orgId(auth));
     }
 
     @PutMapping("/units/{unitId}")
-    public UnitResponse update(
-            @PathVariable Long unitId,
-            @Valid @RequestBody UnitUpdateRequest request
-    ) {
-        return unitService.update(unitId, request);
+    public UnitResponse update(@PathVariable Long unitId, @Valid @RequestBody UnitUpdateRequest request, Authentication auth) {
+        return unitService.update(unitId, request, TenantUtil.orgId(auth));
     }
 
     @DeleteMapping("/units/{unitId}")
-    public void delete(@PathVariable Long unitId) {
-        unitService.delete(unitId);
+    public void delete(@PathVariable Long unitId, Authentication auth) {
+        unitService.delete(unitId, TenantUtil.orgId(auth));
     }
 
     @PatchMapping("/{unitId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public UnitResponse patch(@PathVariable Long unitId, @Valid @RequestBody UnitPatchRequest req) {
-        return unitService.patch(unitId, req);
+    public UnitResponse patch(@PathVariable Long unitId, @Valid @RequestBody UnitPatchRequest req, Authentication auth) {
+        return unitService.patch(unitId, req, TenantUtil.orgId(auth));
     }
-
 }

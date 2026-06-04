@@ -1,0 +1,141 @@
+@use "../styles/theme" as *;
+@use "../styles/ui" as ui;
+
+.pv {
+  padding: 20px 24px;
+  max-width: 860px;
+
+  &--center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: $gray;
+    font-size: 14px;
+  }
+
+  &--error { color: crimson; }
+
+  &__header {
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: $bold;
+    color: $dark-gray;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 16px;
+    align-items: start;
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__card {
+    @include ui.card;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__cardTitle {
+    font-size: 11px;
+    font-weight: $bold;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: $light-gray;
+  }
+
+  &__avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: $accent;
+    color: $white;
+    font-size: 24px;
+    font-weight: $bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    &--grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+  }
+
+  &__field {}
+
+  &__fieldLabel {
+    font-size: 11px;
+    font-weight: $bold;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: $light-gray;
+    margin-bottom: 3px;
+  }
+
+  &__fieldValue {
+    font-size: 14px;
+    color: $dark-gray;
+  }
+
+  &__rolePill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: $bold;
+    padding: 3px 10px;
+    border-radius: 999px;
+
+    &--admin {
+      background: rgba($accent, 0.12);
+      color: $accent;
+    }
+
+    &--staff {
+      background: rgba(#3ab06a, 0.12);
+      color: #2a8050;
+    }
+  }
+
+  &__staffName {
+    font-size: 18px;
+    font-weight: $bold;
+    color: $dark-gray;
+  }
+
+  &__staffTitle {
+    font-size: 13px;
+    color: $gray;
+    margin-top: -8px;
+  }
+
+  &__noLink {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: $gray;
+    font-size: 14px;
+    padding: 8px 0;
+  }
+
+  &__noLinkHint {
+    font-size: 12px;
+    color: $light-gray;
+  }
+}

@@ -7,6 +7,7 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -25,7 +26,8 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/residents',  icon: <PeopleAltOutlinedIcon sx={{ fontSize: 20 }} />,  label: 'Residents' },
   { to: '/care-plans', icon: <AssignmentOutlinedIcon sx={{ fontSize: 20 }} />, label: 'Care Plans' },
   { to: '/scheduling', icon: <CalendarMonthOutlinedIcon sx={{ fontSize: 20 }} />, label: 'Scheduling' },
-  { to: '/facilities', icon: <BadgeOutlinedIcon sx={{ fontSize: 20 }} />,      label: 'Facilities' },
+  { to: '/facilities', icon: <BadgeOutlinedIcon sx={{ fontSize: 20 }} />,            label: 'Facilities' },
+  { to: '/staff',      icon: <ManageAccountsOutlinedIcon sx={{ fontSize: 20 }} />, label: 'Staff', adminOnly: true },
 ];
 
 const NAV_BOTTOM_MAIN: NavItem[] = [

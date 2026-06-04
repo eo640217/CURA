@@ -3,4 +3,6 @@ package com.cura.organization;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrganizationRepository extends JpaRepository<Organization, Long> {
+    java.util.Optional<Organization> findByOrgCode(String orgCode);
+    boolean existsByOrgCode(String orgCode);
 }

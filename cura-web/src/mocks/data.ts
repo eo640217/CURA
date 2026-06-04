@@ -39,6 +39,21 @@ export const seedActivity = [
 ];
 
 export const seedUsers = [
-  { id: 1, username: 'admin', role: 'ADMIN' as const },
-  { id: 2, username: 'staff', role: 'STAFF' as const },
+  { id: 1, username: 'superadmin', role: 'SUPER_ADMIN' as const, userNumber: '100000' },
+  { id: 2, username: 'admin',      role: 'ADMIN'       as const, userNumber: '100001' },
+  { id: 3, username: 'staff',      role: 'STAFF'       as const, userNumber: '100002' },
+];
+
+export const seedOrganizations = [
+  { id: 1, name: 'Sunrise Health Group', orgCode: 'SUNRISE', contactEmail: 'ops@sunrisehealth.com', phone: '+1 (503) 555-0100', createdAt: '2023-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+  { id: 2, name: 'Oakwood Care Network', orgCode: 'OAKWOOD',  contactEmail: 'admin@oakwoodcare.com',  phone: '+1 (503) 555-0200', createdAt: '2023-06-15T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+];
+
+export const seedStaff = [
+  { id: 101, firstName: 'Sarah',   lastName: 'Mitchell', email: 'sarah.mitchell@cura.com',  phone: '+1 (503) 555-0101', userNumber: '500000', employeeNumber: 'EMP-500000', username: 'sarah.mitchell', jobTitle: 'Head Nurse',         department: 'NURSING'        as const, employmentType: 'FULL_TIME' as const, status: 'ACTIVE'    as const, hireDate: '2020-03-15', dateOfBirth: '1985-06-10', notes: null,                              userId: null,  facilityIds: [1],    createdAt: '2020-03-15T09:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+  { id: 102, firstName: 'James',   lastName: 'Okafor',   email: 'james.okafor@cura.com',    phone: '+1 (503) 555-0102', userNumber: '500001', employeeNumber: 'EMP-500001', username: 'james.okafor',   jobTitle: 'Care Assistant',     department: 'CARE'           as const, employmentType: 'FULL_TIME' as const, status: 'ACTIVE'    as const, hireDate: '2021-07-01', dateOfBirth: '1990-11-22', notes: null,                              userId: null,  facilityIds: [1],    createdAt: '2021-07-01T09:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+  { id: 103, firstName: 'Linda',   lastName: 'Park',     email: 'linda.park@cura.com',      phone: null,                userNumber: '500002', employeeNumber: 'EMP-500002', username: 'linda.park',     jobTitle: 'Facility Manager',   department: 'MANAGEMENT'     as const, employmentType: 'FULL_TIME' as const, status: 'ACTIVE'    as const, hireDate: '2019-01-10', dateOfBirth: '1978-03-05', notes: 'Senior manager, oversees both sites.', userId: 1, facilityIds: [1, 2], createdAt: '2019-01-10T09:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+  { id: 104, firstName: 'Marcus',  lastName: 'Rivera',   email: 'marcus.rivera@cura.com',   phone: '+1 (503) 555-0104', userNumber: '500003', employeeNumber: 'EMP-500003', username: 'marcus.rivera',  jobTitle: 'Registered Nurse',   department: 'NURSING'        as const, employmentType: 'PART_TIME' as const, status: 'ON_LEAVE'  as const, hireDate: '2022-04-20', dateOfBirth: '1992-08-14', notes: null,                              userId: null,  facilityIds: [2],    createdAt: '2022-04-20T09:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+  { id: 105, firstName: 'Amelia',  lastName: 'Stone',    email: 'amelia.stone@cura.com',    phone: '+1 (503) 555-0105', userNumber: '500004', employeeNumber: 'EMP-500004', username: 'amelia.stone',   jobTitle: 'Administrator',      department: 'ADMINISTRATION' as const, employmentType: 'FULL_TIME' as const, status: 'ACTIVE'    as const, hireDate: '2023-02-01', dateOfBirth: '1988-01-30', notes: null,                              userId: null,  facilityIds: [1],    createdAt: '2023-02-01T09:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+  { id: 106, firstName: 'Tom',     lastName: 'Harris',   email: 'tom.harris@cura.com',      phone: null,                userNumber: '500005', employeeNumber: 'EMP-500005', username: 'tom.harris',     jobTitle: 'Maintenance Tech',   department: 'MAINTENANCE'    as const, employmentType: 'AGENCY'    as const, status: 'INACTIVE'  as const, hireDate: '2023-06-15', dateOfBirth: '1980-05-17', notes: null,                              userId: null,  facilityIds: [2],    createdAt: '2023-06-15T09:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
 ];

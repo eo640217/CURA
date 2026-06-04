@@ -1,14 +1,15 @@
 import { http } from "./http";
 
-export type LoginRequest = {
-  username: string;
-  password: string;
-};
+export type OrgLoginRequest  = { orgCode: string; userNumber: string; password: string };
+export type UserLoginRequest = { username: string; password: string };
+export type LoginRequest = OrgLoginRequest | UserLoginRequest;
 
 export type LoginResponse = {
   token: string;
   username: string;
-  role: "ADMIN" | "STAFF";
+  role: "SUPER_ADMIN" | "ADMIN" | "STAFF";
+  userNumber: string | null;
+  orgCode: string | null;
 };
 
 export async function login(req: LoginRequest): Promise<LoginResponse> {

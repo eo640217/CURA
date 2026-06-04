@@ -47,6 +47,15 @@ public class DataLoader implements CommandLineRunner {
                 .findFirst()
                 .orElseGet(() -> orgRepo.save(new Organization("Default Organization")));
 
+        if (repo.findByUsername("superadmin").isEmpty()) {
+            User superAdmin = new User();
+            superAdmin.setUsername("superadmin");
+            superAdmin.setPasswordHash(encoder.encode("password"));
+            superAdmin.setRole(UserRole.SUPER_ADMIN);
+            superAdmin.setOrganization(defaultOrg);
+            repo.save(superAdmin);
+        }
+
         if (repo.findByUsername("admin").isEmpty()) {
             User admin = new User();
             admin.setUsername("admin");

@@ -14,6 +14,15 @@ public class Organization {
     @Column(nullable = false, length = 255)
     private String name;
 
+    @Column(name = "org_code", nullable = false, unique = true, length = 20)
+    private String orgCode;
+
+    @Column(name = "contact_email", length = 255)
+    private String contactEmail;
+
+    @Column(length = 30)
+    private String phone;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -40,8 +49,14 @@ public class Organization {
 
     public Long getId() { return id; }
     public String getName() { return name; }
+    public String getOrgCode() { return orgCode; }
+    public String getContactEmail() { return contactEmail; }
+    public String getPhone() { return phone; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
 
     public void setName(String name) { this.name = name; }
+    public void setOrgCode(String orgCode) { this.orgCode = orgCode; }
+    public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
+    public void setPhone(String phone) { this.phone = phone; }
 }

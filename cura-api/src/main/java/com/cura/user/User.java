@@ -21,7 +21,10 @@ public class User {
     @Column(nullable = false, length = 50)
     private UserRole role;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @Column(name = "user_number", nullable = false, length = 6)
+    private String userNumber;
+
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "organization_id", nullable = false)
     private Organization organization;
 
@@ -47,13 +50,11 @@ public class User {
 
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
-    public UserRole getRole() {
-        return role;
-    }
+    public UserRole getRole() { return role; }
+    public void setRole(UserRole role) { this.role = role; }
 
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
+    public String getUserNumber() { return userNumber; }
+    public void setUserNumber(String userNumber) { this.userNumber = userNumber; }
 
     public Organization getOrganization() { return organization; }
 

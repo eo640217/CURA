@@ -1,6 +1,6 @@
 import {
   seedFacilities, seedUnits, seedResidents,
-  seedNotes, seedActivity, seedUsers,
+  seedNotes, seedActivity, seedUsers, seedStaff, seedOrganizations,
 } from './data';
 
 let facilities = structuredClone(seedFacilities);
@@ -9,7 +9,9 @@ let residents  = structuredClone(seedResidents);
 let notes      = structuredClone(seedNotes);
 const activity = structuredClone(seedActivity);
 let users      = structuredClone(seedUsers);
-let nextId     = 200;
+let staff      = structuredClone(seedStaff);
+let orgs       = structuredClone(seedOrganizations);
+let nextId     = 300;
 
 function uid() { return ++nextId; }
 
@@ -165,6 +167,99 @@ export const db = {
       const u = { id: uid(), username: body.username, role: body.role };
       users.push(u);
       return u;
+    },
+  },
+
+  staff: {
+    toResponse: (s: typeof staff[0]) => ({
+      id: s.id, firstName: s.firstName, lastName: s.lastName, email: s.email,
+      phone: s.phone, employeeNumber: s.employeeNumber ?? null, username: s.username ?? null,
+      jobTitle: s.jobTitle, department: s.department,
+      employmentType: s.employmentType, status: s.status, hireDate: s.hireDate,
+      createdAt: s.createdAt,
+    }),
+    toDetail: (s: typeof staff[0]) => ({
+      id: s.id, firstName: s.firstName, lastName: s.lastName, email: s.email,
+      phone: s.phone, employeeNumber: s.employeeNumber ?? null, username: s.username ?? null,
+      jobTitle: s.jobTitle, department: s.department,
+      employmentType: s.employmentType, status: s.status, hireDate: s.hireDate,
+      dateOfBirth: s.dateOfBirth, notes: s.notes, userId: s.userId,
+      facilities: facilities.filter(f => s.facilityIds.includes(f.id)).map(f => ({ id: f.id, name: f.name })),
+      createdAt: s.createdAt, updatedAt: s.updatedAt,
+    }),
+    search: (q: string | null, status: string | null, department: string | null, page: number, size: number) => {
+      const items = staff.filter(s => {
+        if (q && !`${s.firstName} ${s.lastName} ${s.email}`.toLowerCase().includes(q.toLowerCase())) return false;
+        if (status && s.status !== status) return false;
+        if (department && s.department !== department) return false;
+        return true;
+      });
+      const start = page * size;
+      return {
+        content: items.slice(start, start + size).map(db.staff.toResponse),
+        totalElements: items.length,
+        totalPages: Math.ceil(items.length / size) || 1,
+        number: page,
+        size,
+      };
+    },
+    get: (id: number) => staff.find(s => s.id === id) ?? null,
+    create: (body: { firstName: string; lastName: string; email: string; phone?: string; employeeNumber?: string; username?: string; jobTitle: string; department: string; employmentType: string; hireDate: string; dateOfBirth?: string; notes?: string }) => {
+      const s = { id: uid(), ...body, phone: body.phone ?? null, employeeNumber: body.employeeNumber ?? null, username: body.username ?? null, dateOfBirth: body.dateOfBirth ?? null, notes: body.notes ?? null, userId: null, status: 'ACTIVE' as const, facilityIds: [] as number[], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+      staff.push(s as any);
+      return db.staff.toDetail(s as any);
+    },
+    update: (id: number, body: { firstName: string; lastName: string; email: string; phone?: string; employeeNumber?: string; username?: string; jobTitle: string; department: string; employmentType: string; hireDate: string; dateOfBirth?: string; notes?: string }) => {
+      const s = staff.find(x => x.id === id);
+      if (!s) return null;
+      Object.assign(s, { ...body, phone: body.phone ?? null, dateOfBirth: body.dateOfBirth ?? null, notes: body.notes ?? null, updatedAt: new Date().toISOString() });
+      return db.staff.toDetail(s);
+    },
+    patchStatus: (id: number, status: string) => {
+      const s = staff.find(x => x.id === id);
+      if (!s) return null;
+      s.status = status as any;
+      s.updatedAt = new Date().toISOString();
+      return db.staff.toDetail(s);
+    },
+    delete: (id: number) => {
+      const s = staff.find(x => x.id === id);
+      if (s) { s.status = 'TERMINATED' as any; s.updatedAt = new Date().toISOString(); }
+    },
+    assignFacility: (staffId: number, facilityId: number) => {
+      const s = staff.find(x => x.id === staffId);
+      if (!s) return null;
+      if (!s.facilityIds.includes(facilityId)) s.facilityIds.push(facilityId);
+      return db.staff.toDetail(s);
+    },
+    removeFacility: (staffId: number, facilityId: number) => {
+      const s = staff.find(x => x.id === staffId);
+      if (!s) return null;
+      s.facilityIds = s.facilityIds.filter(id => id !== facilityId);
+      return db.staff.toDetail(s);
+    },
+    list: () => staff,
+    listByFacility: (facilityId: number) => staff.filter(s => s.facilityIds.includes(facilityId)).map(db.staff.toResponse),
+    findByUserId: (userId: number) => staff.find(s => s.userId === userId) ?? null,
+  },
+
+  organizations: {
+    toResponse: (o: typeof orgs[0]) => ({ ...o }),
+    list: () => orgs.map(db.organizations.toResponse),
+    get: (id: number) => orgs.find(o => o.id === id) ?? null,
+    create: (body: { name: string; contactEmail?: string; phone?: string }) => {
+      const o = { id: uid(), name: body.name, contactEmail: body.contactEmail ?? null, phone: body.phone ?? null, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+      orgs.push(o);
+      return o;
+    },
+    update: (id: number, body: { name: string; contactEmail?: string; phone?: string }) => {
+      const o = orgs.find(x => x.id === id);
+      if (!o) return null;
+      o.name = body.name;
+      o.contactEmail = body.contactEmail ?? null;
+      o.phone = body.phone ?? null;
+      o.updatedAt = new Date().toISOString();
+      return o;
     },
   },
 };
