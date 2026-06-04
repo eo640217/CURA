@@ -1,10 +1,13 @@
 package com.cura.auth;
 
+import com.cura.organization.Organization;
 import com.cura.user.User;
+import com.cura.user.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,11 +21,20 @@ public class UserPrincipal implements UserDetails {
 
     public Long getId() { return user.getId(); }
     public String getRole() { return user.getRole().name(); }
+    public Long getOrgId() { return user.getOrganization().getId(); }
+    public String getOrgCode() { return user.getOrganization().getOrgCode(); }
+    public Organization getOrganization() { return user.getOrganization(); }
+    public String getUserNumber() { return user.getUserNumber(); }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Spring Security expects roles like "ROLE_ADMIN"
-        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+        // SUPER_ADMIN inherits all ADMIN permissions
+        if (user.getRole() == UserRole.SUPER_ADMIN) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        }
+        return authorities;
     }
 
     @Override

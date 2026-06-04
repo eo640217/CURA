@@ -26,6 +26,9 @@ public class Resident {
     @Column(name = "room_number", length = 50)
     private String roomNumber;
 
+    @Column(name = "resident_number", nullable = false, length = 6)
+    private String residentNumber;
+
 //    @Column(name = "notes")
 //    private String notes;
 
@@ -83,9 +86,10 @@ public class Resident {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getRoomNumber() {
-        return roomNumber;
-    }
+    public String getRoomNumber() { return roomNumber; }
+
+    public String getResidentNumber() { return residentNumber; }
+    public void setResidentNumber(String residentNumber) { this.residentNumber = residentNumber; }
 
     public Unit getUnit() { return unit; }
 

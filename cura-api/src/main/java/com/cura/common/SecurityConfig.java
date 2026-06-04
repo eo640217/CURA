@@ -71,6 +71,16 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/units/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/units/**").hasRole("ADMIN")
 
+                // SUPER_ADMIN only: organization management
+                .requestMatchers("/api/v1/organizations/**").hasRole("SUPER_ADMIN")
+
+                // Authenticated: own profile + settings
+                .requestMatchers("/api/v1/profile/**").authenticated()
+
+                // ADMIN-only: Staff (all operations)
+                .requestMatchers("/api/v1/staff/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/facilities/*/staff").hasRole("ADMIN")
+
                 // Residents: allow reads for any authenticated user
                 .requestMatchers(HttpMethod.GET, "/api/v1/residents/**").authenticated()
 

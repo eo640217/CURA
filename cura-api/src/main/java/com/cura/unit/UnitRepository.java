@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface UnitRepository extends JpaRepository<Unit, Long> {
     List<Unit> findAllByFacilityId(Long facilityId);
+    boolean existsByIdAndFacilityOrganizationId(Long unitId, Long orgId);
     @Query("""
         select new com.cura.unit.dto.UnitResponse(
             u.id,

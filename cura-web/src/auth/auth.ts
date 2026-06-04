@@ -1,18 +1,22 @@
 type AuthState = {
   token: string | null;
   username: string | null;
-  role: "ADMIN" | "STAFF" | null;
+  role: "SUPER_ADMIN" | "ADMIN" | "STAFF" | null;
+  userNumber: string | null;
+  orgCode: string | null;
 };
 
 const KEY = "cura_auth";
 
+const EMPTY: AuthState = { token: null, username: null, role: null, userNumber: null, orgCode: null };
+
 export function getAuth(): AuthState {
   const raw = localStorage.getItem(KEY);
-  if (!raw) return { token: null, username: null, role: null };
+  if (!raw) return EMPTY;
   try {
     return JSON.parse(raw) as AuthState;
   } catch {
-    return { token: null, username: null, role: null };
+    return EMPTY;
   }
 }
 

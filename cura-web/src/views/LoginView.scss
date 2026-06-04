@@ -39,6 +39,31 @@
   }
 }
 
+.curaTabs {
+  display: flex;
+  border: $border;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.curaTab {
+  flex: 1;
+  padding: 9px 12px;
+  font-size: 12px;
+  font-weight: $semibold;
+  background: rgba($black, 0.03);
+  border: none;
+  cursor: pointer;
+  color: $gray;
+  transition: 0.15s ease;
+
+  & + & { border-left: $border; }
+
+  &--active { background: $accent; color: $white; }
+  &:not(&--active):hover { background: rgba($black, 0.07); }
+}
+
 .curaGroup {
   margin-bottom: 16px;
 

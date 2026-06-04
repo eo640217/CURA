@@ -1,7 +1,8 @@
 package com.cura.user;
 
+import com.cura.common.TenantUtil;
 import com.cura.user.dto.UserResponse;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,9 +17,8 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public List<UserResponse> list(@RequestParam(value = "username", required = false) String username) {
-        return userService.listUsers(username);
+    public List<UserResponse> list(@RequestParam(value = "username", required = false) String username, Authentication auth) {
+        return userService.listUsers(username, TenantUtil.orgId(auth));
     }
 }

@@ -4,26 +4,33 @@ import { setAuth } from "../auth/auth";
 import lexicon from "../assets/lexicon";
 import "./LoginView.scss";
 
+type Mode = "org" | "platform";
+
 export default function LoginView() {
   const t = lexicon;
 
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("password");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [mode, setMode]             = useState<Mode>("org");
+  const [orgCode, setOrgCode]       = useState("");
+  const [userNumber, setUserNumber] = useState("");
+  const [username, setUsername]     = useState("superadmin");
+  const [password, setPassword]     = useState("password");
+  const [error, setError]           = useState<string | null>(null);
+  const [loading, setLoading]       = useState(false);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
     try {
-      const data = await login({ username, password });
-      setAuth({ token: data.token, username: data.username, role: data.role });
+      const req = mode === "org"
+        ? { orgCode: orgCode.trim().toUpperCase(), userNumber: userNumber.trim(), password }
+        : { username: username.trim(), password };
+
+      const data = await login(req);
+      setAuth({ token: data.token, username: data.username, role: data.role, userNumber: data.userNumber, orgCode: data.orgCode });
       window.location.href = "/dashboard";
     } catch (err: any) {
-      const msg = err?.response?.data?.message ?? err?.message ?? t.login.loginFailed;
-      setError(msg);
+      setError(err?.response?.data?.message ?? err?.message ?? t.login.loginFailed);
     } finally {
       setLoading(false);
     }
@@ -38,15 +45,53 @@ export default function LoginView() {
             <p>{t.login.subtitle}</p>
           </div>
 
+          <div className="curaTabs">
+            <button type="button"
+              className={`curaTab${mode === "org" ? " curaTab--active" : ""}`}
+              onClick={() => { setMode("org"); setError(null); }}>
+              Organization Login
+            </button>
+            <button type="button"
+              className={`curaTab${mode === "platform" ? " curaTab--active" : ""}`}
+              onClick={() => { setMode("platform"); setError(null); }}>
+              Platform Admin
+            </button>
+          </div>
+
           <form onSubmit={onSubmit}>
-            <div className="curaGroup">
-              <label>{t.login.username}</label>
-              <input
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                autoComplete="username"
-              />
-            </div>
+            {mode === "org" ? (
+              <>
+                <div className="curaGroup">
+                  <label>Organization Code</label>
+                  <input
+                    value={orgCode}
+                    onChange={(e) => setOrgCode(e.target.value)}
+                    placeholder="e.g. SUNRISE"
+                    autoCapitalize="characters"
+                    autoComplete="organization"
+                  />
+                </div>
+                <div className="curaGroup">
+                  <label>User Number</label>
+                  <input
+                    value={userNumber}
+                    onChange={(e) => setUserNumber(e.target.value)}
+                    placeholder="6-digit number"
+                    inputMode="numeric"
+                    autoComplete="username"
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="curaGroup">
+                <label>{t.login.username}</label>
+                <input
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  autoComplete="username"
+                />
+              </div>
+            )}
 
             <div className="curaGroup">
               <label>{t.login.password}</label>

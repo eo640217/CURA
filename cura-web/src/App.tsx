@@ -17,6 +17,10 @@ import HomeView from "./views/HomeView";
 
 import AdminView from "./views/AdminView";
 import AdminUsersView from "./views/AdminUsersView";
+import StaffView from "./views/StaffView";
+import ProfileView from "./views/ProfileView";
+import OrganizationsView from "./views/OrganizationsView";
+import SettingsView from "./views/SettingsView";
 import "./App.scss";
 
 export default function App() {
@@ -73,6 +77,16 @@ export default function App() {
 
           {/* Incidents */}
           <Route path="/incidents" element={<IncidentsView />} />
+
+          {/* Profile + Settings — all authenticated */}
+          <Route path="/profile" element={<ProfileView />} />
+          <Route path="/settings" element={<SettingsView />} />
+
+          {/* Organizations — SUPER_ADMIN only */}
+          <Route path="/organizations" element={<RequireRole role="SUPER_ADMIN"><OrganizationsView /></RequireRole>} />
+
+          {/* Staff — admin only */}
+          <Route path="/staff" element={<RequireRole role="ADMIN"><StaffView /></RequireRole>} />
 
           {/* Legacy */}
           <Route path="/units" element={<UnitsView />} />

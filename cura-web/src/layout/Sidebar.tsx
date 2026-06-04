@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   BarChart2,
   FileWarning,
+  IdCard,
   Settings,
   LogOut,
 } from "lucide-react";
@@ -34,6 +35,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: "/residents/directory", icon: <Users           size={20} />, label: "Residents" },
   { to: "/units",               icon: <LayoutGrid      size={20} />, label: "Units" },
   { to: "/hours",               icon: <Clock           size={20} />, label: "Hours" },
+  { to: "/staff",               icon: <IdCard          size={20} />, label: "Staff",      adminOnly: true },
   { to: "/admin/users",         icon: <ShieldCheck     size={20} />, label: "Admin",      adminOnly: true },
   { to: "/reports",             icon: <BarChart2       size={20} />, label: "Reports" },
   { to: "/incidents",           icon: <FileWarning     size={20} />, label: "Incidents" },

@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import { getAuth } from "./auth";
 
 type Props = {
-  role: "ADMIN" | "STAFF";
+  role: "SUPER_ADMIN" | "ADMIN" | "STAFF";
   children: ReactNode;
 };
 

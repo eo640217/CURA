@@ -1,0 +1,146 @@
+@use "../styles/theme" as *;
+@use "../styles/ui" as ui;
+
+.ov {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px 24px;
+  gap: 16px;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__title { margin: 0; font-size: 22px; font-weight: $bold; color: $dark-gray; }
+  &__subtitle { margin: 2px 0 0; font-size: 13px; color: $gray; }
+
+  &__newBtn { @include ui.buttonPrimary; font-size: 13px; padding: 10px 16px; white-space: nowrap; }
+
+  &__body {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 16px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  &__row {
+    @include ui.card;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    transition: box-shadow 0.15s ease;
+
+    &:hover { box-shadow: $shadow-md; }
+    &--active { border-color: $accent; background: rgba($accent, 0.04); }
+  }
+
+  &__rowIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-sm;
+    background: rgba($accent, 0.1);
+    color: $accent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  &__rowName { font-weight: $bold; font-size: 14px; color: $dark-gray; }
+  &__rowSub { font-size: 12px; color: $gray; margin-top: 2px; }
+
+  &__detail { overflow-y: auto; }
+
+  &__placeholder {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; color: $light-gray; font-size: 14px;
+  }
+
+  &__panel {
+    @include ui.card;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__panelHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  &__panelTitle { margin: 0; font-size: 18px; font-weight: $bold; color: $dark-gray; }
+  &__panelSub { font-size: 12px; color: $gray; margin-top: 2px; }
+
+  &__closeBtn {
+    border: $border; background: transparent; border-radius: $radius-sm;
+    padding: 6px 10px; cursor: pointer; font-size: 14px; color: $gray; line-height: 1;
+    &:hover { background: rgba($black, 0.04); }
+  }
+
+  &__editBtn { @include ui.buttonGhost; font-size: 12px; padding: 6px 12px; }
+
+  &__infoGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  &__infoField {}
+  &__infoLabel { font-size: 11px; font-weight: $bold; text-transform: uppercase; letter-spacing: 0.12em; color: $light-gray; margin-bottom: 3px; }
+  &__infoValue { font-size: 14px; color: $dark-gray; }
+
+  &__form { display: flex; flex-direction: column; gap: 12px; }
+  &__formRow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  &__formField { display: flex; flex-direction: column; gap: 4px; }
+  &__label { font-size: 11px; font-weight: $bold; text-transform: uppercase; letter-spacing: 0.12em; color: $gray; }
+  &__input { @include ui.input; padding: 9px 12px; font-size: 13px; }
+
+  &__actions { display: flex; gap: 8px; }
+
+  &__btn {
+    &--primary { @include ui.buttonPrimary; font-size: 13px; padding: 10px 16px; }
+    &--ghost   { @include ui.buttonGhost;   font-size: 13px; padding: 10px 16px; }
+  }
+
+  &__saveErr { color: crimson; font-size: 13px; }
+  &__saveMsg { color: #0a7a2f; font-size: 13px; }
+
+  &__section {
+    border-top: $border;
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__sectionTitle { font-size: 12px; font-weight: $bold; text-transform: uppercase; letter-spacing: 0.12em; color: $gray; }
+  &__sectionHint { margin: 0; font-size: 12px; color: $light-gray; line-height: 1.5; }
+
+  &__rootForm { display: flex; flex-direction: column; gap: 10px; }
+
+  &__status { color: $gray; font-size: 13px; }
+  &__error  { color: crimson; font-size: 13px; }
+  &__empty  { color: $light-gray; font-size: 13px; padding: 16px 0; }
+}

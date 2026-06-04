@@ -14,6 +14,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.time.LocalDate;
 
 @Component
@@ -25,6 +27,9 @@ public class DataLoader implements CommandLineRunner {
     private final FacilityRepository facilityRepo;
     private final UnitRepository unitRepo;
     private final ResidentRepository residentRepo;
+
+    @Value("${app.demo-seed:false}")
+    private boolean demoSeed;
 
     public DataLoader(UserRepository repo, PasswordEncoder encoder, OrganizationRepository orgRepo,
                       FacilityRepository facilityRepo, UnitRepository unitRepo, ResidentRepository residentRepo) {
@@ -41,6 +46,15 @@ public class DataLoader implements CommandLineRunner {
         Organization defaultOrg = orgRepo.findAll().stream()
                 .findFirst()
                 .orElseGet(() -> orgRepo.save(new Organization("Default Organization")));
+
+        if (repo.findByUsername("superadmin").isEmpty()) {
+            User superAdmin = new User();
+            superAdmin.setUsername("superadmin");
+            superAdmin.setPasswordHash(encoder.encode("password"));
+            superAdmin.setRole(UserRole.SUPER_ADMIN);
+            superAdmin.setOrganization(defaultOrg);
+            repo.save(superAdmin);
+        }
 
         if (repo.findByUsername("admin").isEmpty()) {
             User admin = new User();
@@ -60,7 +74,7 @@ public class DataLoader implements CommandLineRunner {
             repo.save(staff);
         }
 
-        if (facilityRepo.count() == 0) {
+        if (demoSeed && facilityRepo.count() == 0) {
             seedDemoData(defaultOrg);
         }
     }

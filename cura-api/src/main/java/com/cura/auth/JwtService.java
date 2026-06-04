@@ -43,9 +43,12 @@ public class JwtService {
         return Jwts.builder()
                 .subject(principal.getUsername())
                 .claim("role", "ROLE_" + principal.getRole())
+                .claim("orgId", principal.getOrgId())
+                .claim("orgCode", principal.getOrgCode())
+                .claim("userNumber", principal.getUserNumber())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(exp))
-                .signWith(key)   // 0.12.x: algorithm inferred for HMAC keys
+                .signWith(key)
                 .compact();
     }
 

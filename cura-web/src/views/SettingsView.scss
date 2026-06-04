@@ -1,0 +1,123 @@
+@use "../styles/theme" as *;
+@use "../styles/ui" as ui;
+
+.stg {
+  padding: 20px 24px;
+  max-width: 640px;
+
+  &__header { margin-bottom: 24px; }
+  &__title  { margin: 0; font-size: 22px; font-weight: $bold; color: $dark-gray; }
+  &__subtitle { margin: 4px 0 0; font-size: 13px; color: $gray; }
+
+  &__sections { display: flex; flex-direction: column; gap: 16px; }
+
+  &__card {
+    @include ui.card;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__cardTitle {
+    margin: 0;
+    font-size: 15px;
+    font-weight: $bold;
+    color: $dark-gray;
+  }
+
+  &__divider { border: none; border-top: $border; margin: 2px 0; }
+
+  &__infoRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+  }
+
+  &__infoLabel { color: $gray; }
+  &__infoValue { font-weight: $semibold; color: $dark-gray; }
+
+  &__rolePill {
+    font-size: 12px;
+    font-weight: $bold;
+    padding: 3px 10px;
+    border-radius: 999px;
+
+    &--admin       { background: rgba($accent, 0.12); color: $accent; }
+    &--super-admin { background: rgba(#9b59b6, 0.12); color: #7d3c98; }
+    &--staff       { background: rgba(#3ab06a, 0.12); color: #2a8050; }
+  }
+
+  &__form { display: flex; flex-direction: column; gap: 12px; }
+
+  &__formTitle {
+    margin: 0;
+    font-size: 13px;
+    font-weight: $bold;
+    color: $gray;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  &__field { display: flex; flex-direction: column; gap: 4px; }
+
+  &__label {
+    font-size: 11px;
+    font-weight: $bold;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: $gray;
+  }
+
+  &__input { @include ui.input; padding: 9px 12px; font-size: 13px; }
+
+  &__btn {
+    align-self: flex-start;
+    &--primary { @include ui.buttonPrimary; font-size: 13px; padding: 10px 18px; }
+  }
+
+  &__err { color: crimson; font-size: 13px; }
+  &__ok  { color: #0a7a2f; font-size: 13px; }
+
+  // ── Toggle / switch ──────────────────────────────────────────────────────
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  &__toggleLabel { font-size: 14px; font-weight: $semibold; color: $dark-gray; }
+  &__toggleHint  { font-size: 12px; color: $light-gray; margin-top: 2px; }
+
+  &__switch {
+    width: 44px;
+    height: 24px;
+    border-radius: 999px;
+    border: none;
+    background: $lighter-gray;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+
+    &--on { background: $accent; }
+  }
+
+  &__switchThumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: $white;
+    box-shadow: 0 1px 3px rgba($black, 0.2);
+    transition: left 0.2s ease;
+
+    .stg__switch--on & { left: 23px; }
+  }
+}

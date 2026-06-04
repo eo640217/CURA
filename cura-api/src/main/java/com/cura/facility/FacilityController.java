@@ -1,11 +1,12 @@
 package com.cura.facility;
 
+import com.cura.common.TenantUtil;
 import com.cura.facility.dto.FacilityCreateRequest;
 import com.cura.facility.dto.FacilityResponse;
 import com.cura.facility.dto.FacilityUpdateRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,29 +23,28 @@ public class FacilityController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FacilityResponse create(@RequestBody FacilityCreateRequest request) {
-        return service.create(request);
+    public FacilityResponse create(@Valid @RequestBody FacilityCreateRequest request, Authentication auth) {
+        return service.create(request, TenantUtil.principal(auth).getOrgId());
     }
 
     @GetMapping("/{id}")
-    public FacilityResponse get(@PathVariable Long id) {
-        return service.get(id);
+    public FacilityResponse get(@PathVariable Long id, Authentication auth) {
+        return service.get(id, TenantUtil.orgId(auth));
     }
 
     @GetMapping
-    public List<FacilityResponse> list() {
-        return service.list();
+    public List<FacilityResponse> list(Authentication auth) {
+        return service.list(TenantUtil.orgId(auth));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
-        service.delete(id);
+    public void delete(@PathVariable Long id, Authentication auth) {
+        service.delete(id, TenantUtil.orgId(auth));
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public FacilityResponse update(@PathVariable Long id, @Valid @RequestBody FacilityUpdateRequest req) {
-        return service.update(id, req);
+    public FacilityResponse update(@PathVariable Long id, @Valid @RequestBody FacilityUpdateRequest req, Authentication auth) {
+        return service.update(id, req, TenantUtil.orgId(auth));
     }
 }
