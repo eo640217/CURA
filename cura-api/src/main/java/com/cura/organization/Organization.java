@@ -17,6 +17,15 @@ public class Organization {
     @Column(name = "org_code", nullable = false, unique = true, length = 20)
     private String orgCode;
 
+    @Column(name = "plan_tier", nullable = false, length = 30)
+    private String planTier = "TRIAL";
+
+    @Column(name = "logo_url", length = 500)
+    private String logoUrl;
+
+    @Column(name = "primary_color", length = 7)
+    private String primaryColor;
+
     @Column(name = "contact_email", length = 255)
     private String contactEmail;
 
@@ -50,6 +59,9 @@ public class Organization {
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getOrgCode() { return orgCode; }
+    public String getPlanTier() { return planTier; }
+    public String getLogoUrl() { return logoUrl; }
+    public String getPrimaryColor() { return primaryColor; }
     public String getContactEmail() { return contactEmail; }
     public String getPhone() { return phone; }
     public Instant getCreatedAt() { return createdAt; }
@@ -57,6 +69,9 @@ public class Organization {
 
     public void setName(String name) { this.name = name; }
     public void setOrgCode(String orgCode) { this.orgCode = orgCode; }
+    public void setPlanTier(String planTier) { this.planTier = planTier; }
+    public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
+    public void setPrimaryColor(String primaryColor) { this.primaryColor = primaryColor; }
     public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
     public void setPhone(String phone) { this.phone = phone; }
 }

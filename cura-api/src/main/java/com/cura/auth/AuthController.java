@@ -1,11 +1,9 @@
 package com.cura.auth;
 
-import com.cura.auth.dto.LoginRequest;
-import com.cura.auth.dto.LoginResponse;
-import com.cura.auth.dto.RegisterRequest;
-import com.cura.auth.dto.RegisterResponse;
+import com.cura.auth.dto.*;
 import com.cura.organization.Organization;
 import com.cura.organization.OrganizationRepository;
+import com.cura.user.AccountStatus;
 import com.cura.user.User;
 import com.cura.user.UserRepository;
 import com.cura.user.UserService;
@@ -28,16 +26,19 @@ public class AuthController {
     private final OrganizationRepository orgRepo;
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
+    private final SetupTokenService setupTokenService;
 
     public AuthController(AuthenticationManager authenticationManager, JwtService jwtService,
                           UserService userService, OrganizationRepository orgRepo,
-                          UserRepository userRepo, PasswordEncoder passwordEncoder) {
+                          UserRepository userRepo, PasswordEncoder passwordEncoder,
+                          SetupTokenService setupTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userService = userService;
         this.orgRepo = orgRepo;
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
+        this.setupTokenService = setupTokenService;
     }
 
     @PostMapping("/login")
@@ -50,6 +51,18 @@ public class AuthController {
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                 "Provide either (orgCode + userNumber) or username");
+    }
+
+    @PostMapping("/setup-password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void setupPassword(@Valid @RequestBody SetupPasswordRequest req) {
+        Long userId = setupTokenService.consume(req.token());
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                        "User not found for setup token"));
+        user.setPasswordHash(passwordEncoder.encode(req.newPassword()));
+        user.setAccountStatus(AccountStatus.ACTIVE);
+        userRepo.save(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -68,6 +81,13 @@ public class AuthController {
 
         User user = userRepo.findByOrganizationIdAndUserNumber(org.getId(), req.userNumber())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
+
+        if (user.getAccountStatus() != AccountStatus.ACTIVE) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                    user.getAccountStatus() == AccountStatus.PENDING
+                            ? "Account setup not complete"
+                            : "Account is suspended");
+        }
 
         if (!passwordEncoder.matches(req.password(), user.getPasswordHash())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");

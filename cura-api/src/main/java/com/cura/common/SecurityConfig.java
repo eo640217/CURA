@@ -47,10 +47,13 @@ public class SecurityConfig {
 
                 // Public auth
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
-                // if you have other public auth endpoints, list them here:
-                // .requestMatchers(HttpMethod.POST, "/api/v1/auth/refresh").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/setup-password").permitAll()
 
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").hasRole("ADMIN")
+
+                // Public org branding (frontend login page) — must be before SUPER_ADMIN catch-all
+                .requestMatchers(HttpMethod.GET, "/api/v1/organizations/by-code/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/organizations/*/logo").permitAll()
 
                 .requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasRole("ADMIN")
 

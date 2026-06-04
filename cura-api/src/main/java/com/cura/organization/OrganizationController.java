@@ -1,11 +1,14 @@
 package com.cura.organization;
 
 import com.cura.organization.dto.*;
-import com.cura.user.dto.UserResponse;
 import jakarta.validation.Valid;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,6 +34,16 @@ public class OrganizationController {
         return orgService.get(id);
     }
 
+    @GetMapping("/by-code/{orgCode}")
+    public OrgBrandingResponse getByOrgCode(@PathVariable String orgCode) {
+        return orgService.getByOrgCode(orgCode);
+    }
+
+    @GetMapping("/{id}/logo")
+    public ResponseEntity<Resource> getLogo(@PathVariable Long id) {
+        return orgService.getLogo(id);
+    }
+
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -45,9 +58,17 @@ public class OrganizationController {
     }
 
     @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PostMapping(value = "/{id}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public OrganizationResponse uploadLogo(@PathVariable Long id,
+                                           @RequestParam("file") MultipartFile file) {
+        return orgService.uploadLogo(id, file);
+    }
+
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PostMapping("/{id}/root-user")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse createRootUser(@PathVariable Long id, @Valid @RequestBody CreateRootUserRequest req) {
+    public CreateRootUserResponse createRootUser(@PathVariable Long id,
+                                                  @Valid @RequestBody CreateRootUserRequest req) {
         return orgService.createRootUser(id, req);
     }
 }
