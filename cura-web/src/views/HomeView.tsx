@@ -1,111 +1,17 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import PricingCards from "../components/PricingCards";
+import FaqAccordion from "../components/FaqAccordion";
+import { FAQS } from "../data/faqs";
 import "./HomeView.scss";
 
-type PackageTier = {
-  name: string;
-  subtitle: string;
-  monthly: string;
-  yearly: string;
-  features: string[];
-};
-
-const PACKAGE_TIERS: PackageTier[] = [
-  {
-    name: "Cura Essential",
-    subtitle: "For single care homes starting digital operations",
-    monthly: "$299/mo",
-    yearly: "$2,990/yr",
-    features: [
-      "Resident profiles and care notes",
-      "Medication and appointment reminders",
-      "Daily occupancy and unit tracking",
-      "Email support",
-    ],
-  },
-  {
-    name: "Cura Plus",
-    subtitle: "For growing teams that need operational visibility",
-    monthly: "$699/mo",
-    yearly: "$6,990/yr",
-    features: [
-      "Everything in Essential",
-      "Shift and hours oversight",
-      "Multi-facility analytics dashboards",
-      "Priority support",
-    ],
-  },
-  {
-    name: "Cura Enterprise",
-    subtitle: "For regional providers with advanced governance needs",
-    monthly: "Custom",
-    yearly: "Custom",
-    features: [
-      "Everything in Plus",
-      "Advanced permissions and audit exports",
-      "Custom onboarding and integrations",
-      "Dedicated success manager",
-    ],
-  },
-];
-
-const FAQS = [
-  {
-    q: "Can residents and employees both sign in?",
-    a: "Yes. Cura supports role-based access so residents, staff, and administrators each see tools relevant to them.",
-  },
-  {
-    q: "How long does onboarding take?",
-    a: "Most facilities are live in 2 to 4 weeks, including setup, training, and migration support.",
-  },
-  {
-    q: "Do you offer support for multiple sites?",
-    a: "Yes. Cura Plus and Enterprise include multi-site operational oversight and centralized reporting.",
-  },
-];
-
-const TIER_EXCLUDED: Record<string, string[]> = {
-  "Cura Essential": ["Multi-site dashboard", "CQC report export", "API access"],
-  "Cura Plus": ["API access"],
-  "Cura Enterprise": [],
-};
+const FAQ_TEASER = FAQS.slice(0, 3);
 
 export default function HomeView() {
   const [billingMode, setBillingMode] = useState<"monthly" | "yearly">("monthly");
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
-
-  const stats = useMemo(
-    () => [
-      { value: "140+", label: "Care homes using Cura" },
-      { value: "98%", label: "Staff adoption after 30 days" },
-      { value: "24/7", label: "Operational visibility" },
-    ],
-    []
-  );
-
-  void stats;
 
   return (
-    <div className="homePage">
-      {/* NAV */}
-      <nav className="homeNav">
-        <div className="homeNav__inner">
-          <a href="/" className="homeNav__brand">
-            Cu<em>ra</em>
-          </a>
-          <div className="homeNav__links">
-            <a href="#features">Features</a>
-            <a href="#packages">Packages</a>
-            <a href="#awards">Awards</a>
-            <a href="#packages">Pricing</a>
-          </div>
-          <div className="homeNav__actions">
-            <Link to="/login" className="homeNav__signIn">Sign in</Link>
-            <Link to="/login" className="homeNav__trial">Start free trial</Link>
-          </div>
-        </div>
-      </nav>
-
+    <>
       {/* HERO */}
       <section className="homeHero">
         <div className="homeHero__inner">
@@ -122,7 +28,7 @@ export default function HomeView() {
               <Link to="/login" className="homeBtn homeBtn--primary homeBtn--hero">
                 <i className="ti ti-arrow-right" /> Start free trial
               </Link>
-              <Link to="/login" className="homeBtn homeBtn--outline homeBtn--hero">
+              <Link to="/contact" className="homeBtn homeBtn--outline homeBtn--hero">
                 <i className="ti ti-calendar" /> Book a demo
               </Link>
             </div>
@@ -428,83 +334,10 @@ export default function HomeView() {
             <p className="homeSectionSub homeSectionSub--centred">
               All plans include a 14-day free trial. No credit card required.
             </p>
-            <div className="homeBillingToggle" role="tablist" aria-label="Billing mode">
-              <button
-                type="button"
-                className={billingMode === "monthly" ? "isActive" : ""}
-                onClick={() => setBillingMode("monthly")}
-              >
-                Monthly
-              </button>
-              <button
-                type="button"
-                className={billingMode === "yearly" ? "isActive" : ""}
-                onClick={() => setBillingMode("yearly")}
-              >
-                Yearly
-              </button>
-            </div>
-            <div className="homePackages__grid">
-              {PACKAGE_TIERS.map((tier, i) => {
-                const isMiddle = i === 1;
-                const excluded = TIER_EXCLUDED[tier.name] ?? [];
-                const isCustom = tier.monthly === "Custom";
-                return (
-                  <article
-                    key={tier.name}
-                    className={`homePricingCard${isMiddle ? " homePricingCard--featured" : ""}`}
-                  >
-                    <p className="homePricingCard__name">{tier.name}</p>
-                    <div className="homePricingCard__priceRow">
-                      {isCustom ? (
-                        <span className="homePricingCard__priceCustom">Custom</span>
-                      ) : (
-                        <>
-                          <span className="homePricingCard__price">
-                            {billingMode === "monthly"
-                              ? tier.monthly.replace("/mo", "")
-                              : tier.yearly.replace("/yr", "")}
-                          </span>
-                          <span className="homePricingCard__pricePer">
-                            {billingMode === "monthly" ? "/month" : "/year"}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                    <p className="homePricingCard__subtitle">{tier.subtitle}</p>
-                    <hr className="homePricingCard__divider" />
-                    <ul className="homePricingCard__features">
-                      {tier.features.map((f) => (
-                        <li key={f} className="homePricingCard__featureItem">
-                          <i className="ti ti-check homePricingCard__check" />
-                          <span>{f}</span>
-                        </li>
-                      ))}
-                      {excluded.map((f) => (
-                        <li
-                          key={f}
-                          className="homePricingCard__featureItem homePricingCard__featureItem--excluded"
-                        >
-                          <i className="ti ti-x homePricingCard__x" />
-                          <span>{f}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <Link
-                      to="/login"
-                      className={`homeBtn homeBtn--fullWidth ${
-                        isMiddle ? "homeBtn--primary" : "homeBtn--outline"
-                      }`}
-                    >
-                      {isCustom ? "Talk to sales" : "Start free trial"}
-                    </Link>
-                  </article>
-                );
-              })}
-            </div>
+            <PricingCards billingMode={billingMode} onBillingModeChange={setBillingMode} />
             <p className="homePackages__note">
               All prices exclude VAT. Annual billing saves 20%. Need help choosing?{" "}
-              <Link to="/login">Talk to us →</Link>
+              <Link to="/packages">See full plan details →</Link>
             </p>
           </div>
         </section>
@@ -513,27 +346,8 @@ export default function HomeView() {
         <section className="homeFaq">
           <div className="homeFaq__inner">
             <h2 className="homeFaq__h2">Frequently asked questions</h2>
-            <div className="homeFaq__list">
-              {FAQS.map((faq, index) => {
-                const isOpen = openFaq === index;
-                return (
-                  <div
-                    key={faq.q}
-                    className={`homeFaqItem${isOpen ? " homeFaqItem--open" : ""}`}
-                  >
-                    <button
-                      type="button"
-                      aria-expanded={isOpen}
-                      onClick={() => setOpenFaq((prev) => (prev === index ? null : index))}
-                    >
-                      <span>{faq.q}</span>
-                      <i className="ti ti-chevron-down homeFaqItem__chevron" />
-                    </button>
-                    {isOpen && <p>{faq.a}</p>}
-                  </div>
-                );
-              })}
-            </div>
+            <FaqAccordion items={FAQ_TEASER} defaultOpenIndex={0} />
+            <Link to="/faq" className="homeFaq__viewAll">View all FAQs →</Link>
           </div>
         </section>
 
@@ -551,7 +365,7 @@ export default function HomeView() {
               <Link to="/login" className="homeBtn homeBtn--ctaWhite">
                 Start free trial
               </Link>
-              <Link to="/login" className="homeBtn homeBtn--ctaGhost">
+              <Link to="/contact" className="homeBtn homeBtn--ctaGhost">
                 Book a demo
               </Link>
             </div>
@@ -573,23 +387,6 @@ export default function HomeView() {
           </div>
         </section>
       </main>
-
-      {/* FOOTER */}
-      <footer className="homeFooter">
-        <div className="homeFooter__inner">
-          <a href="/" className="homeFooter__brand">
-            Cu<em>ra</em>
-          </a>
-          <nav className="homeFooter__links">
-            <a href="#features">Features</a>
-            <a href="#packages">Pricing</a>
-            <a href="#">Privacy</a>
-            <a href="#">Terms</a>
-            <a href="#contact">Contact</a>
-          </nav>
-          <p className="homeFooter__copy">© 2026 CURA Health Ltd. All rights reserved.</p>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 }

@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import ScrollToTop from "./components/ScrollToTop";
 import LoginView from "./views/LoginView";
 import LogoutView from "./views/LogoutView";
 import SetupPasswordView from "./views/SetupPasswordView";
@@ -10,12 +11,20 @@ import DashboardView from "./views/DashboardView";
 import FacilitiesView from "./views/FacilitiesView";
 import ResidentsDirectoryView from "./views/ResidentsDirectoryView";
 import ResidentsView from "./views/ResidentsView";
+import CreateResidentPage from "./views/CreateResidentPage";
 import ResidentProfileView from "./views/ResidentProfileView";
 import CarePlansView from "./views/CarePlansView";
 import SchedulingView from "./views/SchedulingView";
 import IncidentsView from "./views/IncidentsView";
 import UnitsView from "./views/UnitsView";
 import HomeView from "./views/HomeView";
+
+import PublicLayout from "./layout/PublicLayout";
+import PackagesView from "./views/PackagesView";
+import ContactView from "./views/ContactView";
+import SolutionsView from "./views/SolutionsView";
+import AboutView from "./views/AboutView";
+import FaqView from "./views/FaqView";
 
 import AdminView from "./views/AdminView";
 import AdminUsersView from "./views/AdminUsersView";
@@ -28,8 +37,16 @@ import "./App.scss";
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
-        <Route path="/" element={<HomeView />} />
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<HomeView />} />
+          <Route path="/packages" element={<PackagesView />} />
+          <Route path="/contact" element={<ContactView />} />
+          <Route path="/solutions" element={<SolutionsView />} />
+          <Route path="/about" element={<AboutView />} />
+          <Route path="/faq" element={<FaqView />} />
+        </Route>
         <Route path="/login" element={<LoginView />} />
         <Route path="/logout" element={<LogoutView />} />
         <Route path="/setup-password" element={<SetupPasswordView />} />
@@ -69,6 +86,7 @@ export default function App() {
 
           {/* Residents */}
           <Route path="/residents" element={<ResidentsView />} />
+          <Route path="/residents/new" element={<CreateResidentPage />} />
           <Route path="/residents/:id" element={<ResidentProfileView />} />
           <Route path="/residents/directory" element={<ResidentsDirectoryView />} />
 
