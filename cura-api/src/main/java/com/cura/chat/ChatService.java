@@ -59,7 +59,9 @@ public class ChatService {
                 + "and company info based ONLY on the following documents. "
                 + "If a question cannot be answered from the documents, say so politely and suggest "
                 + "using the contact form on the website to reach the team. Do not make up information. "
-                + "Be concise and friendly.\n\n"
+                + "Be concise and friendly. Respond in plain text only — this renders in a small chat "
+                + "bubble with no markdown support, so do not use #, **, bullet dashes, or any other "
+                + "markdown syntax. Write plain sentences and short paragraphs instead.\n\n"
                 + "=== DOCUMENTS ===\n"
                 + docs
                 + "=== END OF DOCUMENTS ===";
