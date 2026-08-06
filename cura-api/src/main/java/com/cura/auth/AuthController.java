@@ -83,10 +83,7 @@ public class AuthController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
 
         if (user.getAccountStatus() != AccountStatus.ACTIVE) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
-                    user.getAccountStatus() == AccountStatus.PENDING
-                            ? "Account setup not complete"
-                            : "Account is suspended");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
 
         if (!passwordEncoder.matches(req.password(), user.getPasswordHash())) {

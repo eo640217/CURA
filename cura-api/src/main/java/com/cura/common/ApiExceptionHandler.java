@@ -179,6 +179,18 @@ public class ApiExceptionHandler {
         ));
     }
 
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public ResponseEntity<ApiErrorResponse> handleResponseStatus(
+            org.springframework.web.server.ResponseStatusException ex,
+            HttpServletRequest request) {
+        HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
+        String message = ex.getReason() != null ? ex.getReason() : status.getReasonPhrase();
+        ErrorCode code = status == HttpStatus.UNAUTHORIZED ? ErrorCode.UNAUTHORIZED
+                : status.is4xxClientError() ? ErrorCode.VALIDATION_FAILED
+                : ErrorCode.INTERNAL_ERROR;
+        return ResponseEntity.status(status).body(buildBody(status, code, message, request, List.of()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleUnexpected(
             Exception ex,
