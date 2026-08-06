@@ -18,7 +18,7 @@ export default function ChatWidget() {
     {
       id: nextId++,
       role: "assistant",
-      text: "Hi! I can answer questions about our care home policies. What would you like to know?",
+      text: "Hi! Ask me about Cura's plans, features, or how to get started.",
     },
   ]);
   const [input, setInput] = useState("");

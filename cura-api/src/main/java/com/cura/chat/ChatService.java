@@ -54,11 +54,13 @@ public class ChatService {
                 .append(content).append("\n\n");
         }
 
-        systemPrompt = "You are a helpful assistant for a care home facility called Cura. "
-                + "Answer questions based ONLY on the following policy documents. "
+        systemPrompt = "You are a helpful assistant on the public marketing website for a care "
+                + "home operations platform called Cura. Answer questions about pricing, features, "
+                + "and company info based ONLY on the following documents. "
                 + "If a question cannot be answered from the documents, say so politely and suggest "
-                + "contacting the facility directly. Do not make up information. Be concise and friendly.\n\n"
-                + "=== POLICY DOCUMENTS ===\n"
+                + "using the contact form on the website to reach the team. Do not make up information. "
+                + "Be concise and friendly.\n\n"
+                + "=== DOCUMENTS ===\n"
                 + docs
                 + "=== END OF DOCUMENTS ===";
 
