@@ -230,7 +230,13 @@ export default function DashboardView() {
                   status={item.urgency as any}
                   label={URGENCY_LABEL[item.urgency]}
                 />
-                <button type="button" className="dash__action-review">Review</button>
+                <button
+                  type="button"
+                  className="dash__action-review"
+                  onClick={() => navigate(item.route)}
+                >
+                  Review
+                </button>
               </div>
             </article>
           ))}

@@ -25,14 +25,15 @@ export interface ActionItem {
   urgency: ActionUrgency;
   label: string;
   detail: string;
+  route: string;
 }
 
 export const actionItems: ActionItem[] = [
-  { id: 1, urgency: "urgent",  label: "3 medication rounds overdue",      detail: "Wards B & C — action required" },
-  { id: 2, urgency: "urgent",  label: "2 incidents pending sign-off",      detail: "Filed today — awaiting review" },
-  { id: 3, urgency: "monitor", label: "5 care plans due for review",       detail: "Overdue by 3+ days" },
-  { id: 4, urgency: "monitor", label: "Unit A & D near capacity",          detail: "98% occupancy — 2 beds remain" },
-  { id: 5, urgency: "info",    label: "Staff rota updated for 9 Jun",      detail: "Published by admin this morning" },
+  { id: 1, urgency: "urgent",  label: "3 medication rounds overdue",      detail: "Wards B & C — action required",        route: "/scheduling" },
+  { id: 2, urgency: "urgent",  label: "2 incidents pending sign-off",      detail: "Filed today — awaiting review",        route: "/incidents" },
+  { id: 3, urgency: "monitor", label: "5 care plans due for review",       detail: "Overdue by 3+ days",                   route: "/care-plans" },
+  { id: 4, urgency: "monitor", label: "Unit A & D near capacity",          detail: "98% occupancy — 2 beds remain",        route: "/facilities" },
+  { id: 5, urgency: "info",    label: "Staff rota updated for 9 Jun",      detail: "Published by admin this morning",      route: "/scheduling" },
 ];
 
 // ── Worklets ────────────────────────────────────────────────────────────────

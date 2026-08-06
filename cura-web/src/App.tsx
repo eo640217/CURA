@@ -16,6 +16,7 @@ import ResidentProfileView from "./views/ResidentProfileView";
 import CarePlansView from "./views/CarePlansView";
 import SchedulingView from "./views/SchedulingView";
 import IncidentsView from "./views/IncidentsView";
+import ReportsView from "./views/ReportsView";
 import UnitsView from "./views/UnitsView";
 import HomeView from "./views/HomeView";
 
@@ -99,6 +100,9 @@ export default function App() {
 
           {/* Incidents */}
           <Route path="/incidents" element={<IncidentsView />} />
+
+          {/* Reports */}
+          <Route path="/reports" element={<ReportsView />} />
 
           {/* Profile + Settings — all authenticated */}
           <Route path="/profile" element={<ProfileView />} />
