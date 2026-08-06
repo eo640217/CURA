@@ -45,30 +45,11 @@
   flex-shrink: 0;
 }
 
-// Refresh icon button — matches .up__iconBtn
-.rp__headerActions > button:first-child {
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 0.5px solid var(--cura-border);
-  border-radius: var(--cura-radius-sm);
-  background: transparent;
-  color: var(--cura-text-secondary);
-  cursor: pointer;
-  font-family: inherit;
-  transition: background var(--cura-transition-fast);
-
-  &:hover {
-    background: var(--cura-bg);
-  }
-}
-
 // "Create Resident" primary button
 .rp__primary {
   height: 30px;
-  padding: 0 14px;
+  min-width: 128px;
+  padding: 0 12px;
   font-size: 12px;
   font-weight: 600;
   background: var(--cura-navy);

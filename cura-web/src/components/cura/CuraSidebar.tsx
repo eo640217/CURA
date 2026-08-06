@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { roleAtLeast } from '../../auth/auth';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
@@ -43,7 +44,7 @@ interface CuraSidebarProps {
 
 export default function CuraSidebar({ role, onLogout }: CuraSidebarProps) {
   const navigate = useNavigate();
-  const visibleMain = NAV_ITEMS.filter(item => !item.adminOnly || role === 'ADMIN');
+  const visibleMain = NAV_ITEMS.filter(item => !item.adminOnly || roleAtLeast(role, 'ADMIN'));
 
   return (
     <aside className="cura-sidebar">

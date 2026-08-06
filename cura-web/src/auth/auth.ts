@@ -27,3 +27,13 @@ export function setAuth(state: AuthState) {
 export function clearAuth() {
   localStorage.removeItem(KEY);
 }
+
+const ROLE_LEVEL: Record<string, number> = { STAFF: 1, ADMIN: 2, SUPER_ADMIN: 3 };
+
+export function roleAtLeast(
+  userRole: string | null,
+  required: "STAFF" | "ADMIN" | "SUPER_ADMIN"
+): boolean {
+  if (!userRole) return false;
+  return (ROLE_LEVEL[userRole] ?? 0) >= ROLE_LEVEL[required];
+}

@@ -76,7 +76,7 @@
     "signedInAs": "Signed in as",
     "facilitiesTitle": "Facilities",
     "adminBadge": "Admin",
-    "new": "+ New",
+    "new": "+ New Facility",
     "noFacilities": "No facilities yet.",
     "adminNextStep": "Next step: we’ll add a “Create Facility” modal for admins.",
     "staffAskAdmin": "Ask an admin to create the first facility.",

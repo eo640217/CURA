@@ -1,14 +1,17 @@
 package com.cura.facility;
 
 import com.cura.common.NotFoundException;
-import com.cura.common.error.ApiException;
-import com.cura.common.error.ErrorCode;
+import com.cura.facility.dto.CreateUnitWithRoomsRequest;
 import com.cura.facility.dto.FacilityCreateRequest;
 import com.cura.facility.dto.FacilityResponse;
 import com.cura.facility.dto.FacilityUpdateRequest;
 import com.cura.organization.Organization;
 import com.cura.organization.OrganizationRepository;
-import org.springframework.http.HttpStatus;
+import com.cura.room.Room;
+import com.cura.room.RoomRepository;
+import com.cura.unit.Unit;
+import com.cura.unit.UnitRepository;
+import com.cura.unit.UnitType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +23,15 @@ public class FacilityService {
 
     private final FacilityRepository facilityRepository;
     private final OrganizationRepository orgRepository;
+    private final UnitRepository unitRepository;
+    private final RoomRepository roomRepository;
 
-    public FacilityService(FacilityRepository facilityRepository, OrganizationRepository orgRepository) {
+    public FacilityService(FacilityRepository facilityRepository, OrganizationRepository orgRepository,
+                           UnitRepository unitRepository, RoomRepository roomRepository) {
         this.facilityRepository = facilityRepository;
         this.orgRepository = orgRepository;
+        this.unitRepository = unitRepository;
+        this.roomRepository = roomRepository;
     }
 
     public FacilityResponse create(FacilityCreateRequest request, Long orgId) {
@@ -31,7 +39,29 @@ public class FacilityService {
                 .orElseThrow(() -> new NotFoundException("Organization not found: " + orgId));
         Facility facility = new Facility(request.name(), request.address());
         facility.setOrganization(org);
-        return toResponse(facilityRepository.save(facility));
+        Facility saved = facilityRepository.save(facility);
+
+        if (request.units() != null) {
+            for (CreateUnitWithRoomsRequest unitReq : request.units()) {
+                UnitType type = unitReq.getType() != null ? unitReq.getType() : UnitType.ROOM;
+                int capacity = unitReq.getCapacity() != null ? unitReq.getCapacity() : 10;
+                Unit unit = new Unit(saved, unitReq.getName(), type, capacity);
+                Unit savedUnit = unitRepository.save(unit);
+
+                if (unitReq.getRooms() != null) {
+                    for (String roomNumber : unitReq.getRooms()) {
+                        Room room = new Room();
+                        room.setRoomNumber(roomNumber);
+                        room.setUnit(savedUnit);
+                        room.setBedCount(1);
+                        room.setOccupied(false);
+                        roomRepository.save(room);
+                    }
+                }
+            }
+        }
+
+        return toResponse(saved);
     }
 
     @Transactional(readOnly = true)

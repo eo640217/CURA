@@ -26,6 +26,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://cura.cubosq2y43fj.us-east-1.rds.amazonaws.com:5432/cura
       SPRING_DATASOURCE_USERNAME: eman
       SPRING_DATASOURCE_PASSWORD: ${AWS_RDS_DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
     depends_on:
       cura-postgres:
         condition: service_healthy

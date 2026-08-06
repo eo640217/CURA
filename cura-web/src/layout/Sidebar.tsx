@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { roleAtLeast } from "../auth/auth";
 import {
   LayoutDashboard,
   Building2,
@@ -43,7 +44,7 @@ const NAV_ITEMS: NavItem[] = [
 
 export default function Sidebar({ role, onLogout }: SidebarProps) {
   const navigate = useNavigate();
-  const visible = NAV_ITEMS.filter((item) => !item.adminOnly || role === "ADMIN");
+  const visible = NAV_ITEMS.filter((item) => !item.adminOnly || roleAtLeast(role, "ADMIN"));
 
   return (
     <aside className="sidebar">

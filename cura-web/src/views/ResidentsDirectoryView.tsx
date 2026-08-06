@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { apiErrorMessage } from "../api/api-error";
 import { listResidentDirectory, ResidentDirectoryItem } from "../api/api-resident-directory";
 import ResidentDetailsModal from "../components/ResidentDetailsModal";
-import CreateResidentModal from "../components/CreateResidentModal";
 import lexicon from "../assets/lexicon";
 import "./ResidentsDirectoryView.scss";
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
@@ -11,6 +10,7 @@ import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 
 export default function ResidentsDirectoryView() {
   const t = lexicon;
+  const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -27,7 +27,6 @@ export default function ResidentsDirectoryView() {
 
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [detailsId, setDetailsId] = useState<number | null>(null);
-  const [createOpen, setCreateOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
   function setParam(updates: Record<string, string | number | undefined>) {
@@ -89,7 +88,7 @@ export default function ResidentsDirectoryView() {
         <button
           type="button"
           className="resDir__newBtn"
-          onClick={() => setCreateOpen(true)}
+          onClick={() => navigate('/residents/new')}
         >
           <PersonAddAltOutlinedIcon sx={{ fontSize: 15 }} />
           New Resident
@@ -166,15 +165,6 @@ export default function ResidentsDirectoryView() {
       </div>
 
       <ResidentDetailsModal open={detailsOpen} residentId={detailsId} onClose={closeDetails} />
-
-      <CreateResidentModal
-        open={createOpen}
-        onClose={() => setCreateOpen(false)}
-        onCreated={() => {
-          setCreateOpen(false);
-          setRefreshKey((k) => k + 1);
-        }}
-      />
     </div>
   );
 }

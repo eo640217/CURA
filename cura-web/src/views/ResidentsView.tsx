@@ -13,7 +13,6 @@ import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import CuraStatCard from '../components/cura/CuraStatCard';
 import CuraStatusPill from '../components/cura/CuraStatusPill';
 import { residents } from '../lib/mockData';
-import CreateResidentModal from '../components/CreateResidentModal';
 import './ResidentsView.scss';
 
 const WINGS = ['All', 'Wing A', 'Wing B', 'Wing C'];
@@ -38,7 +37,6 @@ export default function ResidentsView() {
   const [status, setStatus] = useState('All');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [page, setPage] = useState(0);
-  const [createOpen, setCreateOpen] = useState(false);
 
   const filtered = useMemo(() => {
     return residents.filter(r => {
@@ -71,7 +69,7 @@ export default function ResidentsView() {
         <button
           type="button"
           className="res-view__newBtn"
-          onClick={() => setCreateOpen(true)}
+          onClick={() => navigate('/residents/new')}
         >
           <PersonAddAltOutlinedIcon sx={{ fontSize: 15 }} />
           New Resident
@@ -218,13 +216,6 @@ export default function ResidentsView() {
         </div>
       </div>
 
-      {/* NOTE: ResidentsView uses mock data — new resident won't appear here
-          until the TODO on line 1 is resolved. Immediately visible in /residents/directory. */}
-      <CreateResidentModal
-        open={createOpen}
-        onClose={() => setCreateOpen(false)}
-        onCreated={() => setCreateOpen(false)}
-      />
     </div>
   );
 }
