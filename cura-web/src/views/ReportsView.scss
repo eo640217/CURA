@@ -1,0 +1,146 @@
+.rv {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.rv__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rv__title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--cura-navy);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.rv__subtitle {
+  font-size: 12px;
+  color: var(--cura-text-muted);
+  margin: 2px 0 0;
+}
+
+.rv__msg {
+  font-size: 13px;
+  color: var(--cura-text-muted);
+}
+
+.rv__msg--error {
+  color: var(--cura-red-text);
+}
+
+.rv__section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rv__section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rv__section-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--cura-navy);
+  margin: 0;
+}
+
+.rv__link-btn {
+  background: none;
+  border: none;
+  color: var(--cura-navy);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.rv__stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.rv__table-wrap {
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-md);
+  overflow: hidden;
+}
+
+.rv__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    text-align: left;
+    padding: 10px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--cura-text-muted);
+    border-bottom: 0.5px solid var(--cura-border);
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 0.5px solid var(--cura-border);
+    color: var(--cura-navy);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.rv__table-row--clickable {
+  cursor: pointer;
+
+  &:hover {
+    background: var(--cura-blue-light);
+  }
+}
+
+.rv__table-msg {
+  text-align: center;
+  color: var(--cura-text-muted);
+  padding: 24px 16px;
+}
+
+.rv__rate-pill {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &--high {
+    background: var(--cura-red-bg);
+    color: var(--cura-red-text);
+  }
+
+  &--mid {
+    background: var(--cura-amber-bg);
+    color: var(--cura-amber-text);
+  }
+
+  &--low {
+    background: var(--cura-green-bg);
+    color: var(--cura-green-text);
+  }
+}
