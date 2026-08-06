@@ -28,6 +28,19 @@ export type RootUserResponse = {
   role: string;
 };
 
+export type OrgBrandingResponse = {
+  id: number;
+  name: string;
+  orgCode: string;
+  logoUrl: string | null;
+  primaryColor: string | null;
+};
+
+export async function getOrgBranding(orgCode: string): Promise<OrgBrandingResponse> {
+  const res = await http.get<OrgBrandingResponse>(`/organizations/by-code/${orgCode}`);
+  return res.data;
+}
+
 export async function listOrganizations(): Promise<OrganizationResponse[]> {
   const res = await http.get<OrganizationResponse[]>("/organizations");
   return res.data;

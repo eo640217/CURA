@@ -10,6 +10,7 @@ import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import { useNavigate } from 'react-router-dom';
 import { listRecentActivity, ActivityItem } from '../api/activity';
+import { getOrgBranding } from '../api/api-organizations';
 import { useAuthState } from '../auth/useAuth';
 import CuraStatusPill from '../components/cura/CuraStatusPill';
 import WorkletGrid from '../components/dashboard/WorkletGrid';
@@ -81,10 +82,18 @@ function layoutKey(username: string | null) {
 }
 
 export default function DashboardView() {
-  const { username, isAdmin } = useAuthState();
+  const { username, isAdmin, orgCode } = useAuthState();
   const navigate = useNavigate();
   const [actState, setActState] = useState<LoadState>({ status: 'idle' });
+  const [orgName, setOrgName] = useState<string | null>(null);
   const shift = getShift();
+
+  useEffect(() => {
+    if (!orgCode) return;
+    getOrgBranding(orgCode)
+      .then(b => setOrgName(b.name))
+      .catch(() => setOrgName(null));
+  }, [orgCode]);
 
   // ── Layout state ──────────────────────────────────────────────────────────
   const [layout, setLayout] = useState<DashboardLayout>(DEFAULT_LAYOUT);
@@ -203,7 +212,7 @@ export default function DashboardView() {
           <h1 className="dash__greeting-title">
             {getGreeting()}, {username ?? 'there'}
           </h1>
-          <p className="dash__greeting-sub">Sunrise Care Home &nbsp;·&nbsp; {TODAY}</p>
+          <p className="dash__greeting-sub">{orgName ?? ' '} &nbsp;·&nbsp; {TODAY}</p>
         </div>
         <span className={`dash__shift-badge dash__shift-badge--${shift.variant}`}>
           {shift.label}
