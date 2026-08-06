@@ -20,8 +20,21 @@ public record ResidentCreateRequest(
         @Past(message = "Date of birth must be in the past")
         LocalDate dateOfBirth,
 
-        @NotBlank(message = "Room number is required")
         @Size(max = 20, message = "Room number must be <= 20 characters")
-        String roomNumber
-) {
-}
+        String roomNumber,
+
+        @Size(max = 100) String condition,
+        @Size(max = 50)  String careLevel,
+        @Size(max = 50)  String status,
+        @Size(max = 100) String gpName,
+        @Size(max = 100) String emergencyContactName,
+        @Size(max = 30)  String emergencyContactPhone,
+        @Size(max = 100) String emergencyContactRelationship,
+
+        Long roomId,
+
+        @Size(max = 50)  String gender,
+        LocalDate admissionDate,
+        @Size(max = 20)  String nhsNumber,
+        @Size(max = 255) String carePlan
+) {}

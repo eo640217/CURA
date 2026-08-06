@@ -45,6 +45,12 @@ public class SecurityConfig {
                 // Actuator health (used by Docker/k8s probes)
                 .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
 
+                // Uploaded resident photos served as static files
+                .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
+
+                // Public chat endpoint
+                .requestMatchers(HttpMethod.POST, "/api/v1/chat").permitAll()
+
                 // Public auth
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/setup-password").permitAll()
@@ -73,6 +79,12 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/v1/units/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/units/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/units/**").hasRole("ADMIN")
+
+                // ADMIN-only: Rooms mutations
+                .requestMatchers(HttpMethod.POST, "/api/v1/rooms/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/rooms/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/rooms/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/rooms/**").hasRole("ADMIN")
 
                 // SUPER_ADMIN only: organization management
                 .requestMatchers("/api/v1/organizations/**").hasRole("SUPER_ADMIN")

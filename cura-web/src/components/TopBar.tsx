@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { clearAuth, getAuth } from "../auth/auth";
+import { clearAuth, getAuth, roleAtLeast } from "../auth/auth";
 import lexicon from "../assets/lexicon";
 import "./TopBar.scss";
 import cura_logo from "../assets/images/cura_logo_2.png";
@@ -29,7 +29,7 @@ export default function TopBar() {
         <Link className="tb__btnLink" to="/residents/directory">
           {lexicon.topBar.residents}
         </Link>
-        {role === "ADMIN" && (
+        {roleAtLeast(role, "ADMIN") && (
           <Link className="tb__link" to="/admin/users">
             {lexicon.topBar.users}
           </Link>

@@ -4,12 +4,18 @@ import com.cura.common.NotFoundException;
 import com.cura.common.UserNumberGenerator;
 import com.cura.facility.FacilityRepository;
 import com.cura.resident.dto.*;
+import com.cura.room.Room;
+import com.cura.room.RoomRepository;
 import com.cura.unit.Unit;
 import com.cura.unit.UnitRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.*;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.List;
 
 @Service
@@ -18,15 +24,18 @@ public class ResidentService {
     private final ResidentRepository residentRepo;
     private final FacilityRepository facilityRepo;
     private final UnitRepository unitRepo;
+    private final RoomRepository roomRepo;
     private final ResidentNoteRepository residentNoteRepository;
     private final UserNumberGenerator numberGenerator;
 
     public ResidentService(ResidentRepository residentRepo, FacilityRepository facilityRepo,
-                           UnitRepository unitRepo, ResidentNoteRepository residentNoteRepository,
+                           UnitRepository unitRepo, RoomRepository roomRepo,
+                           ResidentNoteRepository residentNoteRepository,
                            UserNumberGenerator numberGenerator) {
         this.residentRepo = residentRepo;
         this.facilityRepo = facilityRepo;
         this.unitRepo = unitRepo;
+        this.roomRepo = roomRepo;
         this.residentNoteRepository = residentNoteRepository;
         this.numberGenerator = numberGenerator;
     }
@@ -62,6 +71,7 @@ public class ResidentService {
         residentRepo.deleteById(id);
     }
 
+    @Transactional
     public ResidentResponse createUnderUnit(Long unitId, ResidentCreateRequest req, Long orgId) {
         verifyUnitOwnership(unitId, orgId);
         Unit unit = unitRepo.findById(unitId).orElseThrow(() -> new NotFoundException("Unit not found: " + unitId));
@@ -79,6 +89,25 @@ public class ResidentService {
         resident.setRoomNumber(req.roomNumber());
         resident.setUnit(unit);
         resident.setResidentNumber(residentNumber);
+        resident.setCondition(req.condition());
+        resident.setCareLevel(req.careLevel());
+        resident.setStatus(req.status() != null ? req.status() : "STABLE");
+        resident.setGpName(req.gpName());
+        resident.setEmergencyContactName(req.emergencyContactName());
+        resident.setEmergencyContactPhone(req.emergencyContactPhone());
+        resident.setEmergencyContactRelationship(req.emergencyContactRelationship());
+        resident.setGender(req.gender());
+        resident.setAdmissionDate(req.admissionDate());
+        resident.setNhsNumber(req.nhsNumber());
+        resident.setCarePlan(req.carePlan());
+
+        if (req.roomId() != null) {
+            Room room = roomRepo.findById(req.roomId())
+                    .orElseThrow(() -> new NotFoundException("Room not found: " + req.roomId()));
+            room.setOccupied(true);
+            resident.setRoom(room);
+        }
+
         return toResponse(residentRepo.save(resident));
     }
 
@@ -142,6 +171,30 @@ public class ResidentService {
         return new ResidentNoteResponse(saved.getId(), saved.getResidentId(), saved.getBody(), saved.getCreatedAt(), saved.getCreatedBy());
     }
 
+    @Transactional
+    public ResidentResponse uploadPhoto(Long id, MultipartFile file, Long orgId) {
+        verifyResidentOwnership(id, orgId);
+        Resident r = residentRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Resident not found: " + id));
+
+        String original = StringUtils.cleanPath(
+                file.getOriginalFilename() != null ? file.getOriginalFilename() : "photo.jpg");
+        String ext = original.contains(".")
+                ? original.substring(original.lastIndexOf('.'))
+                : ".jpg";
+
+        Path dir = Paths.get("uploads", "residents");
+        try {
+            Files.createDirectories(dir);
+            Files.copy(file.getInputStream(), dir.resolve(id + ext), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store photo: " + e.getMessage());
+        }
+
+        r.setPhotoUrl("/uploads/residents/" + id + ext);
+        return toResponse(residentRepo.save(r));
+    }
+
     // ── ownership guards ──────────────────────────────────────────────────────
 
     private void verifyFacilityOwnership(Long facilityId, Long orgId) {
@@ -168,6 +221,14 @@ public class ResidentService {
     private ResidentResponse toResponse(Resident r) {
         Long unitId = r.getUnit() != null ? r.getUnit().getId() : null;
         Long facilityId = r.getUnit() != null ? r.getUnit().getFacility().getId() : null;
-        return new ResidentResponse(r.getId(), facilityId, unitId, r.getFirstName(), r.getLastName(), r.getDateOfBirth(), r.getRoomNumber(), r.getCreatedAt());
+        Long roomId = r.getRoom() != null ? r.getRoom().getId() : null;
+        return new ResidentResponse(
+                r.getId(), facilityId, unitId,
+                r.getFirstName(), r.getLastName(), r.getDateOfBirth(), r.getRoomNumber(), r.getCreatedAt(),
+                r.getCondition(), r.getCareLevel(), r.getStatus(),
+                r.getGpName(), r.getEmergencyContactName(), r.getEmergencyContactPhone(),
+                roomId,
+                r.getGender(), r.getAdmissionDate(), r.getNhsNumber(),
+                r.getEmergencyContactRelationship(), r.getCarePlan(), r.getPhotoUrl());
     }
 }

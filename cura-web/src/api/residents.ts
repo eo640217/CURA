@@ -10,6 +10,19 @@ export type Resident = {
   dateOfBirth: string | null;
   roomNumber: string | null;
   createdAt: string;
+  condition?: string | null;
+  careLevel?: string | null;
+  status?: string | null;
+  gpName?: string | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
+  roomId?: number | null;
+  gender?: string | null;
+  admissionDate?: string | null;
+  nhsNumber?: string | null;
+  emergencyContactRelationship?: string | null;
+  carePlan?: string | null;
+  photoUrl?: string | null;
 };
 
 export type ResidentCreateRequest = {
@@ -17,6 +30,18 @@ export type ResidentCreateRequest = {
   lastName: string;
   dateOfBirth?: string | null;
   roomNumber?: string | null;
+  condition?: string | null;
+  careLevel?: string | null;
+  status?: string | null;
+  gpName?: string | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
+  emergencyContactRelationship?: string | null;
+  roomId?: number | null;
+  gender?: string | null;
+  admissionDate?: string | null;
+  nhsNumber?: string | null;
+  carePlan?: string | null;
 };
 
 export async function listResidentsByUnit(unitId: number): Promise<Resident[]> {
@@ -67,3 +92,9 @@ export async function getResidentDetail(id: number): Promise<ResidentDetailRespo
   return res.data;
 }
 
+export async function uploadResidentPhoto(residentId: number, file: File): Promise<Resident> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await http.post<Resident>(`/residents/${residentId}/photo`, formData);
+  return res.data;
+}

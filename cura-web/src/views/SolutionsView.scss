@@ -1,0 +1,143 @@
+.solStats {
+  background: var(--navy);
+  padding: 60px 48px;
+
+  &__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__value {
+    font-family: 'Fraunces', serif;
+    font-size: 44px;
+    font-weight: 500;
+    color: white;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  &__label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+.solRows {
+  background: white;
+  padding: 40px 48px 20px;
+}
+
+.solRow {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 48px;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 48px 0;
+  border-bottom: 0.5px solid var(--border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &--reverse {
+    grid-template-columns: 1fr 260px;
+
+    .solRow__visual {
+      order: 2;
+    }
+
+    .solRow__content {
+      order: 1;
+    }
+  }
+
+  &__visual {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__iconBox {
+    width: 120px;
+    height: 120px;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 44px;
+
+    &--blue { background: var(--blue-light); color: var(--blue); }
+    &--green { background: #e6f5ec; color: var(--green); }
+    &--amber { background: #fef3e0; color: var(--amber); }
+    &--red { background: #feeaea; color: var(--red); }
+    &--purple { background: #ede8f5; color: #6b4fbb; }
+  }
+
+  &__title {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+
+  &__desc {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  &__bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 20px;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--navy);
+
+      i {
+        color: var(--green);
+        font-size: 14px;
+        margin-top: 3px;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .solRow,
+  .solRow--reverse {
+    grid-template-columns: 1fr;
+
+    .solRow__visual {
+      order: 0;
+    }
+
+    .solRow__content {
+      order: 0;
+    }
+  }
+
+  .solRow__bullets {
+    grid-template-columns: 1fr;
+  }
+}

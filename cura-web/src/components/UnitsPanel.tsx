@@ -2,23 +2,17 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   Unit,
-  UnitCreateRequest,
-  UnitType,
-  createUnit,
   deleteUnit,
   listUnitsByFacility,
   patchUnit,
 } from "../api/units";
 import { ResidentsPanel } from "./ResidentsPanel";
-import { getAuth } from "../auth/auth";
+import { getAuth, roleAtLeast } from "../auth/auth";
 import { apiErrorMessage } from "../api/api-error";
 import lexicon from "../assets/lexicon";
 import "./UnitsPanel.scss";
-import MenuSelect from "./MenuSelect";
-import CachedIcon from "@mui/icons-material/Cached";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import AddIcon from "@mui/icons-material/Add";
 
 type LoadState<T> =
   | { status: "idle" }
@@ -41,20 +35,19 @@ function occupancyColor(pct: number): string {
   return "var(--cura-green)";
 }
 
-export function UnitsPanel({ facilityId }: { facilityId: number }) {
+export function UnitsPanel({
+  facilityId,
+  onUnitsLoaded,
+}: {
+  facilityId: number;
+  onUnitsLoaded?: (units: Unit[]) => void;
+}) {
   const auth = getAuth();
-  const isAdmin = auth.role === "ADMIN";
+  const isAdmin = roleAtLeast(auth.role, "ADMIN");
   const reduced = useReducedMotion();
 
   const [unitsState, setUnitsState] = useState<LoadState<Unit[]>>({ status: "idle" });
   const [selectedUnitId, setSelectedUnitId] = useState<number | null>(null);
-  const [showAddForm, setShowAddForm] = useState(false);
-
-  const [form, setForm] = useState<UnitCreateRequest>({
-    name: "",
-    type: "ROOM",
-    capacity: 1,
-  });
 
   const [editingUnitId, setEditingUnitId] = useState<number | null>(null);
   const [editName, setEditName] = useState("");
@@ -76,6 +69,7 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
       setUnitsState({ status: "loading" });
       const data = await listUnitsByFacility(facilityId);
       setUnitsState({ status: "success", data });
+      onUnitsLoaded?.(data);
     } catch (e: any) {
       setUnitsState({ status: "error", message: apiErrorMessage(e) });
     }
@@ -83,11 +77,9 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
 
   useEffect(() => {
     load();
-    setForm({ name: "", type: "ROOM", capacity: 1 });
     setEditingUnitId(null);
     setEditName("");
     setRenameError(null);
-    setShowAddForm(false);
   }, [facilityId]);
 
   useEffect(() => {
@@ -97,25 +89,6 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
       return unitsState.data[0]?.id ?? null;
     });
   }, [unitsState]);
-
-  async function onCreate(e: { preventDefault(): void }) {
-    e.preventDefault();
-    if (!isAdmin) return;
-    if (!form.name.trim()) return;
-
-    try {
-      await createUnit(facilityId, {
-        name: form.name.trim(),
-        type: form.type,
-        capacity: Number(form.capacity),
-      });
-      setForm({ name: "", type: form.type, capacity: form.capacity });
-      setShowAddForm(false);
-      await load();
-    } catch (e: any) {
-      alert(apiErrorMessage(e));
-    }
-  }
 
   async function onDelete(unitId: number) {
     if (!isAdmin) return;
@@ -197,115 +170,7 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
             <span className="up__unitCount">{units.length}</span>
           )}
         </div>
-        <div className="up__headerRight">
-          <button
-            className="up__iconBtn"
-            onClick={load}
-            type="button"
-            aria-label={lexicon.common.refresh}
-          >
-            <CachedIcon sx={{ fontSize: 16 }} />
-          </button>
-          {isAdmin && (
-            <button
-              className={`up__addBtn${showAddForm ? " up__addBtn--active" : ""}`}
-              type="button"
-              onClick={() => setShowAddForm((v) => !v)}
-            >
-              <AddIcon sx={{ fontSize: 14 }} />
-              {lexicon.units.addUnit}
-            </button>
-          )}
-        </div>
       </div>
-
-      {/* Collapsible add-unit form */}
-      <AnimatePresence>
-        {isAdmin && showAddForm && (
-          <motion.div
-            className="up__addForm"
-            initial={reduced ? false : { height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={reduced ? undefined : { height: 0, opacity: 0 }}
-            transition={{ duration: 0.22, ease: "easeOut" }}
-            style={{ overflow: "hidden" }}
-          >
-            <form className="up__addFormInner" onSubmit={onCreate}>
-              <div className="up__addFormGrid">
-                <div className="up__field">
-                  <label className="up__fieldLabel">{lexicon.units.nameLabel}</label>
-                  <input
-                    className="up__fieldInput"
-                    value={form.name}
-                    onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                    placeholder={lexicon.units.namePlaceholder}
-                    autoFocus
-                  />
-                </div>
-                <div className="up__field">
-                  <MenuSelect<UnitType>
-                    label={lexicon.units.typeLabel}
-                    value={form.type}
-                    onChange={(v) => setForm((p) => ({ ...p, type: v }))}
-                    options={[
-                      {
-                        value: "ROOM",
-                        label: lexicon.units.roomLabel,
-                        description: lexicon.units.roomDescription,
-                      },
-                      {
-                        value: "WING",
-                        label: lexicon.units.wingLabel,
-                        description: lexicon.units.wingDescription,
-                      },
-                      {
-                        value: "FLOOR",
-                        label: lexicon.units.floorLabel,
-                        description: lexicon.units.floorDescription,
-                      },
-                    ]}
-                  />
-                </div>
-                <div className="up__field">
-                  <label className="up__fieldLabel">{lexicon.units.capacityLabel}</label>
-                  <input
-                    className="up__fieldInput"
-                    type="number"
-                    min={1}
-                    value={form.capacity}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, capacity: Number(e.target.value) }))
-                    }
-                  />
-                </div>
-              </div>
-              <div className="up__addFormActions">
-                <button className="up__submitBtn" type="submit">
-                  {lexicon.units.addUnit}
-                </button>
-                <button
-                  className="up__cancelFormBtn"
-                  type="button"
-                  onClick={() => setShowAddForm(false)}
-                >
-                  {lexicon.common.cancel}
-                </button>
-              </div>
-            </form>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Staff notice */}
-      {!isAdmin && (
-        <div className="up__notice">
-          <div className="up__noticeTitle">{lexicon.units.unitCreationAdminOnlyTitle}</div>
-          <div className="up__noticeBody">
-            {lexicon.units.unitCreationAdminOnlyBody}{" "}
-            <b>{auth.username ?? "user"}</b> ({auth.role ?? "UNKNOWN"}).
-          </div>
-        </div>
-      )}
 
       {/* States */}
       {unitsState.status === "loading" && (
@@ -431,6 +296,20 @@ export function UnitsPanel({ facilityId }: { facilityId: number }) {
                     </span>
                     {full && <span className="up__fullPill">{lexicon.units.full}</span>}
                   </div>
+
+                  {/* Care speciality label */}
+                  {u.careSpeciality && (
+                    <div className="up__careSpeciality">{u.careSpeciality}</div>
+                  )}
+
+                  {/* Room tags — shown if API returns rooms data */}
+                  {u.rooms && u.rooms.length > 0 && (
+                    <div className="up__roomTags">
+                      {u.rooms.map((r) => (
+                        <span key={r} className="up__roomTag">{r}</span>
+                      ))}
+                    </div>
+                  )}
                 </motion.div>
               );
             })}

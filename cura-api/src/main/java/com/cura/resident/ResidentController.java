@@ -9,6 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -69,6 +70,14 @@ public class ResidentController {
     @GetMapping("/{id}/details")
     public ResidentDetailResponse details(@PathVariable Long id, Authentication auth) {
         return residentService.getResidentDetail(id, TenantUtil.orgId(auth));
+    }
+
+    @PostMapping("/{id}/photo")
+    public ResidentResponse uploadPhoto(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file,
+            Authentication auth) {
+        return residentService.uploadPhoto(id, file, TenantUtil.orgId(auth));
     }
 
     @GetMapping("/{id}/notes")

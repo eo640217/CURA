@@ -23,6 +23,13 @@ export interface MockResident {
   medications: string[];
   keyWorker: string;
   nextOfKin: string;
+  // API-mapped fields
+  condition?: string;
+  gpName?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  unitId?: number;
+  roomId?: number;
 }
 
 export interface MockCarePlan {
@@ -73,14 +80,86 @@ export interface MockIncident {
 // TODO: replace with API call to GET /api/v1/residents/directory
 
 export const residents: MockResident[] = [
-  { id: 1, firstName: 'Margaret', lastName: 'Hughes', residentId: 'R-0041', room: '12A', wing: 'Wing A', age: 82, conditions: ['Dementia', 'Hypertension'], careLevel: 'High', status: 'monitor', lastChecked: '09:15', dob: '12 Mar 1943', admittedDate: '04 Jan 2022', medications: ['Donepezil 10mg', 'Amlodipine 5mg', 'Atorvastatin 20mg'], keyWorker: 'Sarah Okonkwo', nextOfKin: 'David Hughes (Son)' },
-  { id: 2, firstName: 'Robert', lastName: 'Kwame', residentId: 'R-0038', room: '07B', wing: 'Wing B', age: 78, conditions: ['Parkinson\'s', 'Diabetes T2'], careLevel: 'High', status: 'urgent', lastChecked: '08:45', dob: '02 Sep 1946', admittedDate: '17 May 2021', medications: ['Levodopa 100mg', 'Metformin 500mg'], keyWorker: 'James Osei', nextOfKin: 'Abena Kwame (Daughter)' },
-  { id: 3, firstName: 'Dorothy', lastName: 'Patel', residentId: 'R-0055', room: '03C', wing: 'Wing C', age: 91, conditions: ['COPD', 'Osteoporosis'], careLevel: 'Medium', status: 'stable', lastChecked: '10:00', dob: '28 Nov 1932', admittedDate: '21 Aug 2020', medications: ['Salbutamol inhaler', 'Calcium 500mg'], keyWorker: 'Priya Sharma', nextOfKin: 'Raj Patel (Son)' },
-  { id: 4, firstName: 'Thomas', lastName: 'Brennan', residentId: 'R-0029', room: '09A', wing: 'Wing A', age: 85, conditions: ['Stroke recovery', 'Atrial fibrillation'], careLevel: 'High', status: 'monitor', lastChecked: '08:30', dob: '15 Apr 1939', admittedDate: '11 Mar 2023', medications: ['Warfarin 3mg', 'Ramipril 5mg'], keyWorker: 'Sarah Okonkwo', nextOfKin: 'Catherine Brennan (Wife)' },
-  { id: 5, firstName: 'Elsie', lastName: 'Nkrumah', residentId: 'R-0062', room: '14B', wing: 'Wing B', age: 74, conditions: ['Rheumatoid arthritis'], careLevel: 'Low', status: 'stable', lastChecked: '10:30', dob: '03 Jul 1950', admittedDate: '09 Sep 2023', medications: ['Methotrexate 10mg', 'Folic acid 5mg'], keyWorker: 'James Osei', nextOfKin: 'Kofi Nkrumah (Son)' },
-  { id: 6, firstName: 'Harold', lastName: 'Sinclair', residentId: 'R-0017', room: '01C', wing: 'Wing C', age: 88, conditions: ['Heart failure', 'CKD Stage 3'], careLevel: 'High', status: 'stable', lastChecked: '09:50', dob: '22 Jan 1936', admittedDate: '15 Feb 2019', medications: ['Furosemide 40mg', 'Bisoprolol 2.5mg'], keyWorker: 'Priya Sharma', nextOfKin: 'Linda Sinclair (Daughter)' },
-  { id: 7, firstName: 'Joan', lastName: 'Fletcher', residentId: 'R-0073', room: '06A', wing: 'Wing A', age: 79, conditions: ['Depression', 'Type 2 diabetes'], careLevel: 'Medium', status: 'stable', lastChecked: '10:15', dob: '17 Aug 1945', admittedDate: '22 Nov 2022', medications: ['Sertraline 50mg', 'Metformin 1g'], keyWorker: 'Sarah Okonkwo', nextOfKin: 'Peter Fletcher (Husband)' },
-  { id: 8, firstName: 'Arthur', lastName: 'Mensah', residentId: 'R-0044', room: '11B', wing: 'Wing B', age: 83, conditions: ['Vascular dementia', 'Hypertension'], careLevel: 'High', status: 'urgent', lastChecked: '07:55', dob: '09 Dec 1940', admittedDate: '30 Jun 2021', medications: ['Aspirin 75mg', 'Lisinopril 10mg'], keyWorker: 'James Osei', nextOfKin: 'Grace Mensah (Wife)' },
+  {
+    id: 1, firstName: 'Margaret', lastName: 'Hughes', residentId: 'R-0041', room: '12A', wing: 'Wing A',
+    age: 82, conditions: ['Dementia', 'Hypertension'], careLevel: 'High', status: 'monitor',
+    lastChecked: '09:15', dob: '12 Mar 1943', admittedDate: '04 Jan 2022',
+    medications: ['Donepezil 10mg', 'Amlodipine 5mg', 'Atorvastatin 20mg'],
+    keyWorker: 'Sarah Okonkwo', nextOfKin: 'David Hughes (Son)',
+    condition: 'Dementia, Hypertension', gpName: 'Dr. Adeyemi',
+    emergencyContactName: 'David Hughes', emergencyContactPhone: '+44 7700 900001',
+    unitId: 1, roomId: 1,
+  },
+  {
+    id: 2, firstName: 'Robert', lastName: 'Kwame', residentId: 'R-0038', room: '07B', wing: 'Wing B',
+    age: 78, conditions: ['Parkinson\'s', 'Diabetes T2'], careLevel: 'High', status: 'urgent',
+    lastChecked: '08:45', dob: '02 Sep 1946', admittedDate: '17 May 2021',
+    medications: ['Levodopa 100mg', 'Metformin 500mg'],
+    keyWorker: 'James Osei', nextOfKin: 'Abena Kwame (Daughter)',
+    condition: "Parkinson's, Type 2 Diabetes", gpName: 'Dr. Singh',
+    emergencyContactName: 'Abena Kwame', emergencyContactPhone: '+44 7700 900002',
+    unitId: 2, roomId: 2,
+  },
+  {
+    id: 3, firstName: 'Dorothy', lastName: 'Patel', residentId: 'R-0055', room: '03C', wing: 'Wing C',
+    age: 91, conditions: ['COPD', 'Osteoporosis'], careLevel: 'Medium', status: 'stable',
+    lastChecked: '10:00', dob: '28 Nov 1932', admittedDate: '21 Aug 2020',
+    medications: ['Salbutamol inhaler', 'Calcium 500mg'],
+    keyWorker: 'Priya Sharma', nextOfKin: 'Raj Patel (Son)',
+    condition: 'COPD, Osteoporosis', gpName: 'Dr. Singh',
+    emergencyContactName: 'Raj Patel', emergencyContactPhone: '+44 7700 900003',
+    unitId: 3, roomId: 3,
+  },
+  {
+    id: 4, firstName: 'Thomas', lastName: 'Brennan', residentId: 'R-0029', room: '09A', wing: 'Wing A',
+    age: 85, conditions: ['Stroke recovery', 'Atrial fibrillation'], careLevel: 'High', status: 'monitor',
+    lastChecked: '08:30', dob: '15 Apr 1939', admittedDate: '11 Mar 2023',
+    medications: ['Warfarin 3mg', 'Ramipril 5mg'],
+    keyWorker: 'Sarah Okonkwo', nextOfKin: 'Catherine Brennan (Wife)',
+    condition: 'Stroke recovery, Atrial fibrillation', gpName: 'Dr. Adeyemi',
+    emergencyContactName: 'Catherine Brennan', emergencyContactPhone: '+44 7700 900004',
+    unitId: 1, roomId: 4,
+  },
+  {
+    id: 5, firstName: 'Elsie', lastName: 'Nkrumah', residentId: 'R-0062', room: '14B', wing: 'Wing B',
+    age: 74, conditions: ['Rheumatoid arthritis'], careLevel: 'Low', status: 'stable',
+    lastChecked: '10:30', dob: '03 Jul 1950', admittedDate: '09 Sep 2023',
+    medications: ['Methotrexate 10mg', 'Folic acid 5mg'],
+    keyWorker: 'James Osei', nextOfKin: 'Kofi Nkrumah (Son)',
+    condition: 'Rheumatoid arthritis', gpName: 'Dr. Patel',
+    emergencyContactName: 'Kofi Nkrumah', emergencyContactPhone: '+44 7700 900005',
+    unitId: 2, roomId: 5,
+  },
+  {
+    id: 6, firstName: 'Harold', lastName: 'Sinclair', residentId: 'R-0017', room: '01C', wing: 'Wing C',
+    age: 88, conditions: ['Heart failure', 'CKD Stage 3'], careLevel: 'High', status: 'stable',
+    lastChecked: '09:50', dob: '22 Jan 1936', admittedDate: '15 Feb 2019',
+    medications: ['Furosemide 40mg', 'Bisoprolol 2.5mg'],
+    keyWorker: 'Priya Sharma', nextOfKin: 'Linda Sinclair (Daughter)',
+    condition: 'Heart failure, CKD Stage 3', gpName: 'Dr. Walsh',
+    emergencyContactName: 'Linda Sinclair', emergencyContactPhone: '+44 7700 900006',
+    unitId: 3, roomId: 6,
+  },
+  {
+    id: 7, firstName: 'Joan', lastName: 'Fletcher', residentId: 'R-0073', room: '06A', wing: 'Wing A',
+    age: 79, conditions: ['Depression', 'Type 2 diabetes'], careLevel: 'Medium', status: 'stable',
+    lastChecked: '10:15', dob: '17 Aug 1945', admittedDate: '22 Nov 2022',
+    medications: ['Sertraline 50mg', 'Metformin 1g'],
+    keyWorker: 'Sarah Okonkwo', nextOfKin: 'Peter Fletcher (Husband)',
+    condition: 'Depression, Type 2 diabetes', gpName: 'Dr. Adeyemi',
+    emergencyContactName: 'Peter Fletcher', emergencyContactPhone: '+44 7700 900007',
+    unitId: 1, roomId: 7,
+  },
+  {
+    id: 8, firstName: 'Arthur', lastName: 'Mensah', residentId: 'R-0044', room: '11B', wing: 'Wing B',
+    age: 83, conditions: ['Vascular dementia', 'Hypertension'], careLevel: 'High', status: 'urgent',
+    lastChecked: '07:55', dob: '09 Dec 1940', admittedDate: '30 Jun 2021',
+    medications: ['Aspirin 75mg', 'Lisinopril 10mg'],
+    keyWorker: 'James Osei', nextOfKin: 'Grace Mensah (Wife)',
+    condition: 'Vascular dementia, Hypertension', gpName: 'Dr. Patel',
+    emergencyContactName: 'Grace Mensah', emergencyContactPhone: '+44 7700 900008',
+    unitId: 2, roomId: 8,
+  },
 ];
 
 // ── Care Plans ─────────────────────────────────────────────────────────────────

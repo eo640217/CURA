@@ -66,8 +66,10 @@
 .up__addBtn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   height: 30px;
+  min-width: 128px;
   padding: 0 12px;
   font-size: 12px;
   font-weight: 600;
@@ -107,7 +109,7 @@
   display: grid;
   grid-template-columns: 1fr 160px 90px;
   gap: 10px;
-  align-items: end;
+  align-items: start;
 
   @media (max-width: 760px) {
     grid-template-columns: 1fr;
@@ -434,6 +436,31 @@
   border-radius: 20px;
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+// ── Care speciality + room tags ───────────────────────────────────────────────
+
+.up__careSpeciality {
+  font-size: 11px;
+  color: var(--cura-text-muted);
+  margin-top: 2px;
+}
+
+.up__roomTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.up__roomTag {
+  padding: 1px 7px;
+  background: var(--cura-blue-light);
+  color: var(--cura-navy);
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 500;
+  border: 0.5px solid var(--cura-blue-mid);
 }
 
 // ── Residents section (animated in below unit grid) ───────────────────────────

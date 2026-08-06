@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Facility, getFacility, listFacilities, patchFacility } from "../api/facilities";
+import { Unit } from "../api/units";
 import { UnitsPanel } from "../components/UnitsPanel";
-import { getAuth } from "../auth/auth";
+import { getAuth, roleAtLeast } from "../auth/auth";
 import { apiErrorMessage } from "../api/api-error";
 import CreateFacilityModal from "../components/CreateFacilityModal";
 import lexicon from "../assets/lexicon";
 import "./FacilitiesView.scss";
-import CachedIcon from "@mui/icons-material/Cached";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 type LoadState<T> =
@@ -19,7 +19,7 @@ type LoadState<T> =
 export default function FacilitiesView() {
   const t = lexicon;
   const auth = getAuth();
-  const isAdmin = auth.role === "ADMIN";
+  const isAdmin = roleAtLeast(auth.role, "ADMIN");
   const reduced = useReducedMotion();
 
   const [createOpen, setCreateOpen] = useState(false);
@@ -28,6 +28,8 @@ export default function FacilitiesView() {
   const [facilitiesState, setFacilitiesState] = useState<LoadState<Facility[]>>({ status: "idle" });
   const [selectedFacilityId, setSelectedFacilityId] = useState<number | null>(null);
   const [facilityState, setFacilityState] = useState<LoadState<Facility>>({ status: "idle" });
+
+  const [unitsForStats, setUnitsForStats] = useState<Unit[]>([]);
 
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({ name: "", address: "", phone: "", email: "" });
@@ -44,6 +46,15 @@ export default function FacilitiesView() {
     const q = searchQuery.toLowerCase();
     return facilities.filter((f) => f.name?.toLowerCase().includes(q));
   }, [facilities, searchQuery]);
+
+  const occupancyStats = useMemo(() => {
+    const capacity = facilityState.status === "success" ? (facilityState.data.capacity ?? null) : null;
+    const totalBeds = capacity ?? unitsForStats.reduce((s, u) => s + (u.capacity ?? 0), 0);
+    const occupied = unitsForStats.reduce((s, u) => s + (u.occupiedCount ?? 0), 0);
+    const available = Math.max(0, totalBeds - occupied);
+    const rate = totalBeds > 0 ? Math.round((occupied / totalBeds) * 100) : 0;
+    return { totalBeds, occupied, available, rate };
+  }, [facilityState, unitsForStats]);
 
   const loadFacilities = useCallback(async () => {
     try {
@@ -76,8 +87,8 @@ export default function FacilitiesView() {
       setEditForm({
         name: data.name ?? "",
         address: data.address ?? "",
-        phone: (data as any).phone ?? "",
-        email: (data as any).email ?? "",
+        phone: data.phone ?? "",
+        email: data.email ?? "",
       });
     } catch (e: any) {
       setFacilityState({ status: "error", message: apiErrorMessage(e) });
@@ -90,6 +101,7 @@ export default function FacilitiesView() {
 
   useEffect(() => {
     if (selectedFacilityId == null) return;
+    setUnitsForStats([]);
     loadFacility(selectedFacilityId);
   }, [selectedFacilityId, loadFacility]);
 
@@ -102,8 +114,8 @@ export default function FacilitiesView() {
     setEditForm({
       name: f.name ?? "",
       address: f.address ?? "",
-      phone: (f as any).phone ?? "",
-      email: (f as any).email ?? "",
+      phone: f.phone ?? "",
+      email: f.email ?? "",
     });
   }
 
@@ -118,8 +130,8 @@ export default function FacilitiesView() {
     setEditForm({
       name: f.name ?? "",
       address: f.address ?? "",
-      phone: (f as any).phone ?? "",
-      email: (f as any).email ?? "",
+      phone: f.phone ?? "",
+      email: f.email ?? "",
     });
   }
 
@@ -143,8 +155,8 @@ export default function FacilitiesView() {
     const payload: any = {};
     if (next.name !== (current.name ?? "")) payload.name = next.name;
     if (next.address !== (current.address ?? "")) payload.address = next.address;
-    if (next.phone !== ((current as any).phone ?? "")) payload.phone = next.phone;
-    if (next.email !== ((current as any).email ?? "")) payload.email = next.email;
+    if (next.phone !== (current.phone ?? "")) payload.phone = next.phone;
+    if (next.email !== (current.email ?? "")) payload.email = next.email;
 
     if (Object.keys(payload).length === 0) {
       setEditing(false);
@@ -183,14 +195,6 @@ export default function FacilitiesView() {
           </p>
         </div>
         <div className="fv__headerRight">
-          <button
-            className="fv__refreshBtn"
-            onClick={loadFacilities}
-            type="button"
-            aria-label={t.common.refresh}
-          >
-            <CachedIcon sx={{ fontSize: 16 }} />
-          </button>
           {isAdmin && (
             <button
               className="fv__newBtn"
@@ -323,7 +327,12 @@ export default function FacilitiesView() {
                 {/* ── Facility detail card ──────────────────────────────── */}
                 <div className="fv__detailCard">
                   <div className="fv__detailHeader">
-                    <h2 className="fv__detailName">{facilityState.data.name}</h2>
+                    <div className="fv__detailNameRow">
+                      <h2 className="fv__detailName">{facilityState.data.name}</h2>
+                      {facilityState.data.facilityType && (
+                        <span className="fv__typePill">{facilityState.data.facilityType}</span>
+                      )}
+                    </div>
                     <div className="fv__detailHeaderRight">
                       {editing && (
                         <span className="fv__unsavedDot" title="Unsaved changes" />
@@ -341,6 +350,14 @@ export default function FacilitiesView() {
                     </div>
                   </div>
 
+                  {/* License number row */}
+                  {facilityState.data.licenseNumber && (
+                    <div className="fv__licenseRow">
+                      <span className="fv__licenseLabel">License</span>
+                      <span className="fv__licenseValue">{facilityState.data.licenseNumber}</span>
+                    </div>
+                  )}
+
                   {/* View mode — info grid */}
                   {!editing && (
                     <div className="fv__infoGrid">
@@ -353,14 +370,36 @@ export default function FacilitiesView() {
                       <div className="fv__infoField">
                         <div className="fv__infoLabel">Phone</div>
                         <div className="fv__infoValue">
-                          {(facilityState.data as any).phone || "—"}
+                          {facilityState.data.phone || "—"}
                         </div>
                       </div>
                       <div className="fv__infoField">
                         <div className="fv__infoLabel">Email</div>
                         <div className="fv__infoValue">
-                          {(facilityState.data as any).email || "—"}
+                          {facilityState.data.email || "—"}
                         </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Occupancy stats strip */}
+                  {!editing && (
+                    <div className="fv__statsStrip">
+                      <div className="fv__statTile">
+                        <span className="fv__statValue">{occupancyStats.totalBeds}</span>
+                        <span className="fv__statLabel">Total Beds</span>
+                      </div>
+                      <div className="fv__statTile">
+                        <span className="fv__statValue">{occupancyStats.occupied}</span>
+                        <span className="fv__statLabel">Occupied</span>
+                      </div>
+                      <div className="fv__statTile">
+                        <span className="fv__statValue">{occupancyStats.available}</span>
+                        <span className="fv__statLabel">Available</span>
+                      </div>
+                      <div className="fv__statTile">
+                        <span className="fv__statValue">{occupancyStats.rate}%</span>
+                        <span className="fv__statLabel">Occupancy Rate</span>
                       </div>
                     </div>
                   )}
@@ -449,7 +488,7 @@ export default function FacilitiesView() {
                 </div>
 
                 {/* ── Units + Residents ─────────────────────────────────── */}
-                <UnitsPanel facilityId={facilityState.data.id} />
+                <UnitsPanel facilityId={facilityState.data.id} onUnitsLoaded={setUnitsForStats} />
               </motion.div>
             )}
           </AnimatePresence>

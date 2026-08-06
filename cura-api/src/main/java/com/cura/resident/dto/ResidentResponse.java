@@ -11,5 +11,18 @@ public record ResidentResponse(
         String lastName,
         LocalDate dateOfBirth,
         String roomNumber,
-        Instant createdAt
+        Instant createdAt,
+        String condition,
+        String careLevel,
+        String status,
+        String gpName,
+        String emergencyContactName,
+        String emergencyContactPhone,
+        Long roomId,
+        String gender,
+        LocalDate admissionDate,
+        String nhsNumber,
+        String emergencyContactRelationship,
+        String carePlan,
+        String photoUrl
 ) {}

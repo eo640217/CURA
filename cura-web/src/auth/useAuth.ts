@@ -1,10 +1,10 @@
-import { getAuth } from "./auth";
+import { getAuth, roleAtLeast } from "./auth";
 
 export function useAuthState() {
   const auth = getAuth();
   return {
     ...auth,
     isAuthed: !!auth.token,
-    isAdmin: auth.role === "ADMIN",
+    isAdmin: roleAtLeast(auth.role, "ADMIN"),
   };
 }

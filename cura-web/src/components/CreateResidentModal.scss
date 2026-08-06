@@ -1,4 +1,4 @@
-// Full-screen overlay — matches CreateFacilityModal exactly
+// Full-screen overlay
 .crm__root {
   position: fixed;
   inset: 0;
@@ -10,9 +10,10 @@
   backdrop-filter: blur(2px);
 }
 
-// Modal card — slightly wider than cfm to accommodate unit rows
+// Modal card — wider to fit all form sections
 .crm__card {
-  width: min(500px, 100%);
+  width: min(560px, 100%);
+  max-height: calc(100vh - 48px);
   background: var(--cura-surface);
   border: 0.5px solid var(--cura-border);
   border-radius: var(--cura-radius-lg);
@@ -20,15 +21,17 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  overflow: hidden;
 }
 
-// Header: title + close button
+// Header
 .crm__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
 .crm__title {
@@ -62,156 +65,43 @@
   }
 }
 
-// Step indicator: dots + "Step N of 3 — Title"
-.crm__stepIndicator {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-bottom: 18px;
-}
+// ── Form body — scrollable ─────────────────────────────────────────────────────
 
-.crm__stepDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--cura-border);
-  flex-shrink: 0;
-  transition: background var(--cura-transition-fast);
-
-  &--active {
-    background: var(--cura-navy);
-  }
-}
-
-.crm__stepLabel {
-  font-size: 11px;
-  color: var(--cura-text-muted);
-  margin-left: 4px;
-}
-
-// Step body — fixed min-height to prevent card from jumping between steps
-.crm__stepBody {
-  min-height: 180px;
-  overflow: hidden;
-  margin-bottom: 20px;
-}
-
-// ── Facility / unit list (steps 1 and 2) ─────────────────────────────────────
-
-.crm__list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.crm__status {
-  font-size: 13px;
-  color: var(--cura-text-muted);
-  text-align: center;
-  padding: 24px 0;
-}
-
-.crm__listError {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 0;
-}
-
-.crm__retryBtn {
-  height: 30px;
-  padding: 0 12px;
-  font-size: 12px;
-  font-weight: 500;
-  background: transparent;
-  color: var(--cura-text-primary);
-  border: 0.5px solid var(--cura-border);
-  border-radius: var(--cura-radius-sm);
-  cursor: pointer;
-  font-family: inherit;
-  transition: background var(--cura-transition-fast);
-
-  &:hover {
-    background: var(--cura-bg);
-  }
-}
-
-// Each facility / unit row
-.crm__listRow {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px 14px;
-  background: var(--cura-surface);
-  border: 0.5px solid var(--cura-border);
-  border-radius: var(--cura-radius-sm);
-  cursor: pointer;
-  font-family: inherit;
-  text-align: left;
-  transition: background var(--cura-transition-fast), border-color var(--cura-transition-fast);
-
-  &:hover {
-    background: var(--cura-blue-light);
-    border-color: var(--cura-blue-mid);
-  }
-
-  &--selected {
-    background: var(--cura-blue-light);
-    border-color: var(--cura-blue);
-  }
-
-  &--disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-}
-
-.crm__listRowName {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--cura-navy);
-}
-
-.crm__listRowMeta {
-  font-size: 11px;
-  color: var(--cura-text-muted);
-  margin-top: 2px;
-}
-
-.crm__fullPill {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 20px;
-  background: var(--cura-red-bg);
-  color: var(--cura-red-text);
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-// ── Step 3: Resident details form ─────────────────────────────────────────────
-
-.crm__form {
+.crm__formBody {
+  flex: 1;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-bottom: 16px;
+  padding-right: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cura-border) transparent;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: var(--cura-border); border-radius: 999px; }
 }
+
+// ── Section labels ─────────────────────────────────────────────────────────────
+
+.crm__sectionLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--cura-text-muted);
+  padding-bottom: 6px;
+  border-bottom: 0.5px solid var(--cura-border);
+  margin-top: 4px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+// ── Fields ────────────────────────────────────────────────────────────────────
 
 .crm__grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-
-  @media (max-width: 460px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.crm__gridOptional {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
@@ -224,7 +114,15 @@
 .crm__field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
+
+  &--half {
+    max-width: calc(50% - 6px);
+
+    @media (max-width: 460px) {
+      max-width: 100%;
+    }
+  }
 }
 
 .crm__label {
@@ -233,6 +131,9 @@
   text-transform: uppercase;
   letter-spacing: 0.7px;
   color: var(--cura-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .crm__input {
@@ -240,7 +141,7 @@
   background: var(--cura-surface);
   border: 0.5px solid var(--cura-border);
   border-radius: var(--cura-radius-sm);
-  padding: 9px 12px;
+  padding: 8px 11px;
   font-size: 13px;
   color: var(--cura-navy);
   font-family: inherit;
@@ -248,16 +149,104 @@
   box-sizing: border-box;
   transition: border-color var(--cura-transition-fast);
 
-  &::placeholder {
-    color: var(--cura-text-hint);
-  }
+  &::placeholder { color: var(--cura-text-hint); }
+  &:focus { border-color: var(--cura-blue); }
 
-  &:focus {
-    border-color: var(--cura-blue);
+  &--error {
+    border-color: var(--cura-red);
   }
 }
 
-// Inline error — identical to cfm__error
+// ── Select dropdowns ───────────────────────────────────────────────────────────
+
+.crm__selectWrap {
+  position: relative;
+
+  &::after {
+    content: '▾';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 11px;
+    color: var(--cura-text-muted);
+  }
+}
+
+.crm__select {
+  width: 100%;
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  padding: 8px 28px 8px 11px;
+  font-size: 13px;
+  color: var(--cura-navy);
+  font-family: inherit;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color var(--cura-transition-fast);
+
+  &:focus { border-color: var(--cura-blue); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; background: var(--cura-bg); }
+
+  &--error {
+    border-color: var(--cura-red);
+  }
+}
+
+// ── Inline spinner (appears in label during loading) ───────────────────────────
+
+@keyframes crm-spin {
+  to { transform: rotate(360deg); }
+}
+
+.crm__spinnerInline {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid var(--cura-border);
+  border-top-color: var(--cura-blue);
+  border-radius: 50%;
+  animation: crm-spin 0.65s linear infinite;
+  flex-shrink: 0;
+}
+
+// ── Inline error / hint below field ───────────────────────────────────────────
+
+.crm__fieldErr {
+  font-size: 11px;
+  color: var(--cura-red-text);
+}
+
+.crm__fieldError {
+  font-size: 11px;
+  color: var(--cura-red-text);
+  background: var(--cura-red-bg);
+  border-radius: 6px;
+  padding: 5px 8px;
+}
+
+.crm__retryLink {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--cura-navy);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: underline;
+}
+
+.crm__fieldHint {
+  font-size: 11px;
+  color: var(--cura-text-muted);
+}
+
+// ── Submit error banner ────────────────────────────────────────────────────────
+
 .crm__error {
   font-size: 12px;
   color: var(--cura-red-text);
@@ -266,9 +255,10 @@
   padding: 7px 10px;
 }
 
-// ── Success panel ─────────────────────────────────────────────────────────────
+// ── Success panel ──────────────────────────────────────────────────────────────
 
 .crm__success {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -285,46 +275,16 @@
   text-align: center;
 }
 
-// ── Action row ────────────────────────────────────────────────────────────────
+// ── Actions row ───────────────────────────────────────────────────────────────
 
 .crm__actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
-.crm__actionsRight {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-// Back button
-.crm__backBtn {
-  height: 34px;
-  padding: 0 14px;
-  font-size: 13px;
-  font-weight: 500;
-  background: transparent;
-  color: var(--cura-text-primary);
-  border: 0.5px solid var(--cura-border);
-  border-radius: var(--cura-radius-sm);
-  cursor: pointer;
-  font-family: inherit;
-  transition: background var(--cura-transition-fast);
-
-  &:hover {
-    background: var(--cura-bg);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-// Cancel button — outline
 .crm__cancelBtn {
   height: 34px;
   padding: 0 14px;
@@ -338,18 +298,10 @@
   font-family: inherit;
   transition: background var(--cura-transition-fast);
 
-  &:hover {
-    background: var(--cura-bg);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  &:hover { background: var(--cura-bg); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
-// Next / Submit button — navy primary
-.crm__nextBtn,
 .crm__submitBtn {
   height: 34px;
   padding: 0 16px;
@@ -363,28 +315,20 @@
   font-family: inherit;
   transition: background var(--cura-transition-fast);
 
-  &:hover {
-    background: var(--cura-blue-dark);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  &:hover { background: var(--cura-blue-dark); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
 // ── Reduced motion ────────────────────────────────────────────────────────────
 
 @media (prefers-reduced-motion: reduce) {
+  .crm__spinnerInline { animation: none; }
+
   .crm__closeBtn,
-  .crm__stepDot,
-  .crm__listRow,
   .crm__input,
-  .crm__backBtn,
+  .crm__select,
   .crm__cancelBtn,
-  .crm__nextBtn,
-  .crm__submitBtn,
-  .crm__retryBtn {
+  .crm__submitBtn {
     transition: none;
   }
 }

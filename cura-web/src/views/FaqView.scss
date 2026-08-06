@@ -1,0 +1,22 @@
+.faqCategories {
+  padding: 40px 48px 100px;
+  background: white;
+
+  &__inner {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+}
+
+.faqCategory {
+  &__h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--navy);
+    margin-bottom: 16px;
+  }
+}

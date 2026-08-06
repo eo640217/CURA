@@ -9,6 +9,16 @@ export type Unit = {
   type: UnitType;
   capacity: number;
   occupiedCount: number;
+  careSpeciality?: string;
+  rooms?: string[];
+};
+
+export type Room = {
+  id: number;
+  roomNumber: string;
+  unitId: number;
+  bedCount: number;
+  isOccupied: boolean;
 };
 
 export type UnitCreateRequest = {
@@ -38,5 +48,8 @@ export async function patchUnit(unitId: number, payload: UnitPatchRequest): Prom
   return res.data;
 }
 
-
-
+export async function listRoomsByUnit(unitId: number, available?: boolean): Promise<Room[]> {
+  const params = available ? "?available=true" : "";
+  const res = await http.get<Room[]>(`/units/${unitId}/rooms${params}`);
+  return res.data;
+}

@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import {
   Resident,
-  ResidentCreateRequest,
-  createResidentUnderUnit,
   listResidentsByUnit,
   transferResident,
 } from "../api/residents";
@@ -12,7 +10,6 @@ import { apiErrorMessage } from "../api/api-error";
 import lexicon from "../assets/lexicon";
 import MenuSelect from "../components/MenuSelect";
 import "./ResidentsPanel.scss";
-import CachedIcon from '@mui/icons-material/Cached';
 
 type LoadState<T> =
   | { status: "idle" }
@@ -33,17 +30,9 @@ export function ResidentsPanel({
   availableUnits: Unit[];
   onResidentChanged: () => void | Promise<void>;
 }) {
+  const navigate = useNavigate();
   const [state, setState] = useState<LoadState<Resident[]>>({ status: "idle" });
-
-  const [form, setForm] = useState<ResidentCreateRequest>({
-    firstName: "",
-    lastName: "",
-    dateOfBirth: null,
-    roomNumber: "",
-  });
-
   const [transferTo, setTransferTo] = useState<Record<number, number>>({});
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const residents = useMemo(
     () => (state.status === "success" ? state.data : []),
@@ -59,9 +48,6 @@ export function ResidentsPanel({
   const used = currentUnit?.occupiedCount ?? residents.length;
   const isFull = capacity > 0 && used >= capacity;
 
-  const reduced = useReducedMotion();
-
-  const canCreateResident = true;
   const canTransferResident = true;
 
   const otherUnits = useMemo(
@@ -80,13 +66,12 @@ export function ResidentsPanel({
       alert(lexicon.residentsPanel.unitCapacityAlert);
       return;
     }
-    setIsCreateOpen(true);
+    const facilityId = currentUnit?.facilityId;
+    const params = new URLSearchParams();
+    if (facilityId) params.set("facilityId", String(facilityId));
+    params.set("unitId", String(unitId));
+    navigate(`/residents/new?${params.toString()}`);
   }
-
-  function closeCreate() {
-    setIsCreateOpen(false);
-  }
-
 
   async function load() {
     try {
@@ -101,51 +86,8 @@ export function ResidentsPanel({
 
   useEffect(() => {
     load();
-    setForm({ firstName: "", lastName: "", dateOfBirth: null, roomNumber: "" });
     setTransferTo({});
-    setIsCreateOpen(false);
   }, [unitId]);
-
-  useEffect(() => {
-    if (!isCreateOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeCreate();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [isCreateOpen]);
-
-
-
-  async function onCreate(e: { preventDefault(): void }) {
-    e.preventDefault();
-    if (!form.firstName?.trim() || !form.lastName?.trim()) return;
-
-    if (isFull) {
-      alert(lexicon.residentsPanel.unitCapacityAlert);
-      return;
-    }
-
-    try {
-      const created = await createResidentUnderUnit(unitId, {
-        firstName: form.firstName.trim(),
-        lastName: form.lastName.trim(),
-        dateOfBirth: form.dateOfBirth ? form.dateOfBirth : null,
-        roomNumber: form.roomNumber?.trim() ? form.roomNumber.trim() : null,
-      });
-
-      setState((prev) => {
-        if (prev.status !== "success") return prev;
-        return { status: "success", data: [created, ...prev.data] };
-      });
-
-      setForm({ firstName: "", lastName: "", dateOfBirth: null, roomNumber: "" });
-      closeCreate();
-      await onResidentChanged();
-    } catch (e: any) {
-      alert(apiErrorMessage(e));
-    }
-  }
 
   async function onTransfer(residentId: number) {
     const fallback = defaultTransferTarget();
@@ -188,15 +130,10 @@ export function ResidentsPanel({
         </div>
 
         <div className="rp__headerActions">
-          <button onClick={load} type="button" aria-label={lexicon.common.refresh}>
-            <CachedIcon fontSize="small" />
-          </button>
-
-
           <button
             className="rp__primary"
             onClick={openCreate}
-            disabled={isFull || !canCreateResident}
+            disabled={isFull}
             type="button"
           >
             {lexicon.residentsPanel.create_resident}
@@ -282,95 +219,6 @@ export function ResidentsPanel({
           </div>
         )}
       </div>
-
-      <AnimatePresence>
-        {isCreateOpen && (
-          <motion.div
-            className="rp__modalOverlay"
-            onClick={(e) => { if (e.target === e.currentTarget) closeCreate(); }}
-            initial={reduced ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={reduced ? undefined : { opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <motion.div
-              className="rp__modal"
-              role="dialog"
-              aria-modal="true"
-              onClick={(e) => e.stopPropagation()}
-              initial={reduced ? false : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduced ? undefined : { opacity: 0, y: 12 }}
-              transition={{ duration: 0.22, ease: "easeOut" }}
-            >
-              <div className="rp__modalHeader">
-                <h4 className="rp__modalTitle">{lexicon.residentsPanel.create_resident}</h4>
-
-                <button className="rp__modalClose" type="button" onClick={closeCreate}>
-                  {lexicon.common.closeX}
-                </button>
-              </div>
-
-              <form className="rp__form" onSubmit={onCreate}>
-                <div className="rp__grid2">
-                  <div className="rp__field">
-                    <label>{lexicon.residentsPanel.firstName}</label>
-                    <input
-                      autoFocus
-                      value={form.firstName}
-                      onChange={(e) => setForm((p) => ({ ...p, firstName: e.target.value }))}
-                      disabled={isFull}
-                    />
-                  </div>
-
-                  <div className="rp__field">
-                    <label>{lexicon.residentsPanel.lastName}</label>
-                    <input
-                      value={form.lastName}
-                      onChange={(e) => setForm((p) => ({ ...p, lastName: e.target.value }))}
-                      disabled={isFull}
-                    />
-                  </div>
-                </div>
-
-                <div className="rp__gridDobRoom">
-                  <div className="rp__field dob__field">
-                    <label>{lexicon.residentsPanel.dob}</label>
-                    <input
-                      type="date"
-                      value={form.dateOfBirth ?? ""}
-                      onChange={(e) => setForm((p) => ({ ...p, dateOfBirth: e.target.value || null }))}
-                      disabled={isFull}
-                    />
-                  </div>
-
-                  <div className="rp__field rm_number__field">
-                    <label>{lexicon.residentsPanel.roomNumber}</label>
-                    <input
-                      value={form.roomNumber ?? ""}
-                      onChange={(e) => setForm((p) => ({ ...p, roomNumber: e.target.value }))}
-                      placeholder={lexicon.residentsPanel.roomPlaceholder}
-                      disabled={isFull}
-                    />
-                  </div>
-                </div>
-
-                <div className="rp__modalActions">
-                  <button type="button" onClick={closeCreate}>
-                    {lexicon.common.cancel}
-                  </button>
-
-                  <button className="rp__primary" type="submit" disabled={isFull || !canCreateResident}>
-                    {isFull ? lexicon.residentsPanel.unitFull : lexicon.residentsPanel.addResident}
-                  </button>
-                </div>
-
-                {isFull && <div className="rp__hint">{lexicon.residentsPanel.unitCapacityHint}</div>}
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
     </div>
   );

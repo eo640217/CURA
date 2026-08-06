@@ -1,0 +1,401 @@
+.crp {
+  padding: 28px 32px;
+  max-width: 1040px;
+  margin: 0 auto;
+
+  @media (max-width: 900px) {
+    padding: 20px 16px;
+  }
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+
+.crp__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.crp__backBtn {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cura-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+  white-space: nowrap;
+  transition: color var(--cura-transition-fast);
+
+  &:hover { color: var(--cura-navy); }
+}
+
+.crp__headerCenter {
+  flex: 1;
+  text-align: center;
+}
+
+.crp__title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--cura-navy);
+  margin: 0;
+}
+
+.crp__headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.crp__cancelBtn {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--cura-text-primary);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover { background: var(--cura-bg); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.crp__saveBtn {
+  height: 34px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--cura-navy);
+  color: #fff;
+  border: none;
+  border-radius: var(--cura-radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--cura-transition-fast);
+
+  &:hover:not(:disabled) { background: var(--cura-blue-dark); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// ── Layout ────────────────────────────────────────────────────────────────────
+
+.crp__layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ── Left panel ────────────────────────────────────────────────────────────────
+
+.crp__left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: sticky;
+  top: 20px;
+}
+
+.crp__photoCard {
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-md);
+  padding: 24px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.crp__photoBox {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--cura-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color var(--cura-transition-fast), background var(--cura-transition-fast);
+  background: var(--cura-bg);
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--cura-blue);
+    background: var(--cura-blue-light);
+    outline: none;
+  }
+}
+
+.crp__photoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.crp__photoPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: var(--cura-text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.crp__photoHint {
+  font-size: 11px;
+  color: var(--cura-text-muted);
+  text-align: center;
+  max-width: 160px;
+  word-break: break-all;
+  line-height: 1.4;
+}
+
+.crp__photoInput {
+  display: none;
+}
+
+.crp__namePreview {
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-md);
+  padding: 12px 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.crp__namePreviewLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--cura-text-muted);
+  margin-bottom: 4px;
+}
+
+.crp__namePreviewValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cura-navy);
+  word-break: break-word;
+}
+
+// ── Form ──────────────────────────────────────────────────────────────────────
+
+.crp__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.crp__section {
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-md);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.crp__sectionTitle {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--cura-text-muted);
+  padding-bottom: 8px;
+  border-bottom: 0.5px solid var(--cura-border);
+}
+
+// ── Fields ────────────────────────────────────────────────────────────────────
+
+.crp__grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.crp__field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  &--half {
+    max-width: calc(50% - 6px);
+
+    @media (max-width: 520px) {
+      max-width: 100%;
+    }
+  }
+}
+
+.crp__label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--cura-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.crp__input {
+  width: 100%;
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  padding: 8px 11px;
+  font-size: 13px;
+  color: var(--cura-navy);
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color var(--cura-transition-fast);
+
+  &::placeholder { color: var(--cura-text-hint); }
+  &:focus { border-color: var(--cura-blue); }
+  &--error { border-color: var(--cura-red); }
+}
+
+// ── Selects ───────────────────────────────────────────────────────────────────
+
+.crp__selectWrap {
+  position: relative;
+
+  &::after {
+    content: '▾';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 11px;
+    color: var(--cura-text-muted);
+  }
+}
+
+.crp__select {
+  width: 100%;
+  background: var(--cura-surface);
+  border: 0.5px solid var(--cura-border);
+  border-radius: var(--cura-radius-sm);
+  padding: 8px 28px 8px 11px;
+  font-size: 13px;
+  color: var(--cura-navy);
+  font-family: inherit;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color var(--cura-transition-fast);
+
+  &:focus { border-color: var(--cura-blue); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; background: var(--cura-bg); }
+  &--error { border-color: var(--cura-red); }
+}
+
+// ── Inline spinner ────────────────────────────────────────────────────────────
+
+@keyframes crp-spin {
+  to { transform: rotate(360deg); }
+}
+
+.crp__spinnerInline {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid var(--cura-border);
+  border-top-color: var(--cura-blue);
+  border-radius: 50%;
+  animation: crp-spin 0.65s linear infinite;
+  flex-shrink: 0;
+}
+
+// ── Feedback ──────────────────────────────────────────────────────────────────
+
+.crp__fieldErr {
+  font-size: 11px;
+  color: var(--cura-red-text);
+}
+
+.crp__fieldError {
+  font-size: 11px;
+  color: var(--cura-red-text);
+  background: var(--cura-red-bg);
+  border-radius: 6px;
+  padding: 5px 8px;
+}
+
+.crp__retryLink {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--cura-navy);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: underline;
+}
+
+.crp__fieldHint {
+  font-size: 11px;
+  color: var(--cura-text-muted);
+}
+
+.crp__error {
+  font-size: 12px;
+  color: var(--cura-red-text);
+  background: var(--cura-red-bg);
+  border-radius: var(--cura-radius-sm);
+  padding: 10px 14px;
+}
+
+.crp__successBanner {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cura-green-text);
+  background: var(--cura-green-bg);
+  border-radius: var(--cura-radius-sm);
+  padding: 12px 16px;
+  text-align: center;
+}
+
+// ── Reduced motion ────────────────────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+  .crp__spinnerInline { animation: none; }
+
+  .crp__backBtn,
+  .crp__cancelBtn,
+  .crp__saveBtn,
+  .crp__input,
+  .crp__select,
+  .crp__photoBox {
+    transition: none;
+  }
+}

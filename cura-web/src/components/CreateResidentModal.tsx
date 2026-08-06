@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { listFacilities, Facility } from "../api/facilities";
-import { listUnitsByFacility, Unit } from "../api/units";
-import { createResidentUnderUnit, ResidentCreateRequest } from "../api/residents";
+import { listUnitsByFacility, listRoomsByUnit, Unit, Room } from "../api/units";
+import { createResidentUnderUnit } from "../api/residents";
 import { apiErrorMessage } from "../api/api-error";
 import lexicon from "../assets/lexicon";
 import "./CreateResidentModal.scss";
@@ -15,7 +15,9 @@ type LoadState<T> =
 
 type SubmitState = "idle" | "loading" | "success" | { error: string };
 
-type Step = 1 | 2 | 3;
+const CARE_LEVELS = ["Low", "Medium", "High", "Critical"];
+const STATUSES = ["Stable", "Monitoring", "Urgent", "Discharged"];
+const GENDERS = ["Male", "Female", "Non-binary", "Other", "Prefer not to say"];
 
 type Props = {
   open: boolean;
@@ -23,58 +25,56 @@ type Props = {
   onCreated: () => void;
 };
 
-function remainingSpots(u: Unit) {
-  return Math.max(0, (u.capacity ?? 0) - (u.occupiedCount ?? 0));
-}
-
-function isUnitFull(u: Unit) {
-  return (u.capacity ?? 0) > 0 && u.occupiedCount >= u.capacity;
-}
-
-const STEP_TITLES: Record<Step, string> = {
-  1: "Select a Facility",
-  2: "Select a Unit",
-  3: "Resident Details",
-};
-
 export default function CreateResidentModal({ open, onClose, onCreated }: Props) {
   const reduced = useReducedMotion();
 
-  const [step, setStep] = useState<Step>(1);
-  // direction tracks whether we're moving forward (1) or backward (-1) for animation
-  const [direction, setDirection] = useState(1);
-
+  // Cascading dropdowns
   const [facilitiesState, setFacilitiesState] = useState<LoadState<Facility[]>>({ status: "idle" });
   const [selectedFacilityId, setSelectedFacilityId] = useState<number | null>(null);
 
   const [unitsState, setUnitsState] = useState<LoadState<Unit[]>>({ status: "idle" });
   const [selectedUnitId, setSelectedUnitId] = useState<number | null>(null);
 
-  const [form, setForm] = useState<ResidentCreateRequest>({
+  const [roomsState, setRoomsState] = useState<LoadState<Room[]>>({ status: "idle" });
+  const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
+
+  // Form fields
+  const [form, setForm] = useState({
     firstName: "",
     lastName: "",
-    dateOfBirth: null,
-    roomNumber: "",
+    dateOfBirth: "",
+    gender: "",
+    admissionDate: "",
+    nhsNumber: "",
+    condition: "",
+    careLevel: "",
+    status: "Stable",
+    gpName: "",
+    carePlan: "",
+    emergencyContactName: "",
+    emergencyContactPhone: "",
+    emergencyContactRelationship: "",
   });
-  const [formError, setFormError] = useState<string | null>(null);
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
 
-  // Reset all state when modal closes
+  // Reset on close
   useEffect(() => {
     if (!open) {
-      setStep(1);
-      setDirection(1);
       setFacilitiesState({ status: "idle" });
       setSelectedFacilityId(null);
       setUnitsState({ status: "idle" });
       setSelectedUnitId(null);
-      setForm({ firstName: "", lastName: "", dateOfBirth: null, roomNumber: "" });
-      setFormError(null);
+      setRoomsState({ status: "idle" });
+      setSelectedRoomId(null);
+      setForm({ firstName: "", lastName: "", dateOfBirth: "", gender: "", admissionDate: "", nhsNumber: "", condition: "", careLevel: "", status: "Stable", gpName: "", carePlan: "", emergencyContactName: "", emergencyContactPhone: "", emergencyContactRelationship: "" });
+      setErrors({});
       setSubmitState("idle");
     }
   }, [open]);
 
-  // Load facilities when modal opens
+  // Load facilities on open
   useEffect(() => {
     if (!open) return;
     async function load() {
@@ -100,8 +100,11 @@ export default function CreateResidentModal({ open, onClose, onCreated }: Props)
   }, [open, onClose]);
 
   async function loadUnits(facilityId: number) {
+    setUnitsState({ status: "loading" });
+    setSelectedUnitId(null);
+    setRoomsState({ status: "idle" });
+    setSelectedRoomId(null);
     try {
-      setUnitsState({ status: "loading" });
       const data = await listUnitsByFacility(facilityId);
       setUnitsState({ status: "success", data });
     } catch (e: any) {
@@ -109,58 +112,62 @@ export default function CreateResidentModal({ open, onClose, onCreated }: Props)
     }
   }
 
-  function goNext() {
-    setDirection(1);
-    if (step === 1) {
-      if (selectedFacilityId == null) return;
-      loadUnits(selectedFacilityId);
-      setStep(2);
-    } else if (step === 2) {
-      if (selectedUnitId == null) return;
-      setStep(3);
+  async function loadRooms(unitId: number) {
+    setRoomsState({ status: "loading" });
+    setSelectedRoomId(null);
+    try {
+      const data = await listRoomsByUnit(unitId, true);
+      setRoomsState({ status: "success", data });
+    } catch (e: any) {
+      setRoomsState({ status: "error", message: apiErrorMessage(e) });
     }
   }
 
-  function goBack() {
-    setDirection(-1);
-    if (step === 2) {
-      setSelectedUnitId(null);
-      setUnitsState({ status: "idle" });
-      setStep(1);
-    } else if (step === 3) {
-      setFormError(null);
-      setSubmitState("idle");
-      setStep(2);
-    }
+  function onFacilityChange(facilityId: number | null) {
+    setSelectedFacilityId(facilityId);
+    setUnitsState({ status: "idle" });
+    setSelectedUnitId(null);
+    setRoomsState({ status: "idle" });
+    setSelectedRoomId(null);
+    if (facilityId != null) loadUnits(facilityId);
+  }
+
+  function onUnitChange(unitId: number | null) {
+    setSelectedUnitId(unitId);
+    setRoomsState({ status: "idle" });
+    setSelectedRoomId(null);
+    if (unitId != null) loadRooms(unitId);
   }
 
   async function onSubmit(e: { preventDefault(): void }) {
     e.preventDefault();
-    if (selectedUnitId == null) return;
+    const errs: Record<string, string> = {};
+    if (!form.firstName.trim()) errs.firstName = `${lexicon.residentsPanel.firstName} is required.`;
+    if (!form.lastName.trim()) errs.lastName = `${lexicon.residentsPanel.lastName} is required.`;
+    if (!selectedUnitId) errs.unit = "Please select a unit.";
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
 
-    const firstName = form.firstName.trim();
-    const lastName = form.lastName.trim();
-
-    if (!firstName) {
-      setFormError(`${lexicon.residentsPanel.firstName} is required.`);
-      return;
-    }
-    if (!lastName) {
-      setFormError(`${lexicon.residentsPanel.lastName} is required.`);
-      return;
-    }
-
-    setFormError(null);
+    setErrors({});
     setSubmitState("loading");
 
     try {
-      await createResidentUnderUnit(selectedUnitId, {
-        firstName,
-        lastName,
+      await createResidentUnderUnit(selectedUnitId!, {
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
         dateOfBirth: form.dateOfBirth || null,
-        roomNumber: form.roomNumber?.trim() || null,
+        condition: form.condition.trim() || null,
+        careLevel: form.careLevel || null,
+        status: form.status || "Stable",
+        gpName: form.gpName.trim() || null,
+        emergencyContactName: form.emergencyContactName.trim() || null,
+        emergencyContactPhone: form.emergencyContactPhone.trim() || null,
+        emergencyContactRelationship: form.emergencyContactRelationship.trim() || null,
+        roomId: selectedRoomId,
+        gender: form.gender || null,
+        admissionDate: form.admissionDate || null,
+        nhsNumber: form.nhsNumber.trim() || null,
+        carePlan: form.carePlan.trim() || null,
       });
-
       setSubmitState("success");
       setTimeout(() => {
         onCreated();
@@ -171,20 +178,9 @@ export default function CreateResidentModal({ open, onClose, onCreated }: Props)
     }
   }
 
-  const slideVariants = {
-    enter: (dir: number) => ({
-      x: reduced ? 0 : dir * 20,
-      opacity: reduced ? 1 : 0,
-    }),
-    center: { x: 0, opacity: 1 },
-    exit: (dir: number) => ({
-      x: reduced ? 0 : dir * -20,
-      opacity: reduced ? 1 : 0,
-    }),
-  };
-
   const facilities = facilitiesState.status === "success" ? facilitiesState.data : [];
   const units = unitsState.status === "success" ? unitsState.data : [];
+  const rooms = roomsState.status === "success" ? roomsState.data : [];
 
   return (
     <AnimatePresence>
@@ -212,242 +208,353 @@ export default function CreateResidentModal({ open, onClose, onCreated }: Props)
               <h2 className="crm__title">
                 {submitState === "success" ? "Resident Added" : "New Resident"}
               </h2>
-              <button
-                className="crm__closeBtn"
-                type="button"
-                aria-label="Close"
-                onClick={onClose}
-              >
+              <button className="crm__closeBtn" type="button" aria-label="Close" onClick={onClose}>
                 {lexicon.common.closeX}
               </button>
             </div>
 
-            {/* Step indicator */}
-            {submitState !== "success" && (
-              <div className="crm__stepIndicator">
-                {([1, 2, 3] as Step[]).map((s) => (
-                  <span
-                    key={s}
-                    className={`crm__stepDot${step === s ? " crm__stepDot--active" : ""}`}
+            {/* Form body — scrollable */}
+            {submitState !== "success" ? (
+              <form id="crm-form" onSubmit={onSubmit} className="crm__formBody">
+
+                {/* ── PERSONAL INFO ─────────────────────────────────────── */}
+                <div className="crm__sectionLabel">Personal Info</div>
+                <div className="crm__grid2">
+                  <div className="crm__field">
+                    <label className="crm__label">{lexicon.residentsPanel.firstName} *</label>
+                    <input
+                      className={`crm__input${errors.firstName ? " crm__input--error" : ""}`}
+                      value={form.firstName}
+                      autoFocus
+                      onChange={(e) => setForm((p) => ({ ...p, firstName: e.target.value }))}
+                    />
+                    {errors.firstName && <div className="crm__fieldErr">{errors.firstName}</div>}
+                  </div>
+                  <div className="crm__field">
+                    <label className="crm__label">{lexicon.residentsPanel.lastName} *</label>
+                    <input
+                      className={`crm__input${errors.lastName ? " crm__input--error" : ""}`}
+                      value={form.lastName}
+                      onChange={(e) => setForm((p) => ({ ...p, lastName: e.target.value }))}
+                    />
+                    {errors.lastName && <div className="crm__fieldErr">{errors.lastName}</div>}
+                  </div>
+                </div>
+                <div className="crm__grid2">
+                  <div className="crm__field">
+                    <label className="crm__label">{lexicon.residentsPanel.dob}</label>
+                    <input
+                      className="crm__input"
+                      type="date"
+                      value={form.dateOfBirth}
+                      onChange={(e) => setForm((p) => ({ ...p, dateOfBirth: e.target.value }))}
+                    />
+                  </div>
+                  <div className="crm__field">
+                    <label className="crm__label">Gender</label>
+                    <div className="crm__selectWrap">
+                      <select
+                        className="crm__select"
+                        value={form.gender}
+                        onChange={(e) => setForm((p) => ({ ...p, gender: e.target.value }))}
+                      >
+                        <option value="">Select…</option>
+                        {GENDERS.map((g) => (
+                          <option key={g} value={g}>{g}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div className="crm__grid2">
+                  <div className="crm__field">
+                    <label className="crm__label">Admission Date</label>
+                    <input
+                      className="crm__input"
+                      type="date"
+                      value={form.admissionDate}
+                      onChange={(e) => setForm((p) => ({ ...p, admissionDate: e.target.value }))}
+                    />
+                  </div>
+                  <div className="crm__field">
+                    <label className="crm__label">NHS Number</label>
+                    <input
+                      className="crm__input"
+                      value={form.nhsNumber}
+                      placeholder="e.g. 943 476 5919"
+                      onChange={(e) => setForm((p) => ({ ...p, nhsNumber: e.target.value }))}
+                    />
+                  </div>
+                </div>
+
+                {/* ── CLINICAL INFO ─────────────────────────────────────── */}
+                <div className="crm__sectionLabel">Clinical Info</div>
+                <div className="crm__field">
+                  <label className="crm__label">Condition</label>
+                  <input
+                    className="crm__input"
+                    value={form.condition}
+                    placeholder="e.g. Type 2 Diabetes, Hypertension"
+                    onChange={(e) => setForm((p) => ({ ...p, condition: e.target.value }))}
                   />
-                ))}
-                <span className="crm__stepLabel">Step {step} of 3 — {STEP_TITLES[step]}</span>
+                </div>
+                <div className="crm__grid2">
+                  <div className="crm__field">
+                    <label className="crm__label">Care Level</label>
+                    <div className="crm__selectWrap">
+                      <select
+                        className="crm__select"
+                        value={form.careLevel}
+                        onChange={(e) => setForm((p) => ({ ...p, careLevel: e.target.value }))}
+                      >
+                        <option value="">Select…</option>
+                        {CARE_LEVELS.map((l) => (
+                          <option key={l} value={l}>{l}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="crm__field">
+                    <label className="crm__label">Status</label>
+                    <div className="crm__selectWrap">
+                      <select
+                        className="crm__select"
+                        value={form.status}
+                        onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))}
+                      >
+                        {STATUSES.map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div className="crm__grid2">
+                  <div className="crm__field">
+                    <label className="crm__label">GP / Physician</label>
+                    <input
+                      className="crm__input"
+                      value={form.gpName}
+                      placeholder="e.g. Dr. Smith"
+                      onChange={(e) => setForm((p) => ({ ...p, gpName: e.target.value }))}
+                    />
+                  </div>
+                  <div className="crm__field">
+                    <label className="crm__label">Care Plan</label>
+                    <input
+                      className="crm__input"
+                      value={form.carePlan}
+                      placeholder="e.g. Standard Residential, Palliative"
+                      onChange={(e) => setForm((p) => ({ ...p, carePlan: e.target.value }))}
+                    />
+                  </div>
+                </div>
+
+                {/* ── PLACEMENT ────────────────────────────────────────── */}
+                <div className="crm__sectionLabel">Placement</div>
+
+                {/* Facility */}
+                <div className="crm__field">
+                  <label className="crm__label">
+                    Facility
+                    {facilitiesState.status === "loading" && <span className="crm__spinnerInline" />}
+                  </label>
+                  <div className="crm__selectWrap">
+                    <select
+                      className="crm__select"
+                      value={selectedFacilityId ?? ""}
+                      disabled={facilitiesState.status === "loading"}
+                      onChange={(e) => {
+                        const v = e.target.value ? Number(e.target.value) : null;
+                        onFacilityChange(v);
+                      }}
+                    >
+                      <option value="">
+                        {facilitiesState.status === "loading" ? "Loading…" : "Select facility…"}
+                      </option>
+                      {facilities.map((f) => (
+                        <option key={f.id} value={f.id}>{f.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {facilitiesState.status === "error" && (
+                    <div className="crm__fieldError">
+                      Failed to load facilities —{" "}
+                      <button
+                        type="button"
+                        className="crm__retryLink"
+                        onClick={() => {
+                          setFacilitiesState({ status: "idle" });
+                          listFacilities()
+                            .then((d) => setFacilitiesState({ status: "success", data: d }))
+                            .catch((e) => setFacilitiesState({ status: "error", message: apiErrorMessage(e) }));
+                        }}
+                      >
+                        try again
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Unit */}
+                <div className="crm__field">
+                  <label className="crm__label">
+                    Unit *
+                    {unitsState.status === "loading" && <span className="crm__spinnerInline" />}
+                  </label>
+                  <div className="crm__selectWrap">
+                    <select
+                      className={`crm__select${errors.unit ? " crm__select--error" : ""}`}
+                      value={selectedUnitId ?? ""}
+                      disabled={selectedFacilityId == null || unitsState.status === "loading"}
+                      onChange={(e) => {
+                        const v = e.target.value ? Number(e.target.value) : null;
+                        onUnitChange(v);
+                      }}
+                    >
+                      <option value="">
+                        {unitsState.status === "loading"
+                          ? "Loading…"
+                          : selectedFacilityId == null
+                          ? "Select a facility first"
+                          : "Select unit…"}
+                      </option>
+                      {units.map((u) => (
+                        <option key={u.id} value={u.id}>
+                          {u.name} ({u.type}) · {u.occupiedCount}/{u.capacity}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {errors.unit && <div className="crm__fieldErr">{errors.unit}</div>}
+                  {unitsState.status === "error" && (
+                    <div className="crm__fieldError">
+                      Failed to load units —{" "}
+                      <button
+                        type="button"
+                        className="crm__retryLink"
+                        onClick={() => selectedFacilityId != null && loadUnits(selectedFacilityId)}
+                      >
+                        try again
+                      </button>
+                    </div>
+                  )}
+                  {unitsState.status === "success" && units.length === 0 && (
+                    <div className="crm__fieldHint">{lexicon.units.noUnits}</div>
+                  )}
+                </div>
+
+                {/* Room */}
+                <div className="crm__field">
+                  <label className="crm__label">
+                    Room
+                    {roomsState.status === "loading" && <span className="crm__spinnerInline" />}
+                  </label>
+                  <div className="crm__selectWrap">
+                    <select
+                      className="crm__select"
+                      value={selectedRoomId ?? ""}
+                      disabled={selectedUnitId == null || roomsState.status === "loading" || (roomsState.status === "success" && rooms.length === 0)}
+                      onChange={(e) => {
+                        setSelectedRoomId(e.target.value ? Number(e.target.value) : null);
+                      }}
+                    >
+                      <option value="">
+                        {roomsState.status === "loading"
+                          ? "Loading…"
+                          : selectedUnitId == null
+                          ? "Select a unit first"
+                          : roomsState.status === "success" && rooms.length === 0
+                          ? "No rooms available"
+                          : "Select room (optional)…"}
+                      </option>
+                      {rooms.map((r) => (
+                        <option key={r.id} value={r.id}>{r.roomNumber}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {roomsState.status === "error" && (
+                    <div className="crm__fieldError">
+                      Failed to load rooms —{" "}
+                      <button
+                        type="button"
+                        className="crm__retryLink"
+                        onClick={() => selectedUnitId != null && loadRooms(selectedUnitId)}
+                      >
+                        try again
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* ── EMERGENCY CONTACT ─────────────────────────────────── */}
+                <div className="crm__sectionLabel">Emergency Contact</div>
+                <div className="crm__grid2">
+                  <div className="crm__field">
+                    <label className="crm__label">Contact Name</label>
+                    <input
+                      className="crm__input"
+                      value={form.emergencyContactName}
+                      placeholder="e.g. Jane Smith"
+                      onChange={(e) => setForm((p) => ({ ...p, emergencyContactName: e.target.value }))}
+                    />
+                  </div>
+                  <div className="crm__field">
+                    <label className="crm__label">Relationship</label>
+                    <input
+                      className="crm__input"
+                      value={form.emergencyContactRelationship}
+                      placeholder="e.g. Daughter, Spouse"
+                      onChange={(e) => setForm((p) => ({ ...p, emergencyContactRelationship: e.target.value }))}
+                    />
+                  </div>
+                </div>
+                <div className="crm__field crm__field--half">
+                  <label className="crm__label">Contact Phone</label>
+                  <input
+                    className="crm__input"
+                    type="tel"
+                    value={form.emergencyContactPhone}
+                    placeholder="e.g. +44 7700 900001"
+                    onChange={(e) => setForm((p) => ({ ...p, emergencyContactPhone: e.target.value }))}
+                  />
+                </div>
+
+                {/* Submit error */}
+                {typeof submitState === "object" && "error" in submitState && (
+                  <div className="crm__error">{submitState.error}</div>
+                )}
+
+              </form>
+            ) : (
+              <div className="crm__success">
+                <div className="crm__successMsg">
+                  {lexicon.residentsPanel.addResident} — resident created successfully.
+                </div>
               </div>
             )}
-
-            {/* Step body */}
-            <div className="crm__stepBody">
-              <AnimatePresence mode="wait" custom={direction}>
-                <motion.div
-                  key={step}
-                  custom={direction}
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.18, ease: "easeOut" }}
-                >
-                  {/* ── STEP 1: Facility picker ─────────────────────────── */}
-                  {step === 1 && (
-                    <div className="crm__list">
-                      {facilitiesState.status === "loading" && (
-                        <div className="crm__status">{lexicon.common.loading}</div>
-                      )}
-                      {facilitiesState.status === "error" && (
-                        <div className="crm__listError">
-                          <div className="crm__error">{facilitiesState.message}</div>
-                          <button
-                            className="crm__retryBtn"
-                            type="button"
-                            onClick={() => {
-                              setFacilitiesState({ status: "idle" });
-                              listFacilities()
-                                .then((d) => setFacilitiesState({ status: "success", data: d }))
-                                .catch((e) => setFacilitiesState({ status: "error", message: apiErrorMessage(e) }));
-                            }}
-                          >
-                            {lexicon.common.tryAgain}
-                          </button>
-                        </div>
-                      )}
-                      {facilitiesState.status === "success" && facilities.length === 0 && (
-                        <div className="crm__status">{lexicon.common.noData}</div>
-                      )}
-                      {facilities.map((f) => (
-                        <button
-                          key={f.id}
-                          type="button"
-                          className={`crm__listRow${selectedFacilityId === f.id ? " crm__listRow--selected" : ""}`}
-                          onClick={() => setSelectedFacilityId(f.id)}
-                        >
-                          <div>
-                            <div className="crm__listRowName">{f.name}</div>
-                            <div className="crm__listRowMeta">{f.address}</div>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* ── STEP 2: Unit picker ─────────────────────────────── */}
-                  {step === 2 && (
-                    <div className="crm__list">
-                      {unitsState.status === "loading" && (
-                        <div className="crm__status">{lexicon.common.loading}</div>
-                      )}
-                      {unitsState.status === "error" && (
-                        <div className="crm__listError">
-                          <div className="crm__error">{unitsState.message}</div>
-                          <button
-                            className="crm__retryBtn"
-                            type="button"
-                            onClick={() => selectedFacilityId != null && loadUnits(selectedFacilityId)}
-                          >
-                            {lexicon.common.tryAgain}
-                          </button>
-                        </div>
-                      )}
-                      {unitsState.status === "success" && units.length === 0 && (
-                        <div className="crm__status">{lexicon.units.noUnits}</div>
-                      )}
-                      {units.map((u) => {
-                        const full = isUnitFull(u);
-                        const remaining = remainingSpots(u);
-                        return (
-                          <button
-                            key={u.id}
-                            type="button"
-                            className={`crm__listRow${selectedUnitId === u.id ? " crm__listRow--selected" : ""}${full ? " crm__listRow--disabled" : ""}`}
-                            onClick={() => !full && setSelectedUnitId(u.id)}
-                            disabled={full}
-                          >
-                            <div>
-                              <div className="crm__listRowName">{u.name}</div>
-                              <div className="crm__listRowMeta">
-                                {u.type} · {u.occupiedCount}/{u.capacity} occupied · {remaining} remaining
-                              </div>
-                            </div>
-                            {full && (
-                              <span className="crm__fullPill">{lexicon.units.full}</span>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* ── STEP 3: Resident form ────────────────────────────── */}
-                  {step === 3 && submitState !== "success" && (
-                    <form id="crm-form" onSubmit={onSubmit} className="crm__form">
-                      <div className="crm__grid2">
-                        <div className="crm__field">
-                          <label className="crm__label">{lexicon.residentsPanel.firstName}</label>
-                          <input
-                            className="crm__input"
-                            value={form.firstName}
-                            autoFocus
-                            onChange={(e) => setForm((p) => ({ ...p, firstName: e.target.value }))}
-                          />
-                        </div>
-                        <div className="crm__field">
-                          <label className="crm__label">{lexicon.residentsPanel.lastName}</label>
-                          <input
-                            className="crm__input"
-                            value={form.lastName}
-                            onChange={(e) => setForm((p) => ({ ...p, lastName: e.target.value }))}
-                          />
-                        </div>
-                      </div>
-                      <div className="crm__gridOptional">
-                        <div className="crm__field">
-                          <label className="crm__label">{lexicon.residentsPanel.dob}</label>
-                          <input
-                            className="crm__input"
-                            type="date"
-                            value={form.dateOfBirth ?? ""}
-                            onChange={(e) =>
-                              setForm((p) => ({ ...p, dateOfBirth: e.target.value || null }))
-                            }
-                          />
-                        </div>
-                        <div className="crm__field">
-                          <label className="crm__label">{lexicon.residentsPanel.roomNumber}</label>
-                          <input
-                            className="crm__input"
-                            value={form.roomNumber ?? ""}
-                            placeholder={lexicon.residentsPanel.roomPlaceholder}
-                            onChange={(e) => setForm((p) => ({ ...p, roomNumber: e.target.value }))}
-                          />
-                        </div>
-                      </div>
-                      {formError && <div className="crm__error">{formError}</div>}
-                      {typeof submitState === "object" && "error" in submitState && (
-                        <div className="crm__error">{submitState.error}</div>
-                      )}
-                    </form>
-                  )}
-
-                  {/* ── SUCCESS state ────────────────────────────────────── */}
-                  {submitState === "success" && (
-                    <div className="crm__success">
-                      <div className="crm__successMsg">
-                        {lexicon.residentsPanel.addResident} — resident created successfully.
-                      </div>
-                    </div>
-                  )}
-                </motion.div>
-              </AnimatePresence>
-            </div>
 
             {/* Actions */}
             {submitState !== "success" && (
               <div className="crm__actions">
-                <div>
-                  {step > 1 && (
-                    <button
-                      className="crm__backBtn"
-                      type="button"
-                      onClick={goBack}
-                      disabled={submitState === "loading"}
-                    >
-                      {lexicon.common.back}
-                    </button>
-                  )}
-                </div>
-                <div className="crm__actionsRight">
-                  <button
-                    className="crm__cancelBtn"
-                    type="button"
-                    onClick={onClose}
-                    disabled={submitState === "loading"}
-                  >
-                    {lexicon.common.cancel}
-                  </button>
-                  {step < 3 ? (
-                    <button
-                      className="crm__nextBtn"
-                      type="button"
-                      onClick={goNext}
-                      disabled={
-                        (step === 1 && selectedFacilityId == null) ||
-                        (step === 2 && selectedUnitId == null)
-                      }
-                    >
-                      Next
-                    </button>
-                  ) : (
-                    <button
-                      className="crm__submitBtn"
-                      type="submit"
-                      form="crm-form"
-                      disabled={submitState === "loading"}
-                    >
-                      {submitState === "loading"
-                        ? lexicon.common.creating
-                        : lexicon.residentsPanel.addResident}
-                    </button>
-                  )}
-                </div>
+                <button
+                  className="crm__cancelBtn"
+                  type="button"
+                  onClick={onClose}
+                  disabled={submitState === "loading"}
+                >
+                  {lexicon.common.cancel}
+                </button>
+                <button
+                  className="crm__submitBtn"
+                  type="submit"
+                  form="crm-form"
+                  disabled={submitState === "loading"}
+                >
+                  {submitState === "loading"
+                    ? lexicon.common.creating
+                    : lexicon.residentsPanel.addResident}
+                </button>
               </div>
             )}
           </motion.div>
