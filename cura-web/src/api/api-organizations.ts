@@ -30,7 +30,7 @@ export type RootUserResponse = {
 
 export type OrgBrandingResponse = {
   id: number;
-  name: string;
+  orgName: string;
   orgCode: string;
   logoUrl: string | null;
   primaryColor: string | null;
