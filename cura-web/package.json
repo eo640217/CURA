@@ -17,6 +17,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.8",
     "@mui/material": "^7.3.8",
+    "@tanstack/react-query": "^5.101.4",
     "axios": "^1.13.5",
     "boxicons": "^2.1.4",
     "framer-motion": "^12.40.0",

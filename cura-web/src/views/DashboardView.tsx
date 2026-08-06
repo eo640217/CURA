@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
@@ -84,16 +85,26 @@ function layoutKey(username: string | null) {
 export default function DashboardView() {
   const { username, isAdmin, orgCode } = useAuthState();
   const navigate = useNavigate();
-  const [actState, setActState] = useState<LoadState>({ status: 'idle' });
-  const [orgName, setOrgName] = useState<string | null>(null);
   const shift = getShift();
 
-  useEffect(() => {
-    if (!orgCode) return;
-    getOrgBranding(orgCode)
-      .then(b => setOrgName(b.orgName))
-      .catch(() => setOrgName(null));
-  }, [orgCode]);
+  const { data: orgBranding } = useQuery({
+    queryKey: ['org-branding', orgCode],
+    queryFn: () => getOrgBranding(orgCode as string),
+    enabled: !!orgCode,
+  });
+  const orgName = orgBranding?.orgName ?? null;
+
+  const activityQuery = useQuery({
+    queryKey: ['recent-activity', 10],
+    queryFn: () => listRecentActivity(10),
+  });
+  const actState: LoadState = activityQuery.isLoading
+    ? { status: 'loading' }
+    : activityQuery.isError
+      ? { status: 'error', message: activityQuery.error instanceof Error ? activityQuery.error.message : 'Failed to load activity' }
+      : activityQuery.data
+        ? { status: 'success', data: activityQuery.data }
+        : { status: 'idle' };
 
   // ── Layout state ──────────────────────────────────────────────────────────
   const [layout, setLayout] = useState<DashboardLayout>(DEFAULT_LAYOUT);
@@ -156,23 +167,6 @@ export default function DashboardView() {
       setStagedWidgets(prev => [...prev, key]);
     }
   }
-
-  // ── Activity feed ─────────────────────────────────────────────────────────
-  const loadActivity = async () => {
-    try {
-      setActState({ status: 'loading' });
-      const data = await listRecentActivity(10);
-      setActState({ status: 'success', data });
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : 'Failed to load activity';
-      setActState({ status: 'error', message: msg });
-    }
-  };
-
-  useEffect(() => {
-    loadActivity();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const activeWidgets = editMode ? stagedWidgets : layout.widgets;
 
@@ -330,7 +324,7 @@ export default function DashboardView() {
       <section className="dash__section">
         <div className="dash__section-head">
           <h2 className="dash__section-title">Recent activity</h2>
-          <button type="button" className="dash__refresh-btn" onClick={loadActivity}>
+          <button type="button" className="dash__refresh-btn" onClick={() => activityQuery.refetch()}>
             Refresh
           </button>
         </div>

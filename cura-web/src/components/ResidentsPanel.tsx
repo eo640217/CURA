@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
   Resident,
@@ -31,7 +32,18 @@ export function ResidentsPanel({
   onResidentChanged: () => void | Promise<void>;
 }) {
   const navigate = useNavigate();
-  const [state, setState] = useState<LoadState<Resident[]>>({ status: "idle" });
+  const queryClient = useQueryClient();
+  const residentsQuery = useQuery({
+    queryKey: ["residents", unitId],
+    queryFn: () => listResidentsByUnit(unitId),
+  });
+  const state: LoadState<Resident[]> = residentsQuery.isLoading
+    ? { status: "loading" }
+    : residentsQuery.isError
+      ? { status: "error", message: apiErrorMessage(residentsQuery.error) }
+      : residentsQuery.isSuccess
+        ? { status: "success", data: residentsQuery.data }
+        : { status: "idle" };
   const [transferTo, setTransferTo] = useState<Record<number, number>>({});
 
   const residents = useMemo(
@@ -73,19 +85,7 @@ export function ResidentsPanel({
     navigate(`/residents/new?${params.toString()}`);
   }
 
-  async function load() {
-    try {
-      setState({ status: "loading" });
-      const data = await listResidentsByUnit(unitId);
-      setState({ status: "success", data });
-    } catch (e: any) {
-      setState({ status: "error", message: apiErrorMessage(e) });
-    }
-  }
-
-
   useEffect(() => {
-    load();
     setTransferTo({});
   }, [unitId]);
 
@@ -103,7 +103,8 @@ export function ResidentsPanel({
 
     try {
       await transferResident(residentId, { toUnitId });
-      await load();
+      await queryClient.invalidateQueries({ queryKey: ["residents", unitId] });
+      await queryClient.invalidateQueries({ queryKey: ["residents", toUnitId] });
       await onResidentChanged();
     } catch (e: any) {
       alert(apiErrorMessage(e));

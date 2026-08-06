@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Facility, getFacility, listFacilities, patchFacility } from "../api/facilities";
 import { Unit } from "../api/units";
@@ -22,12 +23,12 @@ export default function FacilitiesView() {
   const isAdmin = roleAtLeast(auth.role, "ADMIN");
   const reduced = useReducedMotion();
 
+  const queryClient = useQueryClient();
+
   const [createOpen, setCreateOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [facilitiesState, setFacilitiesState] = useState<LoadState<Facility[]>>({ status: "idle" });
   const [selectedFacilityId, setSelectedFacilityId] = useState<number | null>(null);
-  const [facilityState, setFacilityState] = useState<LoadState<Facility>>({ status: "idle" });
 
   const [unitsForStats, setUnitsForStats] = useState<Unit[]>([]);
 
@@ -35,6 +36,30 @@ export default function FacilitiesView() {
   const [editForm, setEditForm] = useState({ name: "", address: "", phone: "", email: "" });
   const [saving, setSaving] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
+
+  const facilitiesQuery = useQuery({ queryKey: ["facilities"], queryFn: listFacilities });
+  const facilitiesState: LoadState<Facility[]> = facilitiesQuery.isLoading
+    ? { status: "loading" }
+    : facilitiesQuery.isError
+      ? { status: "error", message: apiErrorMessage(facilitiesQuery.error) }
+      : facilitiesQuery.isSuccess
+        ? { status: "success", data: facilitiesQuery.data }
+        : { status: "idle" };
+
+  const facilityQuery = useQuery({
+    queryKey: ["facility", selectedFacilityId],
+    queryFn: () => getFacility(selectedFacilityId as number),
+    enabled: selectedFacilityId != null,
+  });
+  const facilityState: LoadState<Facility> = selectedFacilityId == null
+    ? { status: "idle" }
+    : facilityQuery.isLoading
+      ? { status: "loading" }
+      : facilityQuery.isError
+        ? { status: "error", message: apiErrorMessage(facilityQuery.error) }
+        : facilityQuery.isSuccess
+          ? { status: "success", data: facilityQuery.data }
+          : { status: "idle" };
 
   const facilities = useMemo(
     () => (facilitiesState.status === "success" ? facilitiesState.data : []),
@@ -56,54 +81,34 @@ export default function FacilitiesView() {
     return { totalBeds, occupied, available, rate };
   }, [facilityState, unitsForStats]);
 
-  const loadFacilities = useCallback(async () => {
-    try {
-      setFacilitiesState({ status: "loading" });
-      const data = await listFacilities();
-      setFacilitiesState({ status: "success", data });
-
-      if (data.length === 0) {
-        setSelectedFacilityId(null);
-        setFacilityState({ status: "idle" });
-        return;
-      }
-
-      setSelectedFacilityId((prev) => {
-        if (prev && data.some((f) => f.id === prev)) return prev;
-        return data[0].id;
-      });
-    } catch (e: any) {
-      setFacilitiesState({ status: "error", message: apiErrorMessage(e) });
+  // Pick a default selected facility once the list loads (or if the
+  // previous selection disappeared, e.g. after a delete elsewhere).
+  useEffect(() => {
+    if (!facilitiesQuery.isSuccess) return;
+    const data = facilitiesQuery.data;
+    if (data.length === 0) {
+      setSelectedFacilityId(null);
+      return;
     }
-  }, []);
-
-  const loadFacility = useCallback(async (id: number) => {
-    try {
-      setFacilityState({ status: "loading" });
-      const data = await getFacility(id);
-      setFacilityState({ status: "success", data });
-      setEditing(false);
-      setEditError(null);
-      setEditForm({
-        name: data.name ?? "",
-        address: data.address ?? "",
-        phone: data.phone ?? "",
-        email: data.email ?? "",
-      });
-    } catch (e: any) {
-      setFacilityState({ status: "error", message: apiErrorMessage(e) });
-    }
-  }, []);
+    setSelectedFacilityId((prev) => (prev && data.some((f) => f.id === prev) ? prev : data[0].id));
+  }, [facilitiesQuery.isSuccess, facilitiesQuery.data]);
 
   useEffect(() => {
-    loadFacilities();
-  }, [loadFacilities]);
-
-  useEffect(() => {
-    if (selectedFacilityId == null) return;
     setUnitsForStats([]);
-    loadFacility(selectedFacilityId);
-  }, [selectedFacilityId, loadFacility]);
+  }, [selectedFacilityId]);
+
+  useEffect(() => {
+    if (!facilityQuery.isSuccess) return;
+    const data = facilityQuery.data;
+    setEditing(false);
+    setEditError(null);
+    setEditForm({
+      name: data.name ?? "",
+      address: data.address ?? "",
+      phone: data.phone ?? "",
+      email: data.email ?? "",
+    });
+  }, [facilityQuery.isSuccess, facilityQuery.data]);
 
   function startEdit() {
     if (!isAdmin) return;
@@ -168,14 +173,8 @@ export default function FacilitiesView() {
 
     try {
       const updated = await patchFacility(current.id, payload);
-      setFacilityState({ status: "success", data: updated });
-      setFacilitiesState((prev) => {
-        if (prev.status !== "success") return prev;
-        return {
-          status: "success",
-          data: prev.data.map((f) => (f.id === updated.id ? { ...f, ...updated } : f)),
-        };
-      });
+      queryClient.setQueryData(["facility", updated.id], updated);
+      queryClient.invalidateQueries({ queryKey: ["facilities"] });
       setEditing(false);
     } catch (e: any) {
       setEditError(apiErrorMessage(e));
@@ -230,7 +229,7 @@ export default function FacilitiesView() {
             {facilitiesState.status === "error" && (
               <div className="fv__listError">
                 <div className="fv__listErrorMsg">{facilitiesState.message}</div>
-                <button className="fv__tryAgainBtn" onClick={loadFacilities} type="button">
+                <button className="fv__tryAgainBtn" onClick={() => facilitiesQuery.refetch()} type="button">
                   {t.common.tryAgain}
                 </button>
               </div>
@@ -306,7 +305,7 @@ export default function FacilitiesView() {
                 {selectedFacilityId != null && (
                   <button
                     className="fv__tryAgainBtn"
-                    onClick={() => loadFacility(selectedFacilityId)}
+                    onClick={() => facilityQuery.refetch()}
                     type="button"
                   >
                     {t.common.tryAgain}
@@ -499,7 +498,7 @@ export default function FacilitiesView() {
         <CreateFacilityModal
           open={createOpen}
           onClose={() => setCreateOpen(false)}
-          onCreated={() => loadFacilities()}
+          onCreated={() => queryClient.invalidateQueries({ queryKey: ["facilities"] })}
         />
       )}
     </div>

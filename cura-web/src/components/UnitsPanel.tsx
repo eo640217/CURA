@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   Unit,
@@ -45,8 +46,20 @@ export function UnitsPanel({
   const auth = getAuth();
   const isAdmin = roleAtLeast(auth.role, "ADMIN");
   const reduced = useReducedMotion();
+  const queryClient = useQueryClient();
 
-  const [unitsState, setUnitsState] = useState<LoadState<Unit[]>>({ status: "idle" });
+  const unitsQuery = useQuery({
+    queryKey: ["units", facilityId],
+    queryFn: () => listUnitsByFacility(facilityId),
+  });
+  const unitsState: LoadState<Unit[]> = unitsQuery.isLoading
+    ? { status: "loading" }
+    : unitsQuery.isError
+      ? { status: "error", message: apiErrorMessage(unitsQuery.error) }
+      : unitsQuery.isSuccess
+        ? { status: "success", data: unitsQuery.data }
+        : { status: "idle" };
+
   const [selectedUnitId, setSelectedUnitId] = useState<number | null>(null);
 
   const [editingUnitId, setEditingUnitId] = useState<number | null>(null);
@@ -64,23 +77,20 @@ export function UnitsPanel({
     [units, selectedUnitId]
   );
 
-  async function load() {
-    try {
-      setUnitsState({ status: "loading" });
-      const data = await listUnitsByFacility(facilityId);
-      setUnitsState({ status: "success", data });
-      onUnitsLoaded?.(data);
-    } catch (e: any) {
-      setUnitsState({ status: "error", message: apiErrorMessage(e) });
-    }
+  function load() {
+    return queryClient.invalidateQueries({ queryKey: ["units", facilityId] });
   }
 
   useEffect(() => {
-    load();
     setEditingUnitId(null);
     setEditName("");
     setRenameError(null);
   }, [facilityId]);
+
+  useEffect(() => {
+    if (unitsQuery.isSuccess) onUnitsLoaded?.(unitsQuery.data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unitsQuery.isSuccess, unitsQuery.data]);
 
   useEffect(() => {
     if (unitsState.status !== "success") return;
@@ -95,17 +105,11 @@ export function UnitsPanel({
     const ok = confirm(lexicon.common.deleteConfirmUnit);
     if (!ok) return;
 
+    const remaining = units.filter((u) => u.id !== unitId);
     try {
       await deleteUnit(unitId);
       await load();
-      setSelectedUnitId((prev) => {
-        if (prev !== unitId) return prev;
-        const next =
-          unitsState.status === "success"
-            ? unitsState.data.filter((u) => u.id !== unitId)
-            : [];
-        return next[0]?.id ?? null;
-      });
+      setSelectedUnitId((prev) => (prev === unitId ? remaining[0]?.id ?? null : prev));
     } catch (e: any) {
       alert(apiErrorMessage(e));
     }
@@ -135,13 +139,9 @@ export function UnitsPanel({
     setRenameError(null);
     try {
       const updated = await patchUnit(u.id, { name: nextName });
-      setUnitsState((prev) => {
-        if (prev.status !== "success") return prev;
-        return {
-          status: "success",
-          data: prev.data.map((x) => (x.id === updated.id ? updated : x)),
-        };
-      });
+      queryClient.setQueryData<Unit[]>(["units", facilityId], (prev) =>
+        prev?.map((x) => (x.id === updated.id ? updated : x))
+      );
       cancelRename();
     } catch (e: any) {
       setRenameError(apiErrorMessage(e));

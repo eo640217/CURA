@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { apiErrorMessage } from "../api/api-error";
 import { listResidentDirectory, ResidentDirectoryItem } from "../api/api-resident-directory";
@@ -18,16 +19,27 @@ export default function ResidentsDirectoryView() {
   const page = Number(searchParams.get("page") ?? 0);
   const size = Number(searchParams.get("size") ?? 25);
 
-  const [items, setItems] = useState<ResidentDirectoryItem[]>([]);
-  const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
-
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [detailsId, setDetailsId] = useState<number | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  const [debouncedQ, setDebouncedQ] = useState(q.trim());
+  useEffect(() => {
+    const tmr = setTimeout(() => setDebouncedQ(q.trim()), 250);
+    return () => clearTimeout(tmr);
+  }, [q]);
+
+  const directoryQuery = useQuery({
+    queryKey: ["residents-directory", debouncedQ || undefined, page, size, refreshKey],
+    queryFn: () => listResidentDirectory({ q: debouncedQ || undefined, page, size }),
+    placeholderData: (prev) => prev,
+  });
+
+  const items = directoryQuery.data?.content ?? [];
+  const total = directoryQuery.data?.totalElements ?? 0;
+  const totalPages = directoryQuery.data?.totalPages ?? 0;
+  const loading = directoryQuery.isFetching;
+  const err = directoryQuery.isError ? apiErrorMessage(directoryQuery.error) : null;
 
   function setParam(updates: Record<string, string | number | undefined>) {
     setSearchParams((prev) => {
@@ -50,27 +62,6 @@ export default function ResidentsDirectoryView() {
   function goToPage(p: number) {
     setParam({ page: p });
   }
-
-  async function load() {
-    try {
-      setErr(null);
-      setLoading(true);
-      const data = await listResidentDirectory({ q: q.trim() || undefined, page, size });
-      setItems(data.content);
-      setTotal(data.totalElements);
-      setTotalPages(data.totalPages);
-    } catch (e: any) {
-      setErr(apiErrorMessage(e));
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    const tmr = setTimeout(() => load(), 250);
-    return () => clearTimeout(tmr);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [q, page, size, refreshKey]);
 
   function openDetails(id: number) {
     setDetailsId(id);

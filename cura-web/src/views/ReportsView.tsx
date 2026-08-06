@@ -1,7 +1,8 @@
 // Occupancy is live (facilities/units API). Incidents and care plans have no
 // backend yet (see IncidentsView / CarePlansView), so this reuses the same
 // mockData source those views already use, to stay consistent.
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useQuery, useQueries } from '@tanstack/react-query';
 import BedOutlinedIcon from '@mui/icons-material/BedOutlined';
 import ApartmentOutlinedIcon from '@mui/icons-material/ApartmentOutlined';
 import EventSeatOutlinedIcon from '@mui/icons-material/EventSeatOutlined';
@@ -25,27 +26,34 @@ type LoadState =
 
 export default function ReportsView() {
   const navigate = useNavigate();
-  const [state, setState] = useState<LoadState>({ status: 'idle' });
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      setState({ status: 'loading' });
-      try {
-        const facilities = await listFacilities();
-        const unitLists = await Promise.all(
-          facilities.map(f => listUnitsByFacility(f.id).catch(() => [] as Unit[]))
-        );
-        if (cancelled) return;
-        const unitsByFacility: Record<number, Unit[]> = {};
-        facilities.forEach((f, i) => { unitsByFacility[f.id] = unitLists[i]; });
-        setState({ status: 'success', facilities, unitsByFacility });
-      } catch (e: unknown) {
-        if (!cancelled) setState({ status: 'error', message: apiErrorMessage(e) });
-      }
-    })();
-    return () => { cancelled = true; };
-  }, []);
+  const facilitiesQuery = useQuery({
+    queryKey: ['facilities'],
+    queryFn: listFacilities,
+  });
+  const facilities = facilitiesQuery.data ?? [];
+
+  const unitsQueries = useQueries({
+    queries: facilities.map(f => ({
+      queryKey: ['units', f.id],
+      queryFn: () => listUnitsByFacility(f.id),
+      enabled: facilitiesQuery.isSuccess,
+    })),
+  });
+
+  const state: LoadState = facilitiesQuery.isLoading
+    ? { status: 'loading' }
+    : facilitiesQuery.isError
+      ? { status: 'error', message: apiErrorMessage(facilitiesQuery.error) }
+      : facilitiesQuery.isSuccess
+        ? {
+            status: 'success',
+            facilities,
+            unitsByFacility: Object.fromEntries(
+              facilities.map((f, i) => [f.id, unitsQueries[i]?.data ?? []])
+            ),
+          }
+        : { status: 'idle' };
 
   const occupancy = useMemo(() => {
     if (state.status !== 'success') return { beds: 0, occupied: 0, available: 0, rate: 0 };
