@@ -91,7 +91,7 @@ export default function DashboardView() {
   useEffect(() => {
     if (!orgCode) return;
     getOrgBranding(orgCode)
-      .then(b => setOrgName(b.name))
+      .then(b => setOrgName(b.orgName))
       .catch(() => setOrgName(null));
   }, [orgCode]);
 
